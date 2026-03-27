@@ -1,73 +1,78 @@
-# React + TypeScript + Vite
+# OpenJustice Frontend ⚖️
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**OpenJustice** is an advanced AI-powered legal assistant platform providing multilingual legal Q&A, document analysis, and voice-enabled interactions through modern web and WhatsApp interfaces.
 
-Currently, two official plugins are available:
+Built as a robust research prototype, it prioritizes verified legal insights, strict anti-hallucination protocols via Multi-Perspective Retrieval, and profound architectural scale.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## React Compiler
+*   **Multilingual AI Legal Assistant:** Real-time chat interface parsing complex legal questions in English, Hindi, and Marathi, backed by verifiable citations.
+*   **Voice-Enabled Interaction:** Native audio recording, waveform visualization (WaveSurfer.js), and OpenAI-backed speech-to-text and text-to-speech pipelines.
+*   **Document Analysis:** Upload and scrutinize complex legal contracts and notices with AI.
+*   **Legal Topic Browser:** Curated modular directories for standard legal categories (Employment Law, Family Rights, Consumer Protection, etc.).
+*   **Real-Time Capabilities:** Socket.IO WebSocket integrations for rapid, robust communication.
+*   **WhatsApp Integration:** Extend reach directly to users via native WhatsApp QR/Status capabilities.
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+## 🛠️ Technology Stack
 
-## Expanding the ESLint configuration
+Our frontend architecture utilizes best-in-class, enterprise-ready tooling:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+*   **Core Framework:** React 19 + TypeScript + Vite
+*   **Routing:** React Router 7 (Centralized route config with lazy loading)
+*   **Styling:** TailwindCSS 4 + class-variance-authority (CVA)
+*   **State Management:** Zustand + React Context
+*   **Data Fetching & Networking:** TanStack Query + Axios + Socket.IO Client
+*   **Voice Interface:** MediaRecorder API + WaveSurfer.js (with OpenAI Whisper & TTS backend)
+*   **Internationalization:** i18next + react-i18next
+*   **Testing:** Vitest + React Testing Library
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📦 Getting Started
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Prerequisites
+*   Node.js (v18+ recommended)
+*   npm or yarn
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Installation
+1.  **Clone the repository**
+    ```bash
+    git clone https://github.com/shashinherath/OpenJustice-Frontend-Repo.git
+    cd OpenJustice-Frontend-Repo
+    ```
+
+2.  **Install dependencies**
+    ```bash
+    npm install
+    ```
+
+3.  **Start the development server**
+    ```bash
+    npm run dev
+    ```
+
+## 🗺️ Project Architecture Overview
+
+The repository is organized following scalable frontend design patterns. For in-depth architecture patterns involving our Zustand stores, Service Layers, and WebSocket hooks, please see `docs/FRONTEND_PROJECT_STRUCTURE.md`.
+
+```
+src/
+├── components/          # Reusable UI (common, navigation, chat, voice, legal, whatsapp)
+├── config/              # Centralized route, i18n, socket, and api configs
+├── constants/           # Core constants (languages, endpoints, topics)
+├── contexts/            # React Context (Auth, Theme, Chat, Voice, Language)
+├── hooks/               # Custom modular hooks organized by feature domain
+├── layout/              # Structural wrappers (MainLayout, DashboardLayout, etc.)
+├── lib/                 # Utility libraries (date formatting, audio utils)
+├── locales/             # Native language JSON maps (en, hi, mr)
+├── pages/               # Segmented smart route containers
+├── services/            # Deep API client layer and websocket integration
+├── stores/              # Zustand global state slices
+├── styles/              # Global Tailwind logic
+├── types/               # Strict TypeScript definitions
+└── utils/               # App utilities, validators, and loggers
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## ⚠️ Vital Disclaimer
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+OpenJustice is an AI-powered educational tool. We provide **legal information, not legal advice or representation.** The system may not be aware of extremely recent case law or hyper-local procedural nuances. 
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+**This interface is a research prototype.** Users must cross-reference all outputs with the primary source linked documents and should consult a qualified attorney for their specific contextual situations.
