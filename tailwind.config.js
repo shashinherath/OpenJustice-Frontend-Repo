@@ -1,11 +1,32 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: "class",
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: "#1A1A1A",
+        "primary-alt": "#2d3748",
+        "background-light": "#f7f7f7",
+        "background-dark": "#191919",
+        "brand-bg": "#191919",
+        "surface-dark": "#242424",
+        "border-dark": "#333333",
+      },
+      fontFamily: {
+        display: ["Public Sans", "sans-serif"],
+      },
+      borderRadius: {
+        DEFAULT: "0.25rem",
+        lg: "0.5rem",
+        xl: "0.75rem",
+        full: "9999px",
+      },
+    },
   },
   plugins: [],
 }
+

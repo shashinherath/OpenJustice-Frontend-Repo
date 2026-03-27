@@ -1,3 +1,44 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary: #1A1A1A;
+  --color-background-light: #f7f7f7;
+  --color-background-dark: #191919;
+  --color-brand-bg: #191919;
+  --color-surface-dark: #242424;
+  --color-border-dark: #333333;
+  --font-display: "Public Sans", sans-serif;
+}
+
+@layer base {
+  html {
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  ::selection {
+    background-color: rgb(59 130 246 / 0.3);
+  }
+
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #191919;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #333333;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #444444;
+  }
+}
+
+
