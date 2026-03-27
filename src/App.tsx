@@ -5,6 +5,7 @@ import ChatLayout from "@/layout/ChatLayout";
 import ChatPage from "@/pages/chat/ChatPage";
 import TrustPage from "@/pages/legal/TrustPage";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
+import TopicBrowserPage from "@/pages/topics/TopicBrowserPage";
 
 function App() {
   return (
@@ -33,6 +34,10 @@ function App() {
         <Route
           path="/admin"
           element={<AdminDashboard />}
+        />
+        <Route
+          path="/topics"
+          element={<TopicBrowserPage />}
         />
       </Routes>
     </Router>

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import FeatureCard from "@/components/ui/FeatureCard";
 
 // Feature card data
@@ -83,14 +84,14 @@ const HomePage: React.FC = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center gap-4 mt-4 w-full sm:w-auto">
-            <button className="flex w-full sm:w-auto min-w-[200px] h-14 items-center justify-center gap-2 rounded-xl bg-primary dark:bg-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.98] text-white text-lg font-bold shadow-xl transition-all">
+            <Link to="/chat" className="flex w-full sm:w-auto min-w-[200px] h-14 items-center justify-center gap-2 rounded-xl bg-primary dark:bg-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.98] text-white text-lg font-bold shadow-xl transition-all">
               <span className="material-symbols-outlined">chat_bubble</span>
               <span>Ask a Question</span>
-            </button>
-            <button className="flex w-full sm:w-auto min-w-[200px] h-14 items-center justify-center gap-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-lg font-bold transition-all shadow-sm">
+            </Link>
+            <Link to="/topics" className="flex w-full sm:w-auto min-w-[200px] h-14 items-center justify-center gap-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-lg font-bold transition-all shadow-sm">
               <span className="material-symbols-outlined">grid_view</span>
               <span>Browse Topics</span>
-            </button>
+            </Link>
           </div>
         </div>
 
