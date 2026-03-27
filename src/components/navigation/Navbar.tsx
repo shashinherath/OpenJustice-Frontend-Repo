@@ -26,13 +26,13 @@ const Navbar: React.FC = () => {
         </div>
 
         {/* Right side actions */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           {/* Language Selector */}
           <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
             <span className="material-symbols-outlined text-[18px] text-slate-500">
               language
             </span>
-            <select className="bg-transparent border-none text-sm font-medium text-slate-700 dark:text-slate-300 focus:ring-0 cursor-pointer py-0 pl-1 pr-8 appearance-none">
+            <select className="bg-transparent border-none text-sm font-medium text-slate-700 dark:text-slate-300 focus:ring-0 cursor-pointer py-0 pl-1 pr-8">
               {LANGUAGES.map((lang) => (
                 <option key={lang.value} value={lang.value}>
                   {lang.label}

@@ -9,8 +9,12 @@ export default {
     extend: {
       colors: {
         primary: "#1A1A1A",
+        "primary-alt": "#2d3748",
         "background-light": "#f7f7f7",
         "background-dark": "#191919",
+        "brand-bg": "#191919",
+        "surface-dark": "#242424",
+        "border-dark": "#333333",
       },
       fontFamily: {
         display: ["Public Sans", "sans-serif"],

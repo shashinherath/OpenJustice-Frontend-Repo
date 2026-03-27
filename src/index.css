@@ -6,6 +6,9 @@
   --color-primary: #1A1A1A;
   --color-background-light: #f7f7f7;
   --color-background-dark: #191919;
+  --color-brand-bg: #191919;
+  --color-surface-dark: #242424;
+  --color-border-dark: #333333;
   --font-display: "Public Sans", sans-serif;
 }
 
