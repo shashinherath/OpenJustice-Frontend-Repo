@@ -4,6 +4,7 @@ import HomePage from "@/pages/HomePage";
 import ChatLayout from "@/layout/ChatLayout";
 import ChatPage from "@/pages/chat/ChatPage";
 import TrustPage from "@/pages/legal/TrustPage";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
 
 function App() {
   return (
@@ -28,6 +29,10 @@ function App() {
         <Route
           path="/trust"
           element={<TrustPage />}
+        />
+        <Route
+          path="/admin"
+          element={<AdminDashboard />}
         />
       </Routes>
     </Router>
