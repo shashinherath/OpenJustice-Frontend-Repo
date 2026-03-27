@@ -3,6 +3,7 @@ import MainLayout from "@/layout/MainLayout";
 import HomePage from "@/pages/HomePage";
 import ChatLayout from "@/layout/ChatLayout";
 import ChatPage from "@/pages/chat/ChatPage";
+import TrustPage from "@/pages/legal/TrustPage";
 
 function App() {
   return (
@@ -23,6 +24,10 @@ function App() {
               <ChatPage />
             </ChatLayout>
           }
+        />
+        <Route
+          path="/trust"
+          element={<TrustPage />}
         />
       </Routes>
     </Router>
