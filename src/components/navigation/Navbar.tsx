@@ -1,64 +1,117 @@
-import React from "react";
-import { useTheme } from "@/hooks/common/useTheme";
-
-const LANGUAGES = [
-  { value: "en", label: "English" },
-  { value: "es", label: "Español" },
-  { value: "fr", label: "Français" },
-  { value: "vi", label: "Tiếng Việt" },
-  { value: "zh", label: "中文" },
-];
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const Navbar: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
+  const { t } = useTranslation();
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    if (!isLoginOpen) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsLoginOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isLoginOpen]);
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsLoginOpen(false);
+    setUsername("");
+    setPassword("");
+  };
 
   return (
-    <header className="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
-      <div className="px-4 md:px-10 lg:px-40 py-4 flex items-center justify-between">
-        {/* Logo */}
-        <div className="flex items-center gap-3">
-          <div className="flex items-center justify-center size-9 rounded-lg bg-primary text-white dark:bg-white dark:text-primary">
-            <span className="material-symbols-outlined text-2xl">balance</span>
+    <>
+      <header className="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
+        <div className="px-4 md:px-10 lg:px-40 py-4 flex items-center justify-between">
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center size-9 rounded-lg bg-primary text-white dark:bg-white dark:text-primary">
+              <span className="material-symbols-outlined text-2xl">balance</span>
+            </div>
+            <h2 className="text-slate-900 dark:text-white text-xl font-bold tracking-tight">
+              OpenJustice
+            </h2>
           </div>
-          <h2 className="text-slate-900 dark:text-white text-xl font-bold tracking-tight">
-            OpenJustice
-          </h2>
+
+          {/* Right side actions */}
+          <div className="flex items-center gap-4">
+            {/* Login Button */}
+            <button
+              className="text-sm font-semibold text-primary dark:text-white hover:opacity-70 transition-opacity"
+              type="button"
+              onClick={() => setIsLoginOpen(true)}
+            >
+              {t("logIn")}
+            </button>
+          </div>
         </div>
+      </header>
 
-        {/* Right side actions */}
-        <div className="flex items-center gap-6">
-          {/* Language Selector */}
-          <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
-            <span className="material-symbols-outlined text-[18px] text-slate-500">
-              language
-            </span>
-            <select className="bg-transparent border-none text-sm font-medium text-slate-700 dark:text-slate-300 focus:ring-0 cursor-pointer py-0 pl-1 pr-8">
-              {LANGUAGES.map((lang) => (
-                <option key={lang.value} value={lang.value}>
-                  {lang.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Dark Mode Toggle */}
-          <button
-            onClick={toggleTheme}
-            aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-            className="flex items-center justify-center size-9 rounded-full border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-all"
+      {isLoginOpen && (
+        <div className="fixed inset-0 z-140 flex items-center justify-center bg-black/60 p-4" onClick={() => setIsLoginOpen(false)}>
+          <div
+            className="w-full max-w-sm rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl dark:border-border-dark dark:bg-brand-bg"
+            onClick={(event) => event.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Login"
           >
-            <span className="material-symbols-outlined text-[20px]">
-              {theme === "dark" ? "light_mode" : "dark_mode"}
-            </span>
-          </button>
+            <div className="mb-5 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Login</h3>
+              <button
+                className="rounded-md p-1 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-surface-dark dark:hover:text-white"
+                type="button"
+                onClick={() => setIsLoginOpen(false)}
+                aria-label="Close login window"
+              >
+                <span className="material-symbols-outlined text-base">close</span>
+              </button>
+            </div>
 
-          {/* Login Button */}
-          <button className="text-sm font-semibold text-primary dark:text-white hover:opacity-70 transition-opacity">
-            Log In
-          </button>
+            <form className="space-y-4" onSubmit={handleSubmit}>
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Username</label>
+                <input
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition-colors focus:border-slate-500 dark:border-border-dark dark:bg-surface-dark dark:text-white"
+                  type="text"
+                  value={username}
+                  onChange={(event) => setUsername(event.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Password</label>
+                <input
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition-colors focus:border-slate-500 dark:border-border-dark dark:bg-surface-dark dark:text-white"
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  required
+                />
+              </div>
+
+              <button
+                className="mt-2 w-full rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-slate-700 dark:bg-slate-100 dark:text-slate-900 dark:hover:bg-white"
+                type="submit"
+              >
+                {t("logIn")}
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
-    </header>
+      )}
+    </>
   );
 };
 

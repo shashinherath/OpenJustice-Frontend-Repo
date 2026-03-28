@@ -1,8 +1,40 @@
 import React from "react";
-import { useTheme } from "@/hooks/common/useTheme";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { LanguageContext } from "@/contexts/LanguageContext";
+import { useChatStore } from "@/stores/chatStore";
 
 const ChatPage: React.FC = () => {
-    const { theme, toggleTheme } = useTheme();
+    const navigate = useNavigate();
+    const languageContext = useContext(LanguageContext);
+    const [question, setQuestion] = useState("");
+    const { createNewChat, sendMessageToChat } = useChatStore();
+    const currentLanguage = (languageContext?.currentLanguage || "en").toLowerCase();
+    const languageLabelMap: Record<string, string> = {
+        en: "English",
+        si: "Sinhala",
+        ta: "Tamil",
+    };
+    const selectedLanguageLabel = languageLabelMap[currentLanguage] || "English";
+
+    const handleSubmitQuestion = () => {
+        const text = question.trim();
+        if (!text) {
+            return;
+        }
+
+        const chatId = createNewChat();
+        sendMessageToChat(chatId, text);
+        setQuestion("");
+        navigate(`/chat/${chatId}`);
+    };
+
+    const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            handleSubmitQuestion();
+        }
+    };
     
     return (
         <>
@@ -15,20 +47,10 @@ const ChatPage: React.FC = () => {
                     </nav>
                 </div>
                 <div className="flex gap-3 h-full items-center">
-                    <div className="flex items-center h-full gap-2 bg-slate-50 dark:bg-surface-dark px-3 py-1.5 rounded-lg border border-slate-200 dark:border-border-dark cursor-pointer hover:bg-slate-100 dark:hover:bg-[#2d2d2d] transition-colors">
+                    <div className="flex items-center h-full gap-2 bg-slate-50 dark:bg-surface-dark px-3 py-1.5 rounded-lg border border-slate-200 dark:border-border-dark">
                         <span className="material-symbols-outlined text-[18px] text-slate-500">language</span>
-                        <span className="text-xs font-bold uppercase tracking-tight text-slate-900 dark:text-white">EN</span>
+                        <span className="text-xs font-bold tracking-tight text-slate-900 dark:text-white">{selectedLanguageLabel}</span>
                     </div>
-                    {/* Dark Mode Toggle */}
-                    <button
-                        onClick={toggleTheme}
-                        aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-                        className="flex items-center justify-center px-3 py-1.5 rounded-lg border border-slate-200 dark:border-border-dark bg-slate-50 dark:bg-surface-dark text-slate-500 hover:bg-slate-100 dark:hover:bg-[#2d2d2d] transition-all"
-                    >
-                        <span className="material-symbols-outlined text-[18px]">
-                            {theme === "dark" ? "light_mode" : "dark_mode"}
-                        </span>
-                    </button>
                 </div>
             </header>
             
@@ -68,12 +90,21 @@ const ChatPage: React.FC = () => {
                                 className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-slate-900 dark:text-white text-base px-2 placeholder:text-slate-400 dark:placeholder:text-slate-600 min-w-0" 
                                 placeholder="Type your legal query or research question here..." 
                                 type="text"
+                                value={question}
+                                onChange={(event) => setQuestion(event.target.value)}
+                                onKeyDown={handleInputKeyDown}
                             />
                             <button className="flex items-center justify-center size-10 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0" title="Voice Input">
                                 <span className="material-symbols-outlined">mic</span>
                             </button>
                         </div>
-                        <button className="flex items-center justify-center bg-slate-200 text-black h-14 w-14 rounded-full font-bold hover:bg-white transition-all shadow-lg shrink-0 mt-3 md:mt-0">
+                        <button
+                            className="flex h-14 w-14 items-center justify-center rounded-full font-bold text-white transition-all shadow-lg shrink-0 mt-3 md:mt-0"
+                            style={{ backgroundColor: "var(--oj-accent-color)" }}
+                            type="button"
+                            onClick={handleSubmitQuestion}
+                            disabled={!question.trim()}
+                        >
                             <span className="material-symbols-outlined text-[28px]">arrow_forward</span>
                         </button>
                     </div>

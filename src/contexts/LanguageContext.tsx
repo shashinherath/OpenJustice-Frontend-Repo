@@ -27,7 +27,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     <LanguageContext.Provider 
       value={{ 
         currentLanguage, 
-        availableLanguages: ["en", "hi", "mr", "es", "fr", "vi", "zh"], 
+        availableLanguages: ["en", "si", "ta"], 
         changeLanguage 
       }}
     >

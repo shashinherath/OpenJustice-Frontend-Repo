@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import Navbar from "@/components/navigation/Navbar";
 
 interface MainLayoutProps {
@@ -13,12 +14,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <footer className="w-full border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark py-12">
         <div className="px-4 md:px-10 lg:px-40 flex flex-col items-center justify-center gap-8">
           <div className="flex flex-wrap items-center justify-center gap-10">
-            <a
+            <Link
               className="text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white text-sm font-semibold transition-colors"
-              href="#"
+              to="/privacy-policy"
             >
               Privacy Policy
-            </a>
+            </Link>
             <a
               className="text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-white text-sm font-semibold transition-colors"
               href="#"

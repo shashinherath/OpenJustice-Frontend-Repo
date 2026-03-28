@@ -3,7 +3,8 @@ import MainLayout from "@/layout/MainLayout";
 import HomePage from "@/pages/HomePage";
 import ChatLayout from "@/layout/ChatLayout";
 import ChatPage from "@/pages/chat/ChatPage";
-import TrustPage from "@/pages/legal/TrustPage";
+import AnswerPage from "@/pages/chat/AnswerPage";
+import PrivacyPolicyPage from "@/pages/legal/PrivacyPolicyPage";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import TopicBrowserPage from "@/pages/topics/TopicBrowserPage";
 
@@ -28,8 +29,16 @@ function App() {
           }
         />
         <Route
-          path="/trust"
-          element={<TrustPage />}
+          path="/chat/:chatId"
+          element={
+            <ChatLayout>
+              <AnswerPage />
+            </ChatLayout>
+          }
+        />
+        <Route
+          path="/privacy-policy"
+          element={<PrivacyPolicyPage />}
         />
         <Route
           path="/admin"

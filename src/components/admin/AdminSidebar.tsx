@@ -1,7 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useSettingsModal } from "@/hooks/common/useSettingsModal";
 
 const AdminSidebar: React.FC = () => {
+  const { openSettings } = useSettingsModal();
+
   return (
     <aside className="w-64 flex flex-col border-r border-white/10 bg-[#191919]">
       <div className="p-6 border-b border-white/10">
@@ -30,12 +33,16 @@ const AdminSidebar: React.FC = () => {
           <span className="material-symbols-outlined text-[20px]">database</span>
           <span className="text-sm font-medium">Data Pipelines</span>
         </a>
-        <a className="flex items-center gap-3 px-3 py-2.5 rounded text-slate-400 hover:bg-white/5 hover:text-white transition-colors" href="#">
+        <button
+          className="flex w-full items-center gap-3 rounded px-3 py-2.5 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+          type="button"
+          onClick={openSettings}
+        >
           <span className="material-symbols-outlined text-[20px]">settings</span>
           <span className="text-sm font-medium">Configurations</span>
-        </a>
+        </button>
       </nav>
-      <div className="p-4 border-t border-white/10 bg-white/[0.02]">
+      <div className="p-4 border-t border-white/10 bg-white/2">
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded bg-white/10 flex items-center justify-center border border-white/10 overflow-hidden">
             <span className="material-symbols-outlined text-white">account_circle</span>

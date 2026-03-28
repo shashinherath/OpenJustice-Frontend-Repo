@@ -1,54 +1,51 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import FeatureCard from "@/components/ui/FeatureCard";
 
-// Feature card data
-const features = [
-  {
-    icon: "verified_user",
-    iconBg: "bg-green-50 dark:bg-green-900/20",
-    iconColor: "text-green-600 dark:text-green-400",
-    title: "Private & Secure",
-    description:
-      "Your inquiries remain anonymous. We use enterprise-grade encryption to ensure your data is never shared or exposed.",
-    chat: {
-      userMsg: "Is my personal information shared with third parties?",
-      botMsg:
-        "No. We prioritize data protection. Your inquiries are anonymized and stored securely using end-to-end encryption protocols.",
-    },
-  },
-  {
-    icon: "translate",
-    iconBg: "bg-purple-50 dark:bg-purple-900/20",
-    iconColor: "text-purple-600 dark:text-purple-400",
-    title: "Plain Language",
-    description:
-      'We strip away the legalese to provide you with clear, actionable information that anyone can understand, regardless of background.',
-    chat: {
-      userMsg: 'What does "Force Majeure" mean in simple terms?',
-      botMsg:
-        'It refers to "acts of God"—unforeseeable events like floods or war that prevent someone from fulfilling their part of a contract.',
-    },
-  },
-  {
-    icon: "library_books",
-    iconBg: "bg-orange-50 dark:bg-orange-900/20",
-    iconColor: "text-orange-600 dark:text-orange-400",
-    title: "Comprehensive",
-    description:
-      "From housing disputes to small claims and family law, our library covers the essential legal procedures you need to know.",
-    chat: {
-      userMsg: "How do I start a small claims case?",
-      botMsg:
-        "1. Send a demand letter. 2. File a 'Statement of Claim' at court. 3. Pay the filing fee and serve the defendant.",
-    },
-  },
-];
-
 const HomePage: React.FC = () => {
+  const { t } = useTranslation();
+
+  // Feature card data built with translations
+  const features = [
+    {
+      icon: "verified_user",
+      iconBg: "bg-green-50 dark:bg-green-900/20",
+      iconColor: "text-green-600 dark:text-green-400",
+      title: t("privateAndSecure"),
+      description: t("privateDescription"),
+      chat: {
+        userMsg: t("isMyDataShared"),
+        botMsg: t("dataSecurity"),
+      },
+    },
+    {
+      icon: "translate",
+      iconBg: "bg-purple-50 dark:bg-purple-900/20",
+      iconColor: "text-purple-600 dark:text-purple-400",
+      title: t("plainLanguage"),
+      description: t("plainDescription"),
+      chat: {
+        userMsg: t("forceMajeure"),
+        botMsg: t("forceMajeureExplanation"),
+      },
+    },
+    {
+      icon: "library_books",
+      iconBg: "bg-orange-50 dark:bg-orange-900/20",
+      iconColor: "text-orange-600 dark:text-orange-400",
+      title: t("comprehensive"),
+      description: t("comprehensiveDescription"),
+      chat: {
+        userMsg: t("smallClaimsCase"),
+        botMsg: t("smallClaimsSteps"),
+      },
+    },
+  ];
+
   return (
     <div className="flex-1 flex flex-col items-center px-4 md:px-10 lg:px-40 py-16 md:py-24">
-      <div className="w-full max-w-[1024px] flex flex-col items-center text-center gap-16">
+      <div className="w-full max-w-5xl flex flex-col items-center text-center gap-16">
         {/* Hero Section */}
         <div className="flex flex-col items-center gap-8 max-w-4xl">
           {/* Badge */}
@@ -74,23 +71,30 @@ const HomePage: React.FC = () => {
             <span className="material-symbols-outlined text-amber-600 dark:text-amber-500 shrink-0">
               info
             </span>
-            <p className="text-sm text-amber-800 dark:text-amber-400 leading-snug">
-              <strong className="font-bold">Important Disclaimer:</strong>{" "}
-              OpenJustice is an AI-powered educational tool. We provide legal
-              information, not legal advice or representation. Consult a
-              qualified attorney for your specific situation.
-            </p>
+            <div>
+              <p className="text-sm text-amber-800 dark:text-amber-400 leading-snug">
+                <strong className="font-bold">{t("disclaimer")}</strong>{" "}
+                {t("disclaimerText")}
+              </p>
+              <Link
+                className="mt-2 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-amber-700 hover:text-amber-900 dark:text-amber-300 dark:hover:text-amber-200 transition-colors"
+                to="/privacy-policy"
+              >
+                {t("readPrivacyPolicy")}
+                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+              </Link>
+            </div>
           </div>
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center gap-4 mt-4 w-full sm:w-auto">
-            <Link to="/chat" className="flex w-full sm:w-auto min-w-[200px] h-14 items-center justify-center gap-2 rounded-xl bg-primary dark:bg-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.98] text-white text-lg font-bold shadow-xl transition-all">
+            <Link to="/chat" className="flex w-full sm:w-auto min-w-50 h-14 items-center justify-center gap-2 rounded-xl bg-primary dark:bg-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.98] text-white text-lg font-bold shadow-xl transition-all">
               <span className="material-symbols-outlined">chat_bubble</span>
-              <span>Ask a Question</span>
+              <span>{t("askQuestion")}</span>
             </Link>
-            <Link to="/topics" className="flex w-full sm:w-auto min-w-[200px] h-14 items-center justify-center gap-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-lg font-bold transition-all shadow-sm">
+            <Link to="/topics" className="flex w-full sm:w-auto min-w-50 h-14 items-center justify-center gap-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-lg font-bold transition-all shadow-sm">
               <span className="material-symbols-outlined">grid_view</span>
-              <span>Browse Topics</span>
+              <span>{t("browseTopics")}</span>
             </Link>
           </div>
         </div>
