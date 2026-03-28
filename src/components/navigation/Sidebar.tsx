@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSettingsModal } from '@/hooks/common/useSettingsModal';
 import { useChatStore } from '@/stores/chatStore';
+import BrandLogo from '@/components/ui/BrandLogo';
 
 interface SidebarProps {
     showBrand?: boolean;
@@ -14,9 +15,16 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const { openSettings, openProfile } = useSettingsModal();
-    const { sidebarChats, archiveChat, deleteChat, pinChat, renameChat, createNewChat, setActiveConversation } = useChatStore();
+    const { sidebarChats, archiveChat, deleteChat, pinChat, renameChat, setActiveConversation } = useChatStore();
 
-    const activeChats = sidebarChats.filter((chat) => !chat.isArchived);
+    const activeChats = sidebarChats
+        .filter((chat) => !chat.isArchived)
+        .sort((a, b) => {
+            if (a.isPinned === b.isPinned) {
+                return 0;
+            }
+            return a.isPinned ? -1 : 1;
+        });
     const selectedChatId = location.pathname.startsWith('/chat/') ? location.pathname.split('/')[2] : null;
 
     useEffect(() => {
@@ -33,12 +41,9 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
             <div className="flex flex-col gap-6 p-4">
                 {showBrand && (
                     <div className="flex gap-3 items-center">
-                        <div className="bg-primary dark:bg-slate-200 rounded-lg size-10 flex items-center justify-center overflow-hidden">
-                            <span className="material-symbols-outlined text-white dark:text-[#191919] scale-125">balance</span>
-                        </div>
+                        <BrandLogo containerClassName="bg-primary dark:bg-slate-200 rounded-lg size-10 flex items-center justify-center overflow-hidden" iconClassName="text-white dark:text-[#191919] scale-125" />
                         <div className="flex flex-col">
                             <h1 className="text-base font-bold leading-none text-slate-900 dark:text-white">OpenJustice</h1>
-                            <p className="text-slate-500 dark:text-slate-400 text-xs font-normal">Legal AI Research</p>
                         </div>
                     </div>
                 )}
@@ -48,8 +53,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                         className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white transition-colors mb-4"
                         type="button"
                         onClick={() => {
-                            const newChatId = createNewChat();
-                            navigate(`/chat/${newChatId}`);
+                            navigate('/chat');
                         }}
                     >
                         <span className="material-symbols-outlined text-[20px]" style={{ color: "var(--oj-accent-color)" }}>add</span>
@@ -75,7 +79,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                                 <span className="material-symbols-outlined text-[18px]">history</span>
                                 <p className={`truncate pr-5 ${selectedChatId === chat.id ? "text-sm font-medium" : "text-sm font-normal"}`}>{chat.title}</p>
                                 {chat.isPinned && (
-                                    <span className="material-symbols-outlined text-[14px] text-amber-500">keep</span>
+                                    <span className="material-symbols-outlined text-[12px] text-amber-500" title="Pinned">keep</span>
                                 )}
 
                                 <button
@@ -132,8 +136,8 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                                                 setActiveChatMenu(null);
                                             }}
                                         >
-                                            <span className="material-symbols-outlined text-[14px]">keep</span>
-                                            Pin
+                                            <span className="material-symbols-outlined text-[14px]">{chat.isPinned ? "keep_off" : "keep"}</span>
+                                            {chat.isPinned ? "Unpin" : "Pin"}
                                         </button>
                                         <button
                                             className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-red-500 transition-colors hover:bg-red-500/10"
@@ -217,9 +221,23 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                                 
                                 {helpOpen && (
                                     <div className="absolute left-full bottom-0 ml-1 w-48 bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark rounded-xl shadow-2xl py-2">
-                                        <a className="block px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors" href="#">Help Center</a>
-                                        <Link className="block px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors" to="/privacy-policy">Terms and Policies</Link>
-                                        <a className="block px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors" href="#">Release Notes</a>
+                                        <Link className="group flex items-center gap-2 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors" to="/help">
+                                            <span className="material-symbols-outlined text-[16px]" style={{ color: "var(--oj-accent-color)" }}>help_outline</span>
+                                            <span>Help Center</span>
+                                            <span className="material-symbols-outlined ml-auto text-[7px] opacity-0 transition-opacity group-hover:opacity-100" style={{ color: "var(--oj-accent-color)" }}>north_east</span>
+                                        </Link>
+                                        <Link className="group flex items-center justify-between px-4 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark" target="_blank" to="/privacy-policy">
+                                            <span className="flex items-center gap-2">
+                                                <span className="material-symbols-outlined text-[16px]" style={{ color: "var(--oj-accent-color)" }}>policy</span>
+                                                <span>Terms and Policies</span>
+                                            </span>
+                                            <span className="material-symbols-outlined text-[7px] opacity-0 transition-opacity group-hover:opacity-100" style={{ color: "var(--oj-accent-color)" }}>north_east</span>
+                                        </Link>
+                                        <Link className="group flex items-center gap-2 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors" to="/release-notes">
+                                            <span className="material-symbols-outlined text-[16px]" style={{ color: "var(--oj-accent-color)" }}>new_releases</span>
+                                            <span>Release Notes</span>
+                                            <span className="material-symbols-outlined ml-auto text-[7px] opacity-0 transition-opacity group-hover:opacity-100" style={{ color: "var(--oj-accent-color)" }}>north_east</span>
+                                        </Link>
                                     </div>
                                 )}
                             </div>

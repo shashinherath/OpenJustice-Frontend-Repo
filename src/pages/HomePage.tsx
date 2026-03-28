@@ -79,6 +79,7 @@ const HomePage: React.FC = () => {
               <Link
                 className="mt-2 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-amber-700 hover:text-amber-900 dark:text-amber-300 dark:hover:text-amber-200 transition-colors"
                 to="/privacy-policy"
+                target="_blank"
               >
                 {t("readPrivacyPolicy")}
                 <span className="material-symbols-outlined text-sm">arrow_forward</span>
@@ -105,6 +106,61 @@ const HomePage: React.FC = () => {
             <FeatureCard key={feature.title} feature={feature} />
           ))}
         </div>
+
+        <section className="w-full rounded-3xl border border-slate-200 bg-white p-6 text-left shadow-sm dark:border-slate-700 dark:bg-surface-dark md:p-8">
+          <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Learn more</p>
+              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 dark:text-white">
+                Explore the pages that explain who we are and how we work.
+              </h2>
+            </div>
+            <p className="max-w-xl text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+              These pages give you a quick overview of the project, support options, and platform terms while the backend is still being built.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <Link
+              className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
+              to="/about-us"
+            >
+              <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-300">
+                <span className="material-symbols-outlined text-[22px]">info</span>
+              </div>
+              <h3 className="mb-2 text-base font-bold text-slate-900 dark:text-white">About Us</h3>
+              <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                Learn about the mission, values, and design direction behind OpenJustice.
+              </p>
+            </Link>
+
+            <Link
+              className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
+              to="/contact"
+            >
+              <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-300">
+                <span className="material-symbols-outlined text-[22px]">support_agent</span>
+              </div>
+              <h3 className="mb-2 text-base font-bold text-slate-900 dark:text-white">Contact</h3>
+              <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                Reach out for support or follow-up while the database-backed system is in progress.
+              </p>
+            </Link>
+
+            <Link
+              className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
+              to="/terms-of-service"
+            >
+              <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-300">
+                <span className="material-symbols-outlined text-[22px]">description</span>
+              </div>
+              <h3 className="mb-2 text-base font-bold text-slate-900 dark:text-white">Terms of Service</h3>
+              <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                Review the current usage terms for the frontend and future platform behavior.
+              </p>
+            </Link>
+          </div>
+        </section>
       </div>
     </div>
   );

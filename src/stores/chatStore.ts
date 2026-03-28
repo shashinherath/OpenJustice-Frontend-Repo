@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type { ChatMessage, Conversation } from "@/types/chat.types";
 
 export interface SidebarChatItem {
@@ -29,6 +30,8 @@ interface ChatStore {
   renameChat: (id: string, title: string) => void;
   pinChat: (id: string) => void;
 }
+
+const CHAT_STORAGE_KEY = "oj-chat-store";
 
 const now = new Date();
 
@@ -97,110 +100,148 @@ const summarizeTitle = (text: string): string => {
   return cleaned.length > 44 ? `${cleaned.slice(0, 44)}...` : cleaned;
 };
 
-export const useChatStore = create<ChatStore>((set) => ({
-  conversations: [],
-  activeConversationId: "chat-1",
-  messages: [],
-  isTyping: false,
-  sidebarChats: [
-    { id: "chat-1", title: "Tenant rights in CA", isArchived: false, isPinned: false },
-    { id: "chat-2", title: "IP protection for software", isArchived: false, isPinned: false },
-    { id: "chat-3", title: "Employment law basics", isArchived: false, isPinned: false },
-  ],
-  chatMessagesById: initialMessagesById,
-  
-  setActiveConversation: (id) => set({ activeConversationId: id }),
-  createNewChat: () => {
-    const chatId = `chat-${Date.now()}`;
-    set((state) => ({
-      activeConversationId: chatId,
-      sidebarChats: [{ id: chatId, title: "New Question", isArchived: false, isPinned: false }, ...state.sidebarChats],
-      chatMessagesById: {
-        ...state.chatMessagesById,
-        [chatId]: [],
+const normalizeMessageMap = (
+  map: Record<string, ChatMessage[]> | undefined,
+): Record<string, ChatMessage[]> => {
+  if (!map) {
+    return initialMessagesById;
+  }
+
+  return Object.fromEntries(
+    Object.entries(map).map(([chatId, messages]) => [
+      chatId,
+      (messages || []).map((message) => ({
+        ...message,
+        timestamp:
+          message.timestamp instanceof Date ? message.timestamp : new Date(message.timestamp),
+      })),
+    ]),
+  );
+};
+
+export const useChatStore = create<ChatStore>()(
+  persist(
+    (set) => ({
+      conversations: [],
+      activeConversationId: "chat-1",
+      messages: [],
+      isTyping: false,
+      sidebarChats: [
+        { id: "chat-1", title: "Tenant rights in CA", isArchived: false, isPinned: false },
+        { id: "chat-2", title: "IP protection for software", isArchived: false, isPinned: false },
+        { id: "chat-3", title: "Employment law basics", isArchived: false, isPinned: false },
+      ],
+      chatMessagesById: initialMessagesById,
+
+      setActiveConversation: (id) => set({ activeConversationId: id }),
+      createNewChat: () => {
+        const chatId = `chat-${Date.now()}`;
+        set((state) => ({
+          activeConversationId: chatId,
+          sidebarChats: [{ id: chatId, title: "New Question", isArchived: false, isPinned: false }, ...state.sidebarChats],
+          chatMessagesById: {
+            ...state.chatMessagesById,
+            [chatId]: [],
+          },
+        }));
+        return chatId;
       },
-    }));
-    return chatId;
-  },
-  addMessage: (message) => 
-    set((state) => ({ messages: [...state.messages, message] })),
-  sendMessageToChat: (chatId, question) =>
-    set((state) => {
-      const trimmed = question.trim();
-      if (!trimmed) {
-        return state;
-      }
-
-      const userMessage: ChatMessage = {
-        id: `${chatId}-user-${Date.now()}`,
-        sender: "user",
-        content: trimmed,
-        timestamp: new Date(),
-      };
-
-      const aiMessage: ChatMessage = {
-        id: `${chatId}-ai-${Date.now() + 1}`,
-        sender: "ai",
-        content: buildAiResponse(trimmed),
-        timestamp: new Date(),
-      };
-
-      const existing = state.chatMessagesById[chatId] || [];
-      const nextMessages = [...existing, userMessage, aiMessage];
-
-      return {
-        activeConversationId: chatId,
-        sidebarChats: state.sidebarChats.map((chat) => {
-          if (chat.id !== chatId) {
-            return chat;
+      addMessage: (message) =>
+        set((state) => ({ messages: [...state.messages, message] })),
+      sendMessageToChat: (chatId, question) =>
+        set((state) => {
+          const trimmed = question.trim();
+          if (!trimmed) {
+            return state;
           }
 
-          const nextTitle = chat.title === "New Question" ? summarizeTitle(trimmed) : chat.title;
-          return { ...chat, title: nextTitle };
+          const userMessage: ChatMessage = {
+            id: `${chatId}-user-${Date.now()}`,
+            sender: "user",
+            content: trimmed,
+            timestamp: new Date(),
+          };
+
+          const aiMessage: ChatMessage = {
+            id: `${chatId}-ai-${Date.now() + 1}`,
+            sender: "ai",
+            content: buildAiResponse(trimmed),
+            timestamp: new Date(),
+          };
+
+          const existing = state.chatMessagesById[chatId] || [];
+          const nextMessages = [...existing, userMessage, aiMessage];
+
+          return {
+            activeConversationId: chatId,
+            sidebarChats: state.sidebarChats.map((chat) => {
+              if (chat.id !== chatId) {
+                return chat;
+              }
+
+              const nextTitle = chat.title === "New Question" ? summarizeTitle(trimmed) : chat.title;
+              return { ...chat, title: nextTitle };
+            }),
+            chatMessagesById: {
+              ...state.chatMessagesById,
+              [chatId]: nextMessages,
+            },
+          };
         }),
-        chatMessagesById: {
-          ...state.chatMessagesById,
-          [chatId]: nextMessages,
-        },
-      };
+      setTyping: (isTyping) => set({ isTyping }),
+      clearMessages: () => set({ messages: [] }),
+      archiveChat: (id) =>
+        set((state) => ({
+          sidebarChats: state.sidebarChats.map((chat) =>
+            chat.id === id ? { ...chat, isArchived: true } : chat,
+          ),
+          activeConversationId: state.activeConversationId === id ? null : state.activeConversationId,
+        })),
+      archiveAllChats: () =>
+        set((state) => ({
+          sidebarChats: state.sidebarChats.map((chat) => ({ ...chat, isArchived: true })),
+        })),
+      unarchiveChat: (id) =>
+        set((state) => ({
+          sidebarChats: state.sidebarChats.map((chat) =>
+            chat.id === id ? { ...chat, isArchived: false } : chat,
+          ),
+        })),
+      deleteChat: (id) =>
+        set((state) => ({
+          sidebarChats: state.sidebarChats.filter((chat) => chat.id !== id),
+          chatMessagesById: Object.fromEntries(
+            Object.entries(state.chatMessagesById).filter(([key]) => key !== id),
+          ),
+          activeConversationId: state.activeConversationId === id ? null : state.activeConversationId,
+        })),
+      renameChat: (id, title) =>
+        set((state) => ({
+          sidebarChats: state.sidebarChats.map((chat) =>
+            chat.id === id ? { ...chat, title } : chat,
+          ),
+        })),
+      pinChat: (id) =>
+        set((state) => ({
+          sidebarChats: state.sidebarChats.map((chat) =>
+            chat.id === id ? { ...chat, isPinned: !chat.isPinned } : chat,
+          ),
+        })),
     }),
-  setTyping: (isTyping) => set({ isTyping }),
-  clearMessages: () => set({ messages: [] }),
-  archiveChat: (id) =>
-    set((state) => ({
-      sidebarChats: state.sidebarChats.map((chat) =>
-        chat.id === id ? { ...chat, isArchived: true } : chat,
-      ),
-      activeConversationId: state.activeConversationId === id ? null : state.activeConversationId,
-    })),
-  archiveAllChats: () =>
-    set((state) => ({
-      sidebarChats: state.sidebarChats.map((chat) => ({ ...chat, isArchived: true })),
-    })),
-  unarchiveChat: (id) =>
-    set((state) => ({
-      sidebarChats: state.sidebarChats.map((chat) =>
-        chat.id === id ? { ...chat, isArchived: false } : chat,
-      ),
-    })),
-  deleteChat: (id) =>
-    set((state) => ({
-      sidebarChats: state.sidebarChats.filter((chat) => chat.id !== id),
-      chatMessagesById: Object.fromEntries(
-        Object.entries(state.chatMessagesById).filter(([key]) => key !== id),
-      ),
-      activeConversationId: state.activeConversationId === id ? null : state.activeConversationId,
-    })),
-  renameChat: (id, title) =>
-    set((state) => ({
-      sidebarChats: state.sidebarChats.map((chat) =>
-        chat.id === id ? { ...chat, title } : chat,
-      ),
-    })),
-  pinChat: (id) =>
-    set((state) => ({
-      sidebarChats: state.sidebarChats.map((chat) =>
-        chat.id === id ? { ...chat, isPinned: !chat.isPinned } : chat,
-      ),
-    })),
-}));
+    {
+      name: CHAT_STORAGE_KEY,
+      partialize: (state) => ({
+        activeConversationId: state.activeConversationId,
+        sidebarChats: state.sidebarChats,
+        chatMessagesById: state.chatMessagesById,
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (!state) {
+          return;
+        }
+
+        state.chatMessagesById = normalizeMessageMap(state.chatMessagesById);
+      },
+    },
+  ),
+);

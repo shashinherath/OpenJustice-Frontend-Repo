@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 const privacyHighlights = [
   "End-to-end encryption for all session data",
@@ -117,7 +118,7 @@ const PrivacyPolicyPage: React.FC = () => {
             to="/chat"
           >
             Try OpenJustice
-            <span className="material-symbols-outlined text-sm">chevron_right</span>
+            <span className="material-symbols-outlined text-sm">north_east</span>
           </Link>
         </div>
       </header>
@@ -230,21 +231,27 @@ const PrivacyPolicyPage: React.FC = () => {
           </div>
         </section>
 
-        <footer className="mt-8 flex flex-col items-center justify-between gap-6 border-t border-slate-200 py-8 dark:border-slate-800 md:flex-row">
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-xl text-slate-500 dark:text-slate-200">balance</span>
+        <footer className="mt-8 flex flex-col items-center justify-center gap-6 border-t border-slate-200 py-8 text-center dark:border-slate-800">
+          <div className="flex items-center gap-2 text-center">
+            <BrandLogo containerClassName="flex size-5 items-center justify-center overflow-hidden" iconClassName="text-xl text-slate-500 dark:text-slate-200" />
             <span className="text-sm font-medium text-slate-500">OpenJustice © 2026. All rights reserved.</span>
           </div>
-          <div className="flex gap-6 sm:gap-8">
-            <a className="text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" href="#">
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-center">
+            <Link className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" to="/terms-of-service">
               Terms of Service
-            </a>
-            <a className="text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" href="#">
-              Cookie Policy
-            </a>
-            <a className="text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" href="#">
-              System Status
-            </a>
+            </Link>
+            <Link className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" to="/about-us">
+              About Us
+            </Link>
+            <Link className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" to="/contact">
+              Contact
+            </Link>
+            <Link className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" to="/help">
+              Help
+            </Link>
+            <Link className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" to="/release-notes">
+              Release Notes
+            </Link>
           </div>
         </footer>
       </div>

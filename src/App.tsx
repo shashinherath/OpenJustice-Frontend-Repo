@@ -5,6 +5,11 @@ import ChatLayout from "@/layout/ChatLayout";
 import ChatPage from "@/pages/chat/ChatPage";
 import AnswerPage from "@/pages/chat/AnswerPage";
 import PrivacyPolicyPage from "@/pages/legal/PrivacyPolicyPage";
+import TermsOfServicePage from "@/pages/legal/TermsOfServicePage";
+import AboutUsPage from "@/pages/info/AboutUsPage";
+import ContactPage from "@/pages/info/ContactPage";
+import HelpPage from "@/pages/info/HelpPage";
+import ReleaseNotesPage from "@/pages/info/ReleaseNotesPage";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import TopicBrowserPage from "@/pages/topics/TopicBrowserPage";
 
@@ -39,6 +44,26 @@ function App() {
         <Route
           path="/privacy-policy"
           element={<PrivacyPolicyPage />}
+        />
+        <Route
+          path="/terms-of-service"
+          element={<TermsOfServicePage />}
+        />
+        <Route
+          path="/about-us"
+          element={<AboutUsPage />}
+        />
+        <Route
+          path="/contact"
+          element={<ContactPage />}
+        />
+        <Route
+          path="/help"
+          element={<HelpPage />}
+        />
+        <Route
+          path="/release-notes"
+          element={<ReleaseNotesPage />}
         />
         <Route
           path="/admin"

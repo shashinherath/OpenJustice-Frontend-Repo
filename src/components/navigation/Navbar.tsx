@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 const Navbar: React.FC = () => {
   const { t } = useTranslation();
@@ -35,9 +36,7 @@ const Navbar: React.FC = () => {
         <div className="px-4 md:px-10 lg:px-40 py-4 flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center size-9 rounded-lg bg-primary text-white dark:bg-white dark:text-primary">
-              <span className="material-symbols-outlined text-2xl">balance</span>
-            </div>
+            <BrandLogo containerClassName="flex size-9 items-center justify-center overflow-hidden rounded-lg bg-primary text-white dark:bg-white dark:text-primary" iconClassName="text-2xl" />
             <h2 className="text-slate-900 dark:text-white text-xl font-bold tracking-tight">
               OpenJustice
             </h2>

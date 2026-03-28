@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useSettingsModal } from "@/hooks/common/useSettingsModal";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 interface PrivacyPolicyLayoutProps {
   children: React.ReactNode;
@@ -21,7 +22,7 @@ const PrivacyPolicyLayout: React.FC<PrivacyPolicyLayoutProps> = ({ children }) =
     <div className="min-h-screen bg-[#191919] text-slate-100 antialiased font-display">
       <aside className="fixed left-0 top-0 z-40 hidden h-full w-64 border-r border-border-dark bg-[#191919] py-4 lg:flex lg:flex-col">
         <div className="mb-8 flex items-center gap-3 px-6">
-          <span className="material-symbols-outlined text-slate-200 text-2xl">balance</span>
+          <BrandLogo containerClassName="flex size-8 items-center justify-center overflow-hidden" iconClassName="text-slate-200 text-2xl" />
           <div className="flex flex-col">
             <span className="text-lg font-black text-white leading-none">OpenJustice</span>
             <span className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Legal Research</span>

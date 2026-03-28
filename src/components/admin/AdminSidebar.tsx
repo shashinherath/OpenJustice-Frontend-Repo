@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useSettingsModal } from "@/hooks/common/useSettingsModal";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 const AdminSidebar: React.FC = () => {
   const { openSettings } = useSettingsModal();
@@ -9,7 +10,7 @@ const AdminSidebar: React.FC = () => {
     <aside className="w-64 flex flex-col border-r border-white/10 bg-[#191919]">
       <div className="p-6 border-b border-white/10">
         <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-white text-3xl">balance</span>
+          <BrandLogo containerClassName="flex size-8 items-center justify-center overflow-hidden" iconClassName="text-white text-3xl" />
           <Link to="/">
             <h2 className="text-xl font-black leading-tight tracking-[0.15em] text-white">OPENJUSTICE</h2>
           </Link>

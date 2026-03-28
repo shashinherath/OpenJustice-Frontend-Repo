@@ -109,7 +109,7 @@ const AnswerPage: React.FC = () => {
             onKeyDown={handleKeyDown}
           />
           <button
-            className="flex h-12 w-12 items-center justify-center rounded-full text-white shadow-lg transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full text-white shadow-lg transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
             style={{ backgroundColor: "var(--oj-accent-color)" }}
             type="button"
             onClick={handleSend}

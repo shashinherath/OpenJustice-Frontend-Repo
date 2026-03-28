@@ -99,7 +99,7 @@ const ChatPage: React.FC = () => {
                             </button>
                         </div>
                         <button
-                            className="flex h-14 w-14 items-center justify-center rounded-full font-bold text-white transition-all shadow-lg shrink-0 mt-3 md:mt-0"
+                            className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full font-bold text-white transition-all shadow-lg shrink-0 mt-3 md:mt-0 disabled:cursor-not-allowed"
                             style={{ backgroundColor: "var(--oj-accent-color)" }}
                             type="button"
                             onClick={handleSubmitQuestion}

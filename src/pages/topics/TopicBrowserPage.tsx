@@ -99,8 +99,8 @@ const TopicBrowserPage: React.FC = () => {
             >
               Privacy Policy
             </a>
-            <a className="text-xs font-bold uppercase tracking-widest text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" href="#">Data Provenance</a>
-            <a className="text-xs font-bold uppercase tracking-widest text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" href="#">Cite Sources</a>
+            <a className="text-xs font-bold uppercase tracking-widest text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" href="/about-us">About Us</a>
+            <a className="text-xs font-bold uppercase tracking-widest text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" href="/Contact">Contact</a>
           </div>
         </div>
       </div>
