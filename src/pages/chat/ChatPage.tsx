@@ -1,11 +1,13 @@
 import React from "react";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { LanguageContext } from "@/contexts/LanguageContext";
 import { useChatStore } from "@/stores/chatStore";
 import { SUPPORTED_LANGUAGES, type AppLanguage } from "@/constants/languages";
 
 const ChatPage: React.FC = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const languageContext = useContext(LanguageContext);
     const [question, setQuestion] = useState("");
@@ -13,9 +15,9 @@ const ChatPage: React.FC = () => {
     const currentLanguage = (languageContext?.currentLanguage || "en").toLowerCase() as AppLanguage;
     const availableLanguages = languageContext?.availableLanguages || SUPPORTED_LANGUAGES;
     const languageLabelMap: Record<string, string> = {
-        en: "English",
-        si: "Sinhala",
-        ta: "Tamil",
+        en: t("langEnglish"),
+        si: t("langSinhala"),
+        ta: t("langTamil"),
     };
 
     const handleLanguageChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
@@ -61,7 +63,7 @@ const ChatPage: React.FC = () => {
                             className="appearance-none bg-transparent pr-5 text-xs font-bold tracking-tight text-slate-900 outline-none dark:text-white"
                             value={currentLanguage}
                             onChange={handleLanguageChange}
-                            aria-label="Select language"
+                            aria-label={t("selectLanguage")}
                         >
                             {availableLanguages.map((language) => (
                                 <option key={language} value={language}>
@@ -77,44 +79,44 @@ const ChatPage: React.FC = () => {
             <div className="flex-1 flex flex-col items-center justify-center px-4 max-w-4xl mx-auto w-full">
                 <div className="w-full text-center mb-8">
                     <h2 className="text-slate-900 dark:text-white text-[36px] font-bold leading-tight tracking-tight mb-2">
-                        How can we help with your legal research?
+                        {t("chatResearchHeading")}
                     </h2>
                     <p className="text-slate-500 dark:text-slate-400 text-lg">
-                        Ask a question to start your legal analysis.
+                        {t("chatResearchSubheading")}
                     </p>
                 </div>
                 
                 <div className="w-full max-w-3xl">
                     <div className="flex items-center justify-center gap-3 mb-6 flex-wrap">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mr-1">Suggestions:</span>
+                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mr-1">{t("suggestions")}</span>
                         <button className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#2d2d2d] transition-all px-4 group">
                             <span className="material-symbols-outlined text-[16px] text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300">balance</span>
-                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100">Rights</span>
+                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100">{t("rights")}</span>
                         </button>
                         <button className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#2d2d2d] transition-all px-4 group">
                             <span className="material-symbols-outlined text-[16px] text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300">checklist</span>
-                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100">Procedures</span>
+                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100">{t("procedures")}</span>
                         </button>
                         <button className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#2d2d2d] transition-all px-4 group">
                             <span className="material-symbols-outlined text-[16px] text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300">menu_book</span>
-                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100">Definitions</span>
+                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100">{t("commonDefinitions")}</span>
                         </button>
                     </div>
                     
                     <div className="flex flex-col md:flex-row items-center gap-3 w-full">
                         <div className="relative flex-1 flex items-center bg-white dark:bg-surface-dark rounded-full border border-slate-200 dark:border-border-dark shadow-xl px-4 py-1.5 focus-within:ring-2 focus-within:ring-slate-200 dark:focus-within:ring-slate-700 transition-all w-full">
-                            <button className="flex items-center justify-center size-10 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0" title="Attach Document">
+                            <button className="flex items-center justify-center size-10 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0" title={t("attachDocument")}>
                                 <span className="material-symbols-outlined">attach_file</span>
                             </button>
                             <input 
                                 className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-slate-900 dark:text-white text-base px-2 placeholder:text-slate-400 dark:placeholder:text-slate-600 min-w-0" 
-                                placeholder="Type your legal query or research question here..." 
+                                placeholder={t("queryPlaceholder")} 
                                 type="text"
                                 value={question}
                                 onChange={(event) => setQuestion(event.target.value)}
                                 onKeyDown={handleInputKeyDown}
                             />
-                            <button className="flex items-center justify-center size-10 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0" title="Voice Input">
+                            <button className="flex items-center justify-center size-10 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0" title={t("voiceInput")}>
                                 <span className="material-symbols-outlined">mic</span>
                             </button>
                         </div>
@@ -132,14 +134,14 @@ const ChatPage: React.FC = () => {
                     <div className="mt-8 text-center">
                         <p className="text-slate-400 dark:text-slate-500 text-[11px] flex items-center justify-center gap-1 uppercase tracking-wider font-semibold">
                             <span className="material-symbols-outlined text-[14px]">info</span>
-                            AI verification required by professional counsel
+                            {t("aiVerificationNotice")}
                         </p>
                     </div>
                 </div>
             </div>
             
             <footer className="p-6 text-center text-slate-500 dark:text-slate-600 text-[11px] uppercase tracking-widest font-bold shrink-0">
-                OpenJustice © 2026. All rights reserved.
+                {t("copyright")}
             </footer>
         </>
     );

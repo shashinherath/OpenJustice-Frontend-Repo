@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import Navbar from "@/components/navigation/Navbar";
 
 interface MainLayoutProps {
@@ -6,6 +7,8 @@ interface MainLayoutProps {
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
       <Navbar />
@@ -14,15 +17,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <div className="px-4 md:px-10 lg:px-40 flex flex-col items-center justify-center gap-4 text-center">
           <p className="text-slate-400 dark:text-slate-500 text-xs font-normal max-w-2xl leading-relaxed">
             <strong className="text-slate-500 dark:text-slate-400">
-              Legal Disclaimer:
+              {t("legalDisclaimerTitle")}
             </strong>{" "}
-            OpenJustice is an AI assistant, not a law firm. Information
-            provided is for educational purposes only and does not constitute
-            professional legal advice, an attorney-client relationship, or a
-            substitute for a lawyer.
+            {t("legalDisclaimerBody")}
           </p>
           <p className="text-slate-400 dark:text-slate-500 text-sm font-medium">
-            OpenJustice Prototype &copy; 2026. All rights reserved.
+            {t("prototypeCopyright")}
           </p>
         </div>
       </footer>

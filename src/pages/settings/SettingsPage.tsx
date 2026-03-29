@@ -9,13 +9,6 @@ type SettingsSection = "general" | "data-controls" | "security" | "account";
 type AccentColor = "default" | "blue" | "emerald" | "amber" | "rose";
 type VoiceOption = "alloy" | "nova" | "echo";
 
-const sectionItems: Array<{ id: SettingsSection; label: string; icon: string }> = [
-  { id: "general", label: "General", icon: "tune" },
-  { id: "data-controls", label: "Data Controls", icon: "database" },
-  { id: "security", label: "Security", icon: "shield_lock" },
-  { id: "account", label: "Account", icon: "manage_accounts" },
-];
-
 const ACCENT_STORAGE_KEY = "oj-accent-color";
 const accentColorHexMap: Record<AccentColor, string> = {
   default: "#64748b",
@@ -40,6 +33,15 @@ const getAccentFromStorage = (): AccentColor => {
 const SettingsPage: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const languageContext = useContext(LanguageContext);
+  const currentLang = (languageContext?.currentLanguage as AppLanguage) || "en";
+  const tr = (en: string, si: string, ta: string) => (currentLang === "si" ? si : currentLang === "ta" ? ta : en);
+
+  const sectionItems: Array<{ id: SettingsSection; label: string; icon: string }> = [
+    { id: "general", label: tr("General", "සාමාන්‍ය", "பொது"), icon: "tune" },
+    { id: "data-controls", label: tr("Data Controls", "දත්ත පාලන", "தரவு கட்டுப்பாடுகள்"), icon: "database" },
+    { id: "security", label: tr("Security", "ආරක්ෂාව", "பாதுகாப்பு"), icon: "shield_lock" },
+    { id: "account", label: tr("Account", "ගිණුම", "கணக்கு"), icon: "manage_accounts" },
+  ];
   const { sidebarChats, archiveAllChats, unarchiveChat, deleteChat } = useChatStore();
 
   const [activeSection, setActiveSection] = useState<SettingsSection>("general");
@@ -136,7 +138,7 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="grid h-full grid-cols-1 gap-5 lg:grid-cols-12">
       <aside className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-3 lg:col-span-3">
-        <p className="px-2 pb-2 text-[11px] font-bold uppercase tracking-widest text-zinc-500">Settings</p>
+        <p className="px-2 pb-2 text-[11px] font-bold uppercase tracking-widest text-zinc-500">{tr("Settings", "සැකසුම්", "அமைப்புகள்")}</p>
         <div className="space-y-1.5">
           {sectionItems.map((item) => {
             const active = activeSection === item.id;
@@ -162,10 +164,10 @@ const SettingsPage: React.FC = () => {
       <div className="space-y-4 lg:col-span-9">
         {activeSection === "general" && (
           <section className="space-y-4 rounded-xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <h3 className="text-lg font-semibold text-zinc-100">General</h3>
+            <h3 className="text-lg font-semibold text-zinc-100">{tr("General", "සාමාන්‍ය", "பொது")}</h3>
 
             <div className="space-y-2">
-              <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">Appearance</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">{tr("Appearance", "පෙනුම", "தோற்றம்")}</p>
               <select
                 className="max-w-56 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs font-semibold capitalize text-zinc-100"
                 value={appearance}
@@ -178,7 +180,7 @@ const SettingsPage: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">Accent Color</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">{tr("Accent Color", "ඇක්සන්ට් වර්ණය", "உச்ச நிறம்")}</p>
               <select
                 className="max-w-64 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs font-semibold text-zinc-100"
                 value={accentColor}
@@ -194,7 +196,7 @@ const SettingsPage: React.FC = () => {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">Language</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">{tr("Language", "භාෂාව", "மொழி")}</label>
                 <div className="flex items-center gap-2">
                   <select
                     className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100"
@@ -212,13 +214,13 @@ const SettingsPage: React.FC = () => {
                     type="button"
                     onClick={autoDetectInterfaceLanguage}
                   >
-                    Auto-detect
+                    {tr("Auto-detect", "ස්වයං හඳුනාගන්න", "தானாக கண்டறி")}
                   </button>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">Spoken Language</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">{tr("Spoken Language", "කථන භාෂාව", "பேச்சு மொழி")}</label>
                 <div className="flex items-center gap-2">
                   <select
                     className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100"
@@ -236,14 +238,14 @@ const SettingsPage: React.FC = () => {
                     type="button"
                     onClick={autoDetectSpokenLanguage}
                   >
-                    Auto-detect
+                    {tr("Auto-detect", "ස්වයං හඳුනාගන්න", "தானாக கண்டறி")}
                   </button>
                 </div>
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">Voice</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">{tr("Voice", "හඬ", "குரல்")}</label>
               <div className="flex flex-wrap items-center gap-2">
                 <select
                   className="min-w-45 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100"
@@ -260,7 +262,7 @@ const SettingsPage: React.FC = () => {
                   onClick={playVoiceSample}
                 >
                   <span className="material-symbols-outlined text-sm">play_arrow</span>
-                  Play sample voice
+                  {tr("Play sample voice", "නියැදි හඬ ධාවනය කරන්න", "மாதிரி குரலை இயக்கவும்")}
                 </button>
               </div>
             </div>
@@ -269,12 +271,12 @@ const SettingsPage: React.FC = () => {
 
         {activeSection === "data-controls" && (
           <section className="space-y-4 rounded-xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <h3 className="text-lg font-semibold text-zinc-100">Data Controls</h3>
+            <h3 className="text-lg font-semibold text-zinc-100">{tr("Data Controls", "දත්ත පාලන", "தரவு கட்டுப்பாடுகள்")}</h3>
 
             <div className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950/50 px-4 py-3">
               <div>
-                <p className="text-sm font-medium text-zinc-100">Improve the model for everyone</p>
-                <p className="text-xs text-zinc-500">Allow anonymized conversations to improve quality.</p>
+                <p className="text-sm font-medium text-zinc-100">{tr("Improve the model for everyone", "සියලු දෙනා සඳහා මොඩලය වැඩිදියුණු කරන්න", "அனைவருக்கும் மாதிரியை மேம்படுத்தவும்")}</p>
+                <p className="text-xs text-zinc-500">{tr("Allow anonymized conversations to improve quality.", "නිර්නාමික සංවාද ගුණාත්මකභාවය වැඩිදියුණු කිරීමට ඉඩ දෙන්න.", "அடையாளமற்ற உரையாடல்களை தர மேம்பாட்டிற்கு அனுமதிக்கவும்.")}</p>
               </div>
               <button
                 className={`flex h-6 w-12 items-center rounded-full px-1 transition-colors ${improveModel ? "justify-end bg-zinc-100" : "justify-start bg-zinc-700"}`}
@@ -292,24 +294,24 @@ const SettingsPage: React.FC = () => {
                 type="button"
                 onClick={archiveAllChats}
               >
-                Archive all chats
+                {tr("Archive all chats", "සියලු චැට් සංරක්ෂිත කරන්න", "அனைத்து அரட்டைகளையும் காப்பகப்படுத்து")}
               </button>
               <button className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800" type="button">
-                Export data
+                {tr("Export data", "දත්ත අපනයනය", "தரவை ஏற்றுமதி செய்")}
               </button>
               <button className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800" type="button">
-                Shared links
+                {tr("Shared links", "බෙදාගත් සබැඳි", "பகிரப்பட்ட இணைப்புகள்")}
               </button>
               <button className="rounded-lg border border-red-700/50 px-3 py-2 text-sm font-semibold text-red-300 hover:bg-red-900/20" type="button">
-                Delete all chats
+                {tr("Delete all chats", "සියලු චැට් මකා දමන්න", "அனைத்து அரட்டைகளையும் நீக்கு")}
               </button>
             </div>
 
             <div className="space-y-2 rounded-lg border border-zinc-800 bg-zinc-950/50 p-4">
-              <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">Manage archived chats</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">{tr("Manage archived chats", "සංරක්ෂිත චැට් කළමනාකරණය", "காப்பக அரட்டைகள் நிர்வகிக்க")}</p>
 
               {archivedChats.length === 0 ? (
-                <p className="text-sm text-zinc-400">No archived chats available.</p>
+                <p className="text-sm text-zinc-400">{tr("No archived chats available.", "සංරක්ෂිත චැට් නොමැත.", "காப்பக அரட்டைகள் இல்லை.")}</p>
               ) : (
                 <div className="space-y-2">
                   {archivedChats.map((chat) => (

@@ -51,20 +51,18 @@ const HomePage: React.FC = () => {
         <div className="flex flex-col items-center gap-8 max-w-4xl">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-widest">
-            Bridging the Justice Gap
+            {t("homeBadge")}
           </div>
 
           {/* Headline */}
           <h1 className="text-slate-900 dark:text-white text-5xl md:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight">
-            Ask a legal question
-            <br className="hidden md:block" /> in your language.
+            {t("homeHeroTitleLine1")}
+            <br className="hidden md:block" /> {t("homeHeroTitleLine2")}
           </h1>
 
           {/* Subheading */}
           <p className="text-slate-600 dark:text-slate-400 text-xl md:text-2xl leading-relaxed max-w-3xl font-light">
-            Our mission is to democratize legal information. We provide clear,
-            multi-lingual guidance to help you navigate complex systems and
-            protect your rights with confidence.
+            {t("homeHeroDescription")}
           </p>
 
           {/* Disclaimer */}
@@ -111,13 +109,13 @@ const HomePage: React.FC = () => {
         <section className="w-full rounded-3xl border border-slate-200 bg-white p-6 text-left shadow-sm dark:border-slate-700 dark:bg-surface-dark md:p-8">
           <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">Learn more</p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400">{t("learnMore")}</p>
               <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-900 dark:text-white">
-                Explore the pages that explain who we are and how we work.
+                {t("homeLearnMoreHeading")}
               </h2>
             </div>
             <p className="max-w-xl text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-              These pages give you a quick overview of the project, support options, and platform terms while the backend is still being built.
+              {t("homeLearnMoreDescription")}
             </p>
           </div>
 
@@ -129,9 +127,9 @@ const HomePage: React.FC = () => {
               <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-300">
                 <span className="material-symbols-outlined text-[22px]">info</span>
               </div>
-              <h3 className="mb-2 text-base font-bold text-slate-900 dark:text-white">About Us</h3>
+              <h3 className="mb-2 text-base font-bold text-slate-900 dark:text-white">{t("aboutUs")}</h3>
               <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-                Learn about the mission, values, and design direction behind OpenJustice.
+                {t("homeAboutCardDescription")}
               </p>
             </Link>
 
@@ -142,9 +140,9 @@ const HomePage: React.FC = () => {
               <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-300">
                 <span className="material-symbols-outlined text-[22px]">support_agent</span>
               </div>
-              <h3 className="mb-2 text-base font-bold text-slate-900 dark:text-white">Contact</h3>
+              <h3 className="mb-2 text-base font-bold text-slate-900 dark:text-white">{t("contact")}</h3>
               <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-                Reach out for support or follow-up while the database-backed system is in progress.
+                {t("homeContactCardDescription")}
               </p>
             </Link>
 
@@ -155,9 +153,9 @@ const HomePage: React.FC = () => {
               <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-300">
                 <span className="material-symbols-outlined text-[22px]">description</span>
               </div>
-              <h3 className="mb-2 text-base font-bold text-slate-900 dark:text-white">Terms of Service</h3>
+              <h3 className="mb-2 text-base font-bold text-slate-900 dark:text-white">{t("termsOfService")}</h3>
               <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-                Review the current usage terms for the frontend and future platform behavior.
+                {t("homeTermsCardDescription")}
               </p>
             </Link>
           </div>

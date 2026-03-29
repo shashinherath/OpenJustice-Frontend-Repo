@@ -16,6 +16,9 @@ const HelpPage = React.lazy(() => import("@/pages/info/HelpPage"));
 const ReleaseNotesPage = React.lazy(() => import("@/pages/info/ReleaseNotesPage"));
 const AdminDashboard = React.lazy(() => import("@/pages/admin/AdminDashboard"));
 const TopicBrowserPage = React.lazy(() => import("@/pages/topics/TopicBrowserPage"));
+const ResearchPage = React.lazy(() => import("@/pages/ResearchPage"));
+const DeveloperPage = React.lazy(() => import("@/pages/DeveloperPage"));
+const SignUpPage = React.lazy(() => import("@/pages/SignUpPage"));
 
 export const APP_ROUTES: RouteConfig[] = [
   { path: "/", component: HomePage },
@@ -29,4 +32,7 @@ export const APP_ROUTES: RouteConfig[] = [
   { path: "/release-notes", component: ReleaseNotesPage },
   { path: "/admin", component: AdminDashboard },
   { path: "/topics", component: TopicBrowserPage },
+  { path: "/research", component: ResearchPage },
+  { path: "/developers", component: DeveloperPage },
+  { path: "/signup", component: SignUpPage },
 ];

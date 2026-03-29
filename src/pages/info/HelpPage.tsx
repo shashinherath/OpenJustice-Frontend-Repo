@@ -1,34 +1,29 @@
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-
-const helpTopics = [
-  {
-    title: "Getting started",
-    body: "Use Ask Question to open a fresh conversation and get a guided legal explanation.",
-  },
-  {
-    title: "Chat history",
-    body: "Previous chats stay in the sidebar, and pinned chats are kept at the top for quick access.",
-  },
-  {
-    title: "Archived chats",
-    body: "Archived chats are hidden from the sidebar and can be managed later from Settings.",
-  },
-  {
-    title: "Privacy and terms",
-    body: "Review the privacy policy and terms pages to understand platform usage and limits.",
-  },
-];
-
-const languageOptions = [
-  { value: "en", label: "English" },
-  { value: "si", label: "Sinhala" },
-  { value: "ta", label: "Tamil" },
-];
+import { useTranslation } from "react-i18next";
 
 const HelpPage: React.FC = () => {
-  const [language, setLanguage] = useState("en");
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
+
+  const helpTopics = [
+    {
+      title: t("helpGettingStartedTitle"),
+      body: t("helpGettingStartedBody"),
+    },
+    {
+      title: t("helpChatHistoryTitle"),
+      body: t("helpChatHistoryBody"),
+    },
+    {
+      title: t("helpArchivedChatsTitle"),
+      body: t("helpArchivedChatsBody"),
+    },
+    {
+      title: t("helpPrivacyTermsTitle"),
+      body: t("helpPrivacyTermsBody"),
+    },
+  ];
 
   const filteredTopics = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -49,20 +44,7 @@ const HelpPage: React.FC = () => {
           <Link className="text-lg font-black tracking-tight text-slate-900 dark:text-white" to="/">
             OpenJustice
           </Link>
-          <div className="flex items-center gap-3">
-            <select
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 outline-none transition-colors focus:border-slate-400 dark:border-border-dark dark:bg-surface-dark dark:text-slate-200"
-              value={language}
-              onChange={(event) => setLanguage(event.target.value)}
-              aria-label="Select help page language"
-            >
-              {languageOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <div className="flex items-center gap-3" />
         </div>
       </header>
 
@@ -70,13 +52,13 @@ const HelpPage: React.FC = () => {
         <section className="mb-10 max-w-3xl">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-bold uppercase tracking-widest text-slate-500 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300">
             <span className="material-symbols-outlined text-[14px]" style={{ color: "var(--oj-accent-color)" }}>help_outline</span>
-            Help Center
+            {t("helpCenter")}
           </div>
           <h1 className="text-4xl font-black leading-tight tracking-tight text-slate-900 dark:text-white sm:text-5xl">
-            Quick answers for using OpenJustice.
+            {t("helpHeading")}
           </h1>
           <p className="mt-5 text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-            This temporary help page covers the current frontend experience until backend-powered support workflows are added.
+            {t("helpDescription")}
           </p>
         </section>
 
@@ -84,10 +66,10 @@ const HelpPage: React.FC = () => {
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
               <p className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Article search</p>
-              <h2 className="mt-1 text-lg font-bold text-slate-900 dark:text-white">Search help articles</h2>
+              <h2 className="mt-1 text-lg font-bold text-slate-900 dark:text-white">{t("searchHelpArticles")}</h2>
             </div>
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
-              {filteredTopics.length} articles
+              {t("articlesCount", { count: filteredTopics.length })}
             </span>
           </div>
 
@@ -98,7 +80,7 @@ const HelpPage: React.FC = () => {
               </span>
               <input
                 className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-slate-400 dark:border-border-dark dark:bg-[#232323] dark:text-white"
-                placeholder="Search help articles, topics, or answers..."
+                placeholder={t("searchHelpPlaceholder")}
                 type="text"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
@@ -115,7 +97,7 @@ const HelpPage: React.FC = () => {
           ))}
           {filteredTopics.length === 0 && (
             <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-sm text-slate-500 dark:border-slate-700 dark:bg-surface-dark dark:text-slate-400 md:col-span-2">
-              No help articles match your search.
+              {t("noHelpArticles")}
             </div>
           )}
         </section>

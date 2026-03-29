@@ -1,26 +1,29 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
-const sections = [
-  {
-    title: "Use of the platform",
-    body: "You may use OpenJustice for lawful research and informational purposes. You are responsible for how you interpret and apply any generated content.",
-  },
-  {
-    title: "No legal advice",
-    body: "The platform provides research support and general information only. It does not replace a licensed attorney or professional legal judgment.",
-  },
-  {
-    title: "Acceptable conduct",
-    body: "Do not attempt to abuse, scrape, reverse engineer, or misuse the platform, its prompts, or its future APIs.",
-  },
-  {
-    title: "Availability and changes",
-    body: "Features may change during development. Service availability, response quality, and supported workflows may evolve over time.",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 const TermsOfServicePage: React.FC = () => {
+  const { t } = useTranslation();
+
+  const sections = [
+    {
+      title: t("termsUseOfPlatformTitle"),
+      body: t("termsUseOfPlatformBody"),
+    },
+    {
+      title: t("termsNoLegalAdviceTitle"),
+      body: t("termsNoLegalAdviceBody"),
+    },
+    {
+      title: t("termsAcceptableConductTitle"),
+      body: t("termsAcceptableConductBody"),
+    },
+    {
+      title: t("termsAvailabilityTitle"),
+      body: t("termsAvailabilityBody"),
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 antialiased dark:bg-[#191919] dark:text-slate-100">
       <header className="border-b border-slate-200 bg-white/95 backdrop-blur dark:border-border-dark dark:bg-[#191919]/95">
@@ -30,7 +33,7 @@ const TermsOfServicePage: React.FC = () => {
           </Link>
           <div className="flex items-center gap-3">
             <Link className="rounded-lg px-4 py-2 text-sm font-semibold text-white" style={{ backgroundColor: "var(--oj-accent-color)" }} to="/chat">
-              Try OpenJustice
+              {t("tryOpenJustice")}
             </Link>
           </div>
         </div>
@@ -39,13 +42,13 @@ const TermsOfServicePage: React.FC = () => {
       <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
         <section className="mb-10">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-bold uppercase tracking-widest text-slate-500 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300">
-            Terms of Service
+            {t("termsOfService")}
           </div>
           <h1 className="text-4xl font-black leading-tight tracking-tight text-slate-900 dark:text-white sm:text-5xl">
-            Clear usage terms for the OpenJustice platform.
+            {t("termsHeading")}
           </h1>
           <p className="mt-5 max-w-3xl text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-            These terms describe how the current frontend should be used while backend systems are still being developed. They are intentionally concise and can be expanded later for production deployment.
+            {t("termsDescription")}
           </p>
         </section>
 

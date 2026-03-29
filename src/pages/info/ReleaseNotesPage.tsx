@@ -1,36 +1,31 @@
 import React, { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-
-const releaseNotes = [
-  {
-    version: "v0.4.0",
-    date: "March 2026",
-    items: [
-      "Added dedicated answer pages for previous chats.",
-      "Added archive, pin, and sidebar chat actions.",
-      "Added Help, About Us, Contact, and Terms pages.",
-    ],
-  },
-  {
-    version: "v0.3.0",
-    date: "March 2026",
-    items: [
-      "Introduced multilingual UI support.",
-      "Added settings, profile, and login modal flows.",
-      "Improved topic browsing and privacy page layout.",
-    ],
-  },
-];
-
-const languageOptions = [
-  { value: "en", label: "English" },
-  { value: "si", label: "Sinhala" },
-  { value: "ta", label: "Tamil" },
-];
+import { useTranslation } from "react-i18next";
 
 const ReleaseNotesPage: React.FC = () => {
-  const [language, setLanguage] = useState("en");
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
+
+  const releaseNotes = [
+    {
+      version: "v0.4.0",
+      date: t("releaseDateMarch2026"),
+      items: [
+        t("release040Item1"),
+        t("release040Item2"),
+        t("release040Item3"),
+      ],
+    },
+    {
+      version: "v0.3.0",
+      date: t("releaseDateMarch2026"),
+      items: [
+        t("release030Item1"),
+        t("release030Item2"),
+        t("release030Item3"),
+      ],
+    },
+  ];
 
   const filteredNotes = useMemo(() => {
     const normalizedQuery = searchQuery.trim().toLowerCase();
@@ -51,20 +46,7 @@ const ReleaseNotesPage: React.FC = () => {
           <Link className="text-lg font-black tracking-tight text-slate-900 dark:text-white" to="/">
             OpenJustice
           </Link>
-          <div className="flex items-center gap-3">
-            <select
-              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 outline-none transition-colors focus:border-slate-400 dark:border-border-dark dark:bg-surface-dark dark:text-slate-200"
-              value={language}
-              onChange={(event) => setLanguage(event.target.value)}
-              aria-label="Select release notes language"
-            >
-              {languageOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <div className="flex items-center gap-3" />
         </div>
       </header>
 
@@ -72,13 +54,13 @@ const ReleaseNotesPage: React.FC = () => {
         <section className="mb-10 max-w-3xl">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-bold uppercase tracking-widest text-slate-500 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300">
             <span className="material-symbols-outlined text-[14px]" style={{ color: "var(--oj-accent-color)" }}>new_releases</span>
-            Release Notes
+            {t("releaseNotes")}
           </div>
           <h1 className="text-4xl font-black leading-tight tracking-tight text-slate-900 dark:text-white sm:text-5xl">
-            Recent product updates and improvements.
+            {t("releaseNotesHeading")}
           </h1>
           <p className="mt-5 text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-            This page tracks the latest frontend changes while backend services are still being prepared.
+            {t("releaseNotesDescription")}
           </p>
         </section>
 
@@ -86,10 +68,10 @@ const ReleaseNotesPage: React.FC = () => {
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
               <p className="text-xs font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">Article search</p>
-              <h2 className="mt-1 text-lg font-bold text-slate-900 dark:text-white">Search release notes</h2>
+              <h2 className="mt-1 text-lg font-bold text-slate-900 dark:text-white">{t("searchReleaseNotes")}</h2>
             </div>
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
-              {filteredNotes.length} releases
+              {t("releasesCount", { count: filteredNotes.length })}
             </span>
           </div>
 
@@ -100,7 +82,7 @@ const ReleaseNotesPage: React.FC = () => {
               </span>
               <input
                 className="h-12 w-full rounded-2xl border border-slate-200 bg-slate-50 pl-11 pr-4 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-slate-400 dark:border-border-dark dark:bg-[#232323] dark:text-white"
-                placeholder="Search release versions, dates, or update items..."
+                placeholder={t("searchReleasePlaceholder")}
                 type="text"
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
@@ -128,7 +110,7 @@ const ReleaseNotesPage: React.FC = () => {
           ))}
           {filteredNotes.length === 0 && (
             <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-8 text-sm text-slate-500 dark:border-slate-700 dark:bg-surface-dark dark:text-slate-400">
-              No release notes match your search.
+              {t("noReleaseNotes")}
             </div>
           )}
         </section>

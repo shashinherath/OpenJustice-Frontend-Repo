@@ -43,7 +43,7 @@ const AdminDashboard: React.FC = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-            <section className="p-8 rounded border border-white/10 bg-white/[0.02]">
+            <section className="p-8 rounded border border-white/10 bg-white/2">
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-lg font-bold text-white flex items-center gap-3">
                   <span className="material-symbols-outlined text-slate-400">trending_up</span>
@@ -78,7 +78,7 @@ const AdminDashboard: React.FC = () => {
               </div>
             </section>
             
-            <section className="p-8 rounded border border-white/10 bg-white/[0.02]">
+            <section className="p-8 rounded border border-white/10 bg-white/2">
               <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-3">
                 <span className="material-symbols-outlined text-slate-400">history</span>
                 Recent System Activity
@@ -102,7 +102,7 @@ const AdminDashboard: React.FC = () => {
           </div>
           
           <div className="space-y-6">
-            <section className="p-6 rounded border border-white/10 bg-white/[0.02]">
+            <section className="p-6 rounded border border-white/10 bg-white/2">
               <h2 className="text-sm font-bold text-white mb-6 uppercase tracking-[0.15em]">Data Source Status</h2>
               <div className="space-y-6">
                 {DATA_SOURCES.map(source => (
@@ -119,7 +119,7 @@ const AdminDashboard: React.FC = () => {
               </div>
             </section>
             
-            <section className="p-6 rounded border border-white/10 bg-white/[0.02]">
+            <section className="p-6 rounded border border-white/10 bg-white/2">
               <h2 className="text-sm font-bold text-white mb-4 uppercase tracking-[0.15em]">Admin Quick Actions</h2>
               <div className="grid grid-cols-2 gap-3">
                 {QUICKS_ACTIONS.map(action => (

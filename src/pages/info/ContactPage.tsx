@@ -1,25 +1,27 @@
 import React from "react";
 import { Link } from "react-router-dom";
-
-const contactOptions = [
-  {
-    icon: "mail",
-    title: "Email support",
-    body: "help@openjustice.example",
-  },
-  {
-    icon: "chat",
-    title: "Live inquiry",
-    body: "Use the chat interface to start a new legal question.",
-  },
-  {
-    icon: "location_on",
-    title: "Office hours",
-    body: "Monday to Friday, 9:00 AM - 5:00 PM",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 const ContactPage: React.FC = () => {
+  const { t } = useTranslation();
+  const contactOptions = [
+    {
+      icon: "mail",
+      title: t("contactEmailSupport"),
+      body: "help@openjustice.example",
+    },
+    {
+      icon: "chat",
+      title: t("contactLiveInquiry"),
+      body: t("contactLiveInquiryBody"),
+    },
+    {
+      icon: "location_on",
+      title: t("contactOfficeHours"),
+      body: t("contactOfficeHoursBody"),
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 antialiased dark:bg-[#191919] dark:text-slate-100">
       <header className="border-b border-slate-200 bg-white/95 backdrop-blur dark:border-border-dark dark:bg-[#191919]/95">
@@ -29,7 +31,7 @@ const ContactPage: React.FC = () => {
           </Link>
           <div className="flex items-center gap-3">
             <Link className="rounded-lg px-4 py-2 text-sm font-semibold text-white" style={{ backgroundColor: "var(--oj-accent-color)" }} to="/chat">
-              Try OpenJustice
+              {t("tryOpenJustice")}
             </Link>
           </div>
         </div>
@@ -38,13 +40,13 @@ const ContactPage: React.FC = () => {
       <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
         <section className="mb-10 max-w-3xl">
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-bold uppercase tracking-widest text-slate-500 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300">
-            Contact OpenJustice
+            {t("contactOpenJustice")}
           </div>
           <h1 className="text-4xl font-black leading-tight tracking-tight text-slate-900 dark:text-white sm:text-5xl">
-            Reach out for product help or platform guidance.
+            {t("contactHeading")}
           </h1>
           <p className="mt-5 text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-            This page is a temporary contact surface while the backend is still in development. For now, the chat experience remains the main entry point for legal questions.
+            {t("contactDescription")}
           </p>
         </section>
 
