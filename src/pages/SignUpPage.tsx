@@ -1,34 +1,26 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 const SignUpPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phone: "",
     password: "",
     confirmPassword: "",
-    caseCategory: "",
-    caseDetails: "",
     agreeToTerms: false,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const caseCategories = [
-    "Land & Property",
-    "Employment Law",
-    "Family Rights",
-    "Consumer Protection",
-    "Criminal Justice",
-    "Intellectual Property",
-    "Other",
-  ];
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -46,42 +38,36 @@ const SignUpPage: React.FC = () => {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = "Full name is required";
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = t("signupErrorFirstNameRequired");
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = t("signupErrorLastNameRequired");
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
+      newErrors.email = t("signupErrorEmailRequired");
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
+      newErrors.email = t("signupErrorInvalidEmail");
     }
 
     if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
+      newErrors.phone = t("signupErrorPhoneRequired");
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
+      newErrors.password = t("signupErrorPasswordRequired");
+    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/.test(formData.password)) {
+      newErrors.password = t("signupErrorPasswordCriteria");
     }
 
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    if (!formData.caseCategory) {
-      newErrors.caseCategory = "Please select a case category";
-    }
-
-    if (!formData.caseDetails.trim()) {
-      newErrors.caseDetails = "Please describe your case";
-    } else if (formData.caseDetails.length < 20) {
-      newErrors.caseDetails = "Case description must be at least 20 characters";
+      newErrors.confirmPassword = t("signupErrorPasswordsMismatch");
     }
 
     if (!formData.agreeToTerms) {
-      newErrors.agreeToTerms = "You must agree to the terms and conditions";
+      newErrors.agreeToTerms = t("signupErrorAgreeTerms");
     }
 
     return newErrors;
@@ -108,19 +94,23 @@ const SignUpPage: React.FC = () => {
       navigate("/chat");
     } catch (error) {
       console.error("Sign up failed:", error);
-      setErrors({ form: "Sign up failed. Please try again." });
+      setErrors({ form: t("signupErrorGeneric") });
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 dark:from-[#191919] dark:via-slate-900 dark:to-[#191919]">
+    <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50 dark:from-[#191919] dark:via-zinc-800 dark:to-[#191919]">
       {/* Header */}
       <header className="border-b border-slate-200 bg-white/95 backdrop-blur dark:border-border-dark dark:bg-[#191919]/95">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link className="text-lg font-black tracking-tight text-slate-900 dark:text-white" to="/">
-            OpenJustice
+          <Link className="flex items-center gap-3 text-lg font-black tracking-tight text-slate-900 dark:text-white" to="/">
+            <BrandLogo
+              containerClassName="flex size-9 items-center justify-center overflow-hidden rounded-lg bg-primary text-white dark:bg-white dark:text-primary"
+              iconClassName="text-2xl"
+            />
+            <span>OpenJustice</span>
           </Link>   
         </div>
       </header>
@@ -128,15 +118,18 @@ const SignUpPage: React.FC = () => {
       {/* Main Content */}
       <main className="flex items-center justify-center min-h-[calc(100vh-64px)] px-4 py-8">
         <div className="w-full max-w-2xl">
-          <div className="rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-slate-700 dark:bg-slate-800/50 p-8 md:p-12">
+          <div className="rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-zinc-800 dark:bg-zinc-700/50 p-8 md:p-12">
             {/* Form Header */}
             <div className="mb-8 text-center">
-              <div className="mx-auto mb-4 inline-flex items-center justify-center rounded-lg bg-blue-100 p-3 dark:bg-blue-900/30">
-                <span className="material-symbols-outlined text-3xl text-blue-600 dark:text-blue-400">person_add</span>
+              <div className="mx-auto mb-4 inline-flex items-center justify-center rounded-4xl border dark:border-zinc-700">
+                <BrandLogo
+                  containerClassName="flex h-15 w-15 items-center justify-center rounded-full bg-primary text-white dark:bg-white dark:text-primary"
+                  iconClassName="text-2xl"
+                />
               </div>
-              <h1 className="mb-2 text-3xl font-black text-slate-900 dark:text-white">Create Your Account</h1>
+              <h1 className="mb-2 text-3xl font-black text-slate-900 dark:text-white">{t("createAccount")}</h1>
               <p className="text-slate-600 dark:text-slate-400">
-                Get started with OpenJustice and access legal research tools
+                {t("signupSubtitle")}
               </p>
             </div>
 
@@ -148,41 +141,62 @@ const SignUpPage: React.FC = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Full Name */}
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleInputChange}
-                  placeholder="John Doe"
-                  className={`w-full rounded-lg border ${
-                    errors.fullName ? "border-red-500" : "border-slate-300 dark:border-slate-600"
-                  } bg-white px-4 py-2.5 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400`}
-                />
-                {errors.fullName && (
-                  <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.fullName}</p>
-                )}
+              {/* First & Last Name */}
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                    {t("firstName")}
+                  </label>
+                  <input
+                    type="text"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    placeholder={t("firstNamePlaceholder")}
+                    className={`w-full rounded-lg border ${
+                      errors.firstName ? "border-red-500" : "border-slate-300 dark:border-slate-600"
+                    } bg-white px-4 py-2.5 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white dark:placeholder-slate-400`}
+                  />
+                  {errors.firstName && (
+                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.firstName}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                    {t("lastName")}
+                  </label>
+                  <input
+                    type="text"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    placeholder={t("lastNamePlaceholder")}
+                    className={`w-full rounded-lg border ${
+                      errors.lastName ? "border-red-500" : "border-slate-300 dark:border-slate-600"
+                    } bg-white px-4 py-2.5 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white dark:placeholder-slate-400`}
+                  />
+                  {errors.lastName && (
+                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.lastName}</p>
+                  )}
+                </div>
               </div>
 
               {/* Email & Phone Row */}
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    Email Address
+                    {t("emailAddress")}
                   </label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    placeholder="john@example.com"
+                    placeholder={t("emailPlaceholder")}
                     className={`w-full rounded-lg border ${
                       errors.email ? "border-red-500" : "border-slate-300 dark:border-slate-600"
-                    } bg-white px-4 py-2.5 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400`}
+                    } bg-white px-4 py-2.5 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white dark:placeholder-slate-400`}
                   />
                   {errors.email && (
                     <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.email}</p>
@@ -191,17 +205,17 @@ const SignUpPage: React.FC = () => {
 
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    Phone Number
+                    {t("phoneNumber")}
                   </label>
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    placeholder="+1 (555) 000-0000"
+                    placeholder={t("phonePlaceholder")}
                     className={`w-full rounded-lg border ${
                       errors.phone ? "border-red-500" : "border-slate-300 dark:border-slate-600"
-                    } bg-white px-4 py-2.5 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400`}
+                    } bg-white px-4 py-2.5 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white dark:placeholder-slate-400`}
                   />
                   {errors.phone && (
                     <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.phone}</p>
@@ -213,94 +227,62 @@ const SignUpPage: React.FC = () => {
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    Password
+                    {t("password")}
                   </label>
-                  <input
-                    type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    placeholder="••••••••"
-                    className={`w-full rounded-lg border ${
-                      errors.password ? "border-red-500" : "border-slate-300 dark:border-slate-600"
-                    } bg-white px-4 py-2.5 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400`}
-                  />
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      placeholder="••••••••"
+                      className={`w-full rounded-lg border ${
+                        errors.password ? "border-red-500" : "border-slate-300 dark:border-slate-600"
+                      } bg-white px-4 py-2.5 pr-11 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white dark:placeholder-slate-400`}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-white transition-colors"
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      onClick={() => setShowPassword((prev) => !prev)}
+                    >
+                      <span className="material-symbols-outlined text-[18px]">{showPassword ? "visibility_off" : "visibility"}</span>
+                    </button>
+                  </div>
                   {errors.password && (
                     <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.password}</p>
                   )}
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{t("passwordCriteria")}</p>
                 </div>
 
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                    Confirm Password
+                    {t("confirmPassword")}
                   </label>
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleInputChange}
-                    placeholder="••••••••"
-                    className={`w-full rounded-lg border ${
-                      errors.confirmPassword ? "border-red-500" : "border-slate-300 dark:border-slate-600"
-                    } bg-white px-4 py-2.5 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400`}
-                  />
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleInputChange}
+                      placeholder="••••••••"
+                      className={`w-full rounded-lg border ${
+                        errors.confirmPassword ? "border-red-500" : "border-slate-300 dark:border-slate-600"
+                      } bg-white px-4 py-2.5 pr-11 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white dark:placeholder-slate-400`}
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-white transition-colors"
+                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                      onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    >
+                      <span className="material-symbols-outlined text-[18px]">{showConfirmPassword ? "visibility_off" : "visibility"}</span>
+                    </button>
+                  </div>
                   {errors.confirmPassword && (
                     <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.confirmPassword}</p>
                   )}
                 </div>
-              </div>
-
-              {/* Case Category */}
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                  Case Category
-                </label>
-                <select
-                  name="caseCategory"
-                  value={formData.caseCategory}
-                  onChange={handleInputChange}
-                  className={`w-full rounded-lg border ${
-                    errors.caseCategory ? "border-red-500" : "border-slate-300 dark:border-slate-600"
-                  } bg-white px-4 py-2.5 text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white`}
-                >
-                  <option value="">Select a case category</option>
-                  {caseCategories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-                {errors.caseCategory && (
-                  <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.caseCategory}</p>
-                )}
-              </div>
-
-              {/* Case Details */}
-              <div>
-                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
-                  Tell us about your case
-                </label>
-                <textarea
-                  name="caseDetails"
-                  value={formData.caseDetails}
-                  onChange={handleInputChange}
-                  placeholder="Describe your legal situation in detail..."
-                  rows={5}
-                  className={`w-full rounded-lg border ${
-                    errors.caseDetails ? "border-red-500" : "border-slate-300 dark:border-slate-600"
-                  } bg-white px-4 py-2.5 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:text-white dark:placeholder-slate-400`}
-                />
-                <div className="mt-2 flex justify-between">
-                  <p className="text-xs text-slate-600 dark:text-slate-400">
-                    Minimum 20 characters
-                  </p>
-                  <p className="text-xs text-slate-600 dark:text-slate-400">
-                    {formData.caseDetails.length} / 2000
-                  </p>
-                </div>
-                {errors.caseDetails && (
-                  <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.caseDetails}</p>
-                )}
               </div>
 
               {/* Terms & Conditions */}
@@ -313,14 +295,14 @@ const SignUpPage: React.FC = () => {
                   className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 dark:border-slate-600"
                 />
                 <label className="text-sm text-slate-600 dark:text-slate-400">
-                  I agree to the{" "}
-                  <Link to="/privacy-policy" className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
-                    Privacy Policy
-                  </Link>
-                  {" "}and{" "}
-                  <Link to="/terms-of-service" className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
-                    Terms of Service
-                  </Link>
+                  {t("agreeToTermsPrefix")}{" "}
+                  <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+                    {t("privacyPolicyLabel")}
+                  </a>
+                  {" "}{t("and")}{" "}
+                  <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+                    {t("termsOfServiceLabel")}
+                  </a>
                 </label>
               </div>
               {errors.agreeToTerms && (
@@ -336,13 +318,12 @@ const SignUpPage: React.FC = () => {
                 {isLoading && (
                   <span className="animate-spin rounded-full h-4 w-4 border-2 border-white border-r-transparent" />
                 )}
-                {isLoading ? "Creating Account..." : "Create Account"}
+                {isLoading ? t("creatingAccount") : t("createAccount")}
               </button>
 
               {/* Disclaimer */}
               <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-xs text-amber-800 dark:border-amber-900 dark:bg-amber-900/20 dark:text-amber-300">
-                <strong>Important:</strong> OpenJustice is an AI-powered educational tool. We provide legal
-                information, not legal advice. Please consult a qualified attorney for your specific situation.
+                <strong>{t("disclaimer")}</strong> {t("disclaimerText")}
               </div>
             </form>
           </div>

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 const ResearchPage: React.FC = () => {
   const { t } = useTranslation();
@@ -37,8 +38,12 @@ const ResearchPage: React.FC = () => {
       {/* Header */}
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur dark:border-border-dark dark:bg-[#191919]/95">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link className="text-lg font-black tracking-tight text-slate-900 dark:text-white" to="/">
-            OpenJustice
+          <Link className="flex items-center gap-3 text-lg font-black tracking-tight text-slate-900 dark:text-white" to="/">
+            <BrandLogo
+              containerClassName="flex size-9 items-center justify-center overflow-hidden rounded-lg bg-primary text-white dark:bg-white dark:text-primary"
+              iconClassName="text-2xl"
+            />
+            <span>OpenJustice</span>
           </Link>
           <Link
             className="inline-flex items-center gap-2 rounded-lg bg-primary text-white px-4 py-2 text-sm font-bold hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors"

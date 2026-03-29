@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import BrandLogo from "@/components/ui/BrandLogo";
 
 interface LoginModalProps {
@@ -8,6 +9,7 @@ interface LoginModalProps {
 }
 
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,7 +30,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Login attempt:", { email, password });
-    // Add your login logic here
+    handleClose();
+    navigate("/chat");
   };
 
   if (!isOpen) return null;
@@ -46,7 +49,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         <button
           className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-100 dark:text-slate-400 dark:hover:text-slate-200 transition-colors"
           onClick={handleClose}
-          aria-label="Close login modal"
+          aria-label={t("closeLoginModal")}
         >
           <span className="material-symbols-outlined text-2xl">close</span>
         </button>
@@ -57,10 +60,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             <BrandLogo containerClassName="w-full h-full flex items-center justify-center" iconClassName="text-yellow-400 dark:text-blue-300 text-3xl" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-white dark:text-white mb-2">
-            Welcome Back
+            {t("loginWelcomeBack")}
           </h1>
           <p className="text-slate-200 dark:text-slate-300 text-sm">
-            Access the OpenJustice AI search suite
+            {t("loginSubtitle")}
           </p>
         </div>
 
@@ -72,7 +75,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
               className="text-xs font-semibold uppercase tracking-widest text-slate-200 dark:text-slate-300"
               htmlFor="modal-email"
             >
-              Email Address
+              {t("emailAddress")}
             </label>
             <div className="relative">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 text-lg">
@@ -81,7 +84,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
               <input
                 className="w-full bg-zinc-600 dark:bg-zinc-900 border border-zinc-500 dark:border-zinc-600 rounded-lg py-3 pl-10 pr-4 text-white dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all outline-none"
                 id="modal-email"
-                placeholder="name@organization.org"
+                placeholder={t("emailPlaceholder")}
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -97,13 +100,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                 className="text-xs font-semibold uppercase tracking-widest text-slate-200 dark:text-slate-300"
                 htmlFor="modal-password"
               >
-                Password
+                {t("password")}
               </label>
               <a
                 className="text-xs text-yellow-300 hover:text-yellow-200 dark:text-blue-300 dark:hover:text-blue-200 transition-colors font-medium"
                 href="#"
               >
-                Forgot Password?
+                {t("forgotPassword")}
               </a>
             </div>
             <div className="relative">
@@ -135,7 +138,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 group shadow-lg"
             type="submit"
           >
-            Log In
+            {t("logIn")}
             <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">
               arrow_forward
             </span>
@@ -145,14 +148,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         {/* Sign Up Link */}
         <div className="mt-8 pt-6 border-t border-slate-600 dark:border-slate-700 flex flex-col items-center gap-4">
           <p className="text-slate-300 dark:text-slate-400 text-sm">
-            Don't have an account?
+            {t("dontHaveAccount")}
           </p>
           <button
             type="button"
             className="text-white dark:text-slate-200 font-semibold hover:text-blue-300 dark:hover:text-blue-300 underline underline-offset-4 transition-colors"
             onClick={handleSignUpClick}
           >
-            Create Account
+            {t("createAccount")}
           </button>
         </div>
       </div>

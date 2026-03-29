@@ -42,7 +42,7 @@ const SettingsPage: React.FC = () => {
     { id: "security", label: tr("Security", "ආරක්ෂාව", "பாதுகாப்பு"), icon: "shield_lock" },
     { id: "account", label: tr("Account", "ගිණුම", "கணக்கு"), icon: "manage_accounts" },
   ];
-  const { sidebarChats, archiveAllChats, unarchiveChat, deleteChat } = useChatStore();
+  const { sidebarChats, chatMessagesById, activeConversationId, archiveAllChats, unarchiveChat, deleteChat, deleteAllChats } = useChatStore();
 
   const [activeSection, setActiveSection] = useState<SettingsSection>("general");
 
@@ -133,6 +133,55 @@ const SettingsPage: React.FC = () => {
   const autoDetectSpokenLanguage = () => {
     const detected = detectLanguage();
     setSpokenLanguage(detected);
+  };
+
+  const handleExportData = () => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      activeConversationId,
+      chats: sidebarChats.map((chat) => ({
+        ...chat,
+        messages: (chatMessagesById[chat.id] || []).map((message) => ({
+          ...message,
+          timestamp: new Date(message.timestamp).toISOString(),
+        })),
+      })),
+    };
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const fileDate = new Date().toISOString().slice(0, 10);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `openjustice-data-${fileDate}.json`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDeleteAllChats = () => {
+    if (sidebarChats.length === 0 || typeof window === "undefined") {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      tr(
+        "Are you sure you want to permanently delete all chats? This action cannot be undone.",
+        "ඔබට සියලු චැට් ස්ථිරවම මකා දැමීමට අවශ්‍යද? මෙම ක්‍රියාව ආපසු හැරවිය නොහැක.",
+        "எல்லா அரட்டைகளையும் நிரந்தரமாக நீக்க விரும்புகிறீர்களா? இந்த செயலினை மாற்ற முடியாது.",
+      ),
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    deleteAllChats();
   };
 
   return (
@@ -296,13 +345,22 @@ const SettingsPage: React.FC = () => {
               >
                 {tr("Archive all chats", "සියලු චැට් සංරක්ෂිත කරන්න", "அனைத்து அரட்டைகளையும் காப்பகப்படுத்து")}
               </button>
-              <button className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800" type="button">
+              <button
+                className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800"
+                type="button"
+                onClick={handleExportData}
+              >
                 {tr("Export data", "දත්ත අපනයනය", "தரவை ஏற்றுமதி செய்")}
               </button>
               <button className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800" type="button">
                 {tr("Shared links", "බෙදාගත් සබැඳි", "பகிரப்பட்ட இணைப்புகள்")}
               </button>
-              <button className="rounded-lg border border-red-700/50 px-3 py-2 text-sm font-semibold text-red-300 hover:bg-red-900/20" type="button">
+              <button
+                className="rounded-lg border border-red-700/50 px-3 py-2 text-sm font-semibold text-red-300 hover:bg-red-900/20 disabled:cursor-not-allowed disabled:opacity-50"
+                type="button"
+                onClick={handleDeleteAllChats}
+                disabled={sidebarChats.length === 0}
+              >
                 {tr("Delete all chats", "සියලු චැට් මකා දමන්න", "அனைத்து அரட்டைகளையும் நீக்கு")}
               </button>
             </div>

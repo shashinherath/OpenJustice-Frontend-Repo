@@ -27,6 +27,7 @@ interface ChatStore {
   archiveAllChats: () => void;
   unarchiveChat: (id: string) => void;
   deleteChat: (id: string) => void;
+  deleteAllChats: () => void;
   renameChat: (id: string, title: string) => void;
   pinChat: (id: string) => void;
 }
@@ -215,6 +216,13 @@ export const useChatStore = create<ChatStore>()(
           ),
           activeConversationId: state.activeConversationId === id ? null : state.activeConversationId,
         })),
+      deleteAllChats: () =>
+        set({
+          sidebarChats: [],
+          chatMessagesById: {},
+          activeConversationId: null,
+          messages: [],
+        }),
       renameChat: (id, title) =>
         set((state) => ({
           sidebarChats: state.sidebarChats.map((chat) =>

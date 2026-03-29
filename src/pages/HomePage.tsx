@@ -119,7 +119,7 @@ const HomePage: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
             <Link
               className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
               to="/about-us"
@@ -156,6 +156,32 @@ const HomePage: React.FC = () => {
               <h3 className="mb-2 text-base font-bold text-slate-900 dark:text-white">{t("termsOfService")}</h3>
               <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
                 {t("homeTermsCardDescription")}
+              </p>
+            </Link>
+
+            <Link
+              className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
+              to="/research"
+            >
+              <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-900/20 dark:text-violet-300">
+                <span className="material-symbols-outlined text-[22px]">search</span>
+              </div>
+              <h3 className="mb-2 text-base font-bold text-slate-900 dark:text-white">{t("research")}</h3>
+              <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                {t("homeResearchCardDescription")}
+              </p>
+            </Link>
+
+            <Link
+              className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
+              to="/developers"
+            >
+              <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-300">
+                <span className="material-symbols-outlined text-[22px]">code</span>
+              </div>
+              <h3 className="mb-2 text-base font-bold text-slate-900 dark:text-white">{t("developers")}</h3>
+              <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
+                {t("homeDevelopersCardDescription")}
               </p>
             </Link>
           </div>

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useContext } from "react";
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import BrandLogo from "@/components/ui/BrandLogo";
 import LoginModal from "@/components/ui/LoginModal";
@@ -33,15 +32,6 @@ const Navbar: React.FC = () => {
               OpenJustice
             </h2>
           </div>
-
-          <nav className="hidden items-center gap-5 md:flex">
-            <Link className="text-sm font-semibold text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" to="/research">
-              {t("research")}
-            </Link>
-            <Link className="text-sm font-semibold text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" to="/developers">
-              {t("developers")}
-            </Link>
-          </nav>
 
           {/* Right side actions */}
           <div className="flex items-center gap-3">
