@@ -2,11 +2,11 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import { LanguageContext } from "@/contexts/LanguageContext";
 import { useTheme } from "@/hooks/common/useTheme";
 import { useChatStore } from "@/stores/chatStore";
+import { LANGUAGE_OPTIONS, type AppLanguage } from "@/constants/languages";
 
 type SettingsSection = "general" | "data-controls" | "security" | "account";
 
 type AccentColor = "default" | "blue" | "emerald" | "amber" | "rose";
-type AppLanguage = "en" | "si" | "ta";
 type VoiceOption = "alloy" | "nova" | "echo";
 
 const sectionItems: Array<{ id: SettingsSection; label: string; icon: string }> = [
@@ -14,12 +14,6 @@ const sectionItems: Array<{ id: SettingsSection; label: string; icon: string }> 
   { id: "data-controls", label: "Data Controls", icon: "database" },
   { id: "security", label: "Security", icon: "shield_lock" },
   { id: "account", label: "Account", icon: "manage_accounts" },
-];
-
-const languageOptions: Array<{ value: AppLanguage; label: string }> = [
-  { value: "en", label: "English" },
-  { value: "si", label: "Sinhala" },
-  { value: "ta", label: "Tamil" },
 ];
 
 const ACCENT_STORAGE_KEY = "oj-accent-color";
@@ -207,7 +201,7 @@ const SettingsPage: React.FC = () => {
                     value={language}
                     onChange={(event) => setLanguage(event.target.value as AppLanguage)}
                   >
-                    {languageOptions.map((item) => (
+                    {LANGUAGE_OPTIONS.map((item) => (
                       <option key={item.value} value={item.value}>
                         {item.label}
                       </option>
@@ -231,7 +225,7 @@ const SettingsPage: React.FC = () => {
                     value={spokenLanguage}
                     onChange={(event) => setSpokenLanguage(event.target.value as AppLanguage)}
                   >
-                    {languageOptions.map((item) => (
+                    {LANGUAGE_OPTIONS.map((item) => (
                       <option key={item.value} value={item.value}>
                         {item.label}
                       </option>

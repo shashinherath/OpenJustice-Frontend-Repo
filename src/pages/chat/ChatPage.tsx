@@ -3,14 +3,15 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LanguageContext } from "@/contexts/LanguageContext";
 import { useChatStore } from "@/stores/chatStore";
+import { SUPPORTED_LANGUAGES, type AppLanguage } from "@/constants/languages";
 
 const ChatPage: React.FC = () => {
     const navigate = useNavigate();
     const languageContext = useContext(LanguageContext);
     const [question, setQuestion] = useState("");
     const { createNewChat, sendMessageToChat } = useChatStore();
-    const currentLanguage = (languageContext?.currentLanguage || "en").toLowerCase();
-    const availableLanguages = languageContext?.availableLanguages || ["en", "si", "ta"];
+    const currentLanguage = (languageContext?.currentLanguage || "en").toLowerCase() as AppLanguage;
+    const availableLanguages = languageContext?.availableLanguages || SUPPORTED_LANGUAGES;
     const languageLabelMap: Record<string, string> = {
         en: "English",
         si: "Sinhala",
@@ -18,7 +19,7 @@ const ChatPage: React.FC = () => {
     };
 
     const handleLanguageChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
-        const nextLanguage = event.target.value;
+        const nextLanguage = event.target.value as AppLanguage;
         if (languageContext?.changeLanguage) {
             void languageContext.changeLanguage(nextLanguage);
         }
