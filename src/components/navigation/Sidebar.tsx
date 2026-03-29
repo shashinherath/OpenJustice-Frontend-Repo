@@ -40,12 +40,12 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
         <aside className="w-64 border-r border-slate-200 dark:border-border-dark flex flex-col justify-between bg-white dark:bg-brand-bg relative shrink-0">
             <div className="flex flex-col gap-6 p-4">
                 {showBrand && (
-                    <div className="flex gap-3 items-center">
+                    <Link className="flex gap-3 items-center" to="/" aria-label="Go to home page">
                         <BrandLogo containerClassName="bg-primary dark:bg-slate-200 rounded-lg size-10 flex items-center justify-center overflow-hidden" iconClassName="text-white dark:text-[#191919] scale-125" />
                         <div className="flex flex-col">
                             <h1 className="text-base font-bold leading-none text-slate-900 dark:text-white">OpenJustice</h1>
                         </div>
-                    </div>
+                    </Link>
                 )}
                 
                 <div className="flex flex-col gap-1">

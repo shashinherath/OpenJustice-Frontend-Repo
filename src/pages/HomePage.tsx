@@ -44,8 +44,9 @@ const HomePage: React.FC = () => {
   ];
 
   return (
-    <div className="flex-1 flex flex-col items-center px-4 md:px-10 lg:px-40 py-16 md:py-24">
-      <div className="w-full max-w-5xl flex flex-col items-center text-center gap-16">
+    <>
+      <div className="flex-1 flex flex-col items-center px-4 md:px-10 lg:px-40 py-16 md:py-24">
+        <div className="w-full max-w-5xl flex flex-col items-center text-center gap-16">
         {/* Hero Section */}
         <div className="flex flex-col items-center gap-8 max-w-4xl">
           {/* Badge */}
@@ -161,8 +162,9 @@ const HomePage: React.FC = () => {
             </Link>
           </div>
         </section>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

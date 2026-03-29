@@ -27,6 +27,11 @@ const ContactPage: React.FC = () => {
           <Link className="text-lg font-black tracking-tight text-slate-900 dark:text-white" to="/">
             OpenJustice
           </Link>
+          <div className="flex items-center gap-3">
+            <Link className="rounded-lg px-4 py-2 text-sm font-semibold text-white" style={{ backgroundColor: "var(--oj-accent-color)" }} to="/chat">
+              Try OpenJustice
+            </Link>
+          </div>
         </div>
       </header>
 

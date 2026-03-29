@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import BrandLogo from "@/components/ui/BrandLogo";
 
 const privacyHighlights = [
   "End-to-end encryption for all session data",
@@ -233,7 +232,6 @@ const PrivacyPolicyPage: React.FC = () => {
 
         <footer className="mt-8 flex flex-col items-center justify-center gap-6 border-t border-slate-200 py-8 text-center dark:border-slate-800">
           <div className="flex items-center gap-2 text-center">
-            <BrandLogo containerClassName="flex size-5 items-center justify-center overflow-hidden" iconClassName="text-xl text-slate-500 dark:text-slate-200" />
             <span className="text-sm font-medium text-slate-500">OpenJustice © 2026. All rights reserved.</span>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-center">

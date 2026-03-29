@@ -10,12 +10,19 @@ const ChatPage: React.FC = () => {
     const [question, setQuestion] = useState("");
     const { createNewChat, sendMessageToChat } = useChatStore();
     const currentLanguage = (languageContext?.currentLanguage || "en").toLowerCase();
+    const availableLanguages = languageContext?.availableLanguages || ["en", "si", "ta"];
     const languageLabelMap: Record<string, string> = {
         en: "English",
         si: "Sinhala",
         ta: "Tamil",
     };
-    const selectedLanguageLabel = languageLabelMap[currentLanguage] || "English";
+
+    const handleLanguageChange: React.ChangeEventHandler<HTMLSelectElement> = (event) => {
+        const nextLanguage = event.target.value;
+        if (languageContext?.changeLanguage) {
+            void languageContext.changeLanguage(nextLanguage);
+        }
+    };
 
     const handleSubmitQuestion = () => {
         const text = question.trim();
@@ -47,9 +54,21 @@ const ChatPage: React.FC = () => {
                     </nav>
                 </div>
                 <div className="flex gap-3 h-full items-center">
-                    <div className="flex items-center h-full gap-2 bg-slate-50 dark:bg-surface-dark px-3 py-1.5 rounded-lg border border-slate-200 dark:border-border-dark">
+                    <div className="relative flex items-center h-full gap-2 bg-slate-50 dark:bg-surface-dark px-3 py-1.5 rounded-lg border border-slate-200 dark:border-border-dark">
                         <span className="material-symbols-outlined text-[18px] text-slate-500">language</span>
-                        <span className="text-xs font-bold tracking-tight text-slate-900 dark:text-white">{selectedLanguageLabel}</span>
+                        <select
+                            className="appearance-none bg-transparent pr-5 text-xs font-bold tracking-tight text-slate-900 outline-none dark:text-white"
+                            value={currentLanguage}
+                            onChange={handleLanguageChange}
+                            aria-label="Select language"
+                        >
+                            {availableLanguages.map((language) => (
+                                <option key={language} value={language}>
+                                    {languageLabelMap[language] || language.toUpperCase()}
+                                </option>
+                            ))}
+                        </select>
+                        <span className="material-symbols-outlined pointer-events-none absolute right-2 text-[14px] text-slate-500">expand_more</span>
                     </div>
                 </div>
             </header>
