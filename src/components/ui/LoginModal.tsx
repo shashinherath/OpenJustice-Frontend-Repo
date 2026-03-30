@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import BrandLogo from "@/components/ui/BrandLogo";
+import { useAuthStore } from "@/stores/authStore";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -11,6 +12,8 @@ interface LoginModalProps {
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const login = useAuthStore((state) => state.login);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -29,9 +32,20 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Login attempt:", { email, password });
+
+    const fallbackName = email.split("@")[0] || "User";
+    login(
+      {
+        id: `user-${Date.now()}`,
+        name: fallbackName,
+        email,
+      },
+      `token-${Date.now()}`,
+    );
+
+    const redirectPath = new URLSearchParams(location.search).get("redirect") || "/chat";
     handleClose();
-    navigate("/chat");
+    navigate(redirectPath);
   };
 
   if (!isOpen) return null;

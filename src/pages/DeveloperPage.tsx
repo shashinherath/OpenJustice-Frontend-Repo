@@ -34,7 +34,7 @@ const DeveloperPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-[#191919] dark:to-slate-900">
+    <div className="min-h-screen bg-linear-to-b from-slate-50 to-white dark:from-[#191919] dark:to-slate-900">
       {/* Header */}
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur dark:border-border-dark dark:bg-[#191919]/95">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -126,7 +126,7 @@ const DeveloperPage: React.FC = () => {
                   <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </div>
 
-                <div className="absolute inset-0 pointer-events-none -translate-x-full bg-gradient-to-r from-transparent via-white to-transparent opacity-30 group-hover:translate-x-full transition-transform duration-500 dark:via-slate-700" />
+                <div className="absolute inset-0 pointer-events-none -translate-x-full bg-linear-to-r from-transparent via-white to-transparent opacity-30 group-hover:translate-x-full transition-transform duration-500 dark:via-slate-700" />
               </a>
             ))}
           </div>

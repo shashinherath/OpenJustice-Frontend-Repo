@@ -1,8 +1,21 @@
 import React, { Suspense } from "react";
-import { Route } from "react-router-dom";
+import { Navigate, Route, useLocation } from "react-router-dom";
 import type { RouteConfig } from "@/config/routes.config";
 import MainLayout from "@/layout/MainLayout";
 import ChatLayout from "@/layout/ChatLayout";
+import { useAuthStore } from "@/stores/authStore";
+
+const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const location = useLocation();
+
+  if (!isAuthenticated) {
+    const redirect = `${location.pathname}${location.search}`;
+    return <Navigate to={`/?login=1&redirect=${encodeURIComponent(redirect)}`} replace />;
+  }
+
+  return <>{children}</>;
+};
 
 const withLayout = (path: string, content: React.ReactNode) => {
   if (path === "/") {
@@ -10,7 +23,11 @@ const withLayout = (path: string, content: React.ReactNode) => {
   }
 
   if (path === "/chat" || path.startsWith("/chat/")) {
-    return <ChatLayout>{content}</ChatLayout>;
+    return (
+      <RequireAuth>
+        <ChatLayout>{content}</ChatLayout>
+      </RequireAuth>
+    );
   }
 
   return content;

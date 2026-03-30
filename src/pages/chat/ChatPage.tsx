@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { LanguageContext } from "@/contexts/LanguageContext";
 import { useChatStore } from "@/stores/chatStore";
+import { useVoiceStore } from "@/stores/voiceStore";
+import { useVoiceRecording } from "@/hooks/useVoiceRecording";
+import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
 import { SUPPORTED_LANGUAGES, type AppLanguage } from "@/constants/languages";
 
 const ChatPage: React.FC = () => {
@@ -11,7 +14,19 @@ const ChatPage: React.FC = () => {
     const navigate = useNavigate();
     const languageContext = useContext(LanguageContext);
     const [question, setQuestion] = useState("");
+    const [isVoicePreview, setIsVoicePreview] = useState(false);
     const { createNewChat, sendMessageToChat } = useChatStore();
+    const { recordingState, audioBlob, reset } = useVoiceStore();
+    const {
+        startRecording,
+        pauseRecording,
+        resumeRecording,
+        stopRecording,
+        cancelRecording,
+        formatDuration,
+        voiceLevel,
+        isPaused,
+    } = useVoiceRecording();
     const currentLanguage = (languageContext?.currentLanguage || "en").toLowerCase() as AppLanguage;
     const availableLanguages = languageContext?.availableLanguages || SUPPORTED_LANGUAGES;
     const languageLabelMap: Record<string, string> = {
@@ -44,6 +59,53 @@ const ChatPage: React.FC = () => {
             event.preventDefault();
             handleSubmitQuestion();
         }
+    };
+
+    const handleMicClick = async () => {
+        setIsVoicePreview(false);
+        await startRecording();
+    };
+
+    const handlePauseResumeVoice = () => {
+        if (isPaused) {
+            resumeRecording();
+            return;
+        }
+        pauseRecording();
+    };
+
+    const handleStopVoice = async () => {
+        await stopRecording();
+        setIsVoicePreview(true);
+    };
+
+    const handleCancelVoice = () => {
+        cancelRecording();
+        setIsVoicePreview(false);
+    };
+
+    const handlePlayVoice = () => {
+        if (!audioBlob) {
+            return;
+        }
+
+        const url = URL.createObjectURL(audioBlob);
+        const audio = new Audio(url);
+        void audio.play();
+        audio.onended = () => URL.revokeObjectURL(url);
+    };
+
+    const handleSendVoice = () => {
+        if (!audioBlob) {
+            return;
+        }
+
+        const voiceMessage = `[Voice message ${(audioBlob.size / 1024).toFixed(1)}KB]`;
+        const chatId = createNewChat();
+        sendMessageToChat(chatId, voiceMessage);
+        reset();
+        setIsVoicePreview(false);
+        navigate(`/chat/${chatId}`);
     };
     
     return (
@@ -104,31 +166,52 @@ const ChatPage: React.FC = () => {
                     </div>
                     
                     <div className="flex flex-col md:flex-row items-center gap-3 w-full">
-                        <div className="relative flex-1 flex items-center bg-white dark:bg-surface-dark rounded-full border border-slate-200 dark:border-border-dark shadow-xl px-4 py-1.5 focus-within:ring-2 focus-within:ring-slate-200 dark:focus-within:ring-slate-700 transition-all w-full">
-                            <button className="flex items-center justify-center size-10 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0" title={t("attachDocument")}>
-                                <span className="material-symbols-outlined">attach_file</span>
-                            </button>
-                            <input 
-                                className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-slate-900 dark:text-white text-base px-2 placeholder:text-slate-400 dark:placeholder:text-slate-600 min-w-0" 
-                                placeholder={t("queryPlaceholder")} 
-                                type="text"
-                                value={question}
-                                onChange={(event) => setQuestion(event.target.value)}
-                                onKeyDown={handleInputKeyDown}
+                        {(recordingState.isRecording || isVoicePreview) ? (
+                            <VoiceRecordingUI
+                                durationLabel={formatDuration(recordingState.duration)}
+                                voiceLevel={voiceLevel}
+                                isPaused={isPaused}
+                                isPreview={isVoicePreview}
+                                onPauseResume={handlePauseResumeVoice}
+                                onStop={handleStopVoice}
+                                onPlay={handlePlayVoice}
+                                onSend={handleSendVoice}
+                                onCancel={handleCancelVoice}
                             />
-                            <button className="flex items-center justify-center size-10 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0" title={t("voiceInput")}>
-                                <span className="material-symbols-outlined">mic</span>
+                        ) : (
+                            <div className="relative flex-1 flex items-center bg-white dark:bg-surface-dark rounded-full border border-slate-200 dark:border-border-dark shadow-xl px-4 py-1.5 focus-within:ring-2 focus-within:ring-slate-200 dark:focus-within:ring-slate-700 transition-all w-full">
+                                <button className="flex items-center justify-center size-10 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0" title={t("attachDocument")}>
+                                    <span className="material-symbols-outlined">attach_file</span>
+                                </button>
+                                <input 
+                                    className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-slate-900 dark:text-white text-base px-2 placeholder:text-slate-400 dark:placeholder:text-slate-600 min-w-0" 
+                                    placeholder={t("queryPlaceholder")} 
+                                    type="text"
+                                    value={question}
+                                    onChange={(event) => setQuestion(event.target.value)}
+                                    onKeyDown={handleInputKeyDown}
+                                />
+                                <button 
+                                    className="flex items-center justify-center size-10 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0 rounded-lg"
+                                    title={t("voiceInput")}
+                                    onClick={handleMicClick}
+                                    type="button"
+                                >
+                                    <span className="material-symbols-outlined">mic</span>
+                                </button>
+                            </div>
+                        )}
+                        {!recordingState.isRecording && !isVoicePreview && (
+                            <button
+                                className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full font-bold text-white transition-all shadow-lg shrink-0 mt-3 md:mt-0 disabled:cursor-not-allowed"
+                                style={{ backgroundColor: "var(--oj-accent-color)" }}
+                                type="button"
+                                onClick={handleSubmitQuestion}
+                                disabled={!question.trim()}
+                            >
+                                <span className="material-symbols-outlined text-[28px]">arrow_forward</span>
                             </button>
-                        </div>
-                        <button
-                            className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full font-bold text-white transition-all shadow-lg shrink-0 mt-3 md:mt-0 disabled:cursor-not-allowed"
-                            style={{ backgroundColor: "var(--oj-accent-color)" }}
-                            type="button"
-                            onClick={handleSubmitQuestion}
-                            disabled={!question.trim()}
-                        >
-                            <span className="material-symbols-outlined text-[28px]">arrow_forward</span>
-                        </button>
+                        )}
                     </div>
                     
                     <div className="mt-8 text-center">
@@ -143,6 +226,8 @@ const ChatPage: React.FC = () => {
             <footer className="p-6 text-center text-slate-500 dark:text-slate-600 text-[11px] uppercase tracking-widest font-bold shrink-0">
                 {t("copyright")}
             </footer>
+
+
         </>
     );
 };

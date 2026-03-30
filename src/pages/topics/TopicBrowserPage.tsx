@@ -99,8 +99,22 @@ const TopicBrowserPage: React.FC = () => {
             >
               Privacy Policy
             </a>
-            <a className="text-xs font-bold uppercase tracking-widest text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" href="/about-us">About Us</a>
-            <a className="text-xs font-bold uppercase tracking-widest text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" href="/Contact">Contact</a>
+            <a
+              className="text-xs font-bold uppercase tracking-widest text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white"
+              href="/about-us"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              About Us
+            </a>
+            <a
+              className="text-xs font-bold uppercase tracking-widest text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white"
+              href="/contact"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Contact
+            </a>
           </div>
         </div>
       </div>

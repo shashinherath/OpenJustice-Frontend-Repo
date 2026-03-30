@@ -1,32 +1,45 @@
 import { create } from "zustand";
 
-interface VoiceStore {
+interface RecordingState {
   isRecording: boolean;
-  isPlaying: boolean;
+  isPaused: boolean;
+  duration: number;
+}
+
+interface VoiceStore {
+  recordingState: RecordingState;
   audioBlob: Blob | null;
   transcript: string;
   
-  startRecording: () => void;
-  stopRecording: () => void;
-  setAudioBlob: (blob: Blob) => void;
+  setRecordingState: (state: Partial<RecordingState>) => void;
+  setAudioBlob: (blob: Blob | null) => void;
   setTranscript: (text: string) => void;
   reset: () => void;
 }
 
 export const useVoiceStore = create<VoiceStore>((set) => ({
-  isRecording: false,
-  isPlaying: false,
+  recordingState: {
+    isRecording: false,
+    isPaused: false,
+    duration: 0,
+  },
   audioBlob: null,
   transcript: "",
   
-  startRecording: () => set({ isRecording: true }),
-  stopRecording: () => set({ isRecording: false }),
+  setRecordingState: (state) =>
+    set((prevState) => ({
+      recordingState: { ...prevState.recordingState, ...state },
+    })),
   setAudioBlob: (blob) => set({ audioBlob: blob }),
   setTranscript: (text) => set({ transcript: text }),
-  reset: () => set({ 
-    isRecording: false, 
-    isPlaying: false, 
-    audioBlob: null, 
-    transcript: "" 
-  })
+  reset: () =>
+    set({
+      recordingState: {
+        isRecording: false,
+        isPaused: false,
+        duration: 0,
+      },
+      audioBlob: null,
+      transcript: "",
+    }),
 }));

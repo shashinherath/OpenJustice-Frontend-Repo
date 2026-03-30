@@ -1,10 +1,29 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import FeatureCard from "@/components/ui/FeatureCard";
+import LoginModal from "@/components/ui/LoginModal";
 
 const HomePage: React.FC = () => {
   const { t } = useTranslation();
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("login") === "1") {
+      setIsLoginOpen(true);
+    }
+  }, [searchParams]);
+
+  const handleCloseLogin = () => {
+    setIsLoginOpen(false);
+    if (searchParams.has("login") || searchParams.has("redirect")) {
+      const next = new URLSearchParams(searchParams);
+      next.delete("login");
+      next.delete("redirect");
+      setSearchParams(next, { replace: true });
+    }
+  };
 
   // Feature card data built with translations
   const features = [
@@ -88,10 +107,14 @@ const HomePage: React.FC = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center gap-4 mt-4 w-full sm:w-auto">
-            <Link to="/chat" className="flex w-full sm:w-auto min-w-50 h-14 items-center justify-center gap-2 rounded-xl bg-primary dark:bg-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.98] text-white text-lg font-bold shadow-xl transition-all">
+            <button
+              type="button"
+              onClick={() => setIsLoginOpen(true)}
+              className="flex w-full sm:w-auto min-w-50 h-14 items-center justify-center gap-2 rounded-xl bg-primary dark:bg-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.98] text-white text-lg font-bold shadow-xl transition-all"
+            >
               <span className="material-symbols-outlined">chat_bubble</span>
               <span>{t("askQuestion")}</span>
-            </Link>
+            </button>
             <Link to="/topics" className="flex w-full sm:w-auto min-w-50 h-14 items-center justify-center gap-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-lg font-bold transition-all shadow-sm">
               <span className="material-symbols-outlined">grid_view</span>
               <span>{t("browseTopics")}</span>
@@ -188,6 +211,8 @@ const HomePage: React.FC = () => {
         </section>
         </div>
       </div>
+
+      <LoginModal isOpen={isLoginOpen} onClose={handleCloseLogin} />
     </>
   );
 };
