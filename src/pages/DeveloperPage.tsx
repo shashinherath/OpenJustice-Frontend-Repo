@@ -9,26 +9,26 @@ const DeveloperPage: React.FC = () => {
   const resources = [
     {
       icon: "code",
-      title: "GitHub Repository",
-      description: "View the OpenJustice source code and contribute to the project.",
+      title: t("developerResourceGithubTitle"),
+      description: t("developerResourceGithubDescription"),
       link: "https://github.com/shashinherath/OpenJustice",
     },
     {
       icon: "description",
-      title: "Documentation",
-      description: "Explore our comprehensive technical documentation and API guides.",
+      title: t("developerResourceDocsTitle"),
+      description: t("developerResourceDocsDescription"),
       link: "#documentation",
     },
     {
       icon: "bug_report",
-      title: "Report Issues",
-      description: "Found a bug? Help us improve by reporting issues.",
+      title: t("developerResourceIssuesTitle"),
+      description: t("developerResourceIssuesDescription"),
       link: "https://github.com/shashinherath/OpenJustice/issues",
     },
     {
       icon: "feedback",
-      title: "Contribute",
-      description: "Join our community and contribute to legal access for all.",
+      title: t("developerResourceContributeTitle"),
+      description: t("developerResourceContributeDescription"),
       link: "#contribute",
     },
   ];
@@ -61,11 +61,11 @@ const DeveloperPage: React.FC = () => {
         <section className="mb-16 flex flex-col items-center text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-purple-200 bg-purple-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-purple-700 dark:border-purple-900 dark:bg-purple-900/20 dark:text-purple-400">
             <span className="material-symbols-outlined text-sm">code</span>
-            For Developers
+            {t("developerHeroBadge")}
           </div>
 
           <h1 className="mb-6 text-5xl font-black text-slate-900 dark:text-white md:text-6xl">
-            Build with OpenJustice
+            {t("developerHeroTitle")}
           </h1>
 
           <p className="mb-8 max-w-2xl text-xl leading-relaxed text-slate-600 dark:text-slate-400">
@@ -80,7 +80,7 @@ const DeveloperPage: React.FC = () => {
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-white px-6 py-3 font-bold hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors"
             >
               <span className="material-symbols-outlined">code</span>
-              View on GitHub
+              {t("developerViewGithub")}
             </a>
             <Link
               to="/contact"
@@ -95,7 +95,7 @@ const DeveloperPage: React.FC = () => {
         {/* Developer Resources */}
         <section className="mb-16">
           <h2 className="mb-12 text-3xl font-bold text-slate-900 dark:text-white text-center">
-            Developer Resources
+            {t("developerResourcesHeading")}
           </h2>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -122,7 +122,7 @@ const DeveloperPage: React.FC = () => {
                 </p>
 
                 <div className="inline-flex items-center gap-2 text-sm font-semibold text-purple-600 dark:text-purple-400 group-hover:gap-3 transition-all">
-                  Learn More
+                  {t("developerLearnMore")}
                   <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </div>
 
@@ -135,46 +135,46 @@ const DeveloperPage: React.FC = () => {
         {/* Tech Stack */}
         <section className="mb-16 rounded-2xl border border-slate-200 bg-white p-8 dark:border-slate-700 dark:bg-slate-800/50 md:p-12">
           <h2 className="mb-8 text-3xl font-bold text-slate-900 dark:text-white">
-            Technology Stack
+            {t("developerTechStackHeading")}
           </h2>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             <div>
               <h3 className="mb-4 font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <span className="material-symbols-outlined text-blue-600">cloud</span>
-                Backend
+                {t("developerBackend")}
               </h3>
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-                <li>• Python & FastAPI</li>
-                <li>• PostgreSQL Database</li>
-                <li>• Vector Embeddings</li>
-                <li>• LLM Integration</li>
+                <li>{t("developerBackendItem1")}</li>
+                <li>{t("developerBackendItem2")}</li>
+                <li>{t("developerBackendItem3")}</li>
+                <li>{t("developerBackendItem4")}</li>
               </ul>
             </div>
 
             <div>
               <h3 className="mb-4 font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <span className="material-symbols-outlined text-purple-600">window</span>
-                Frontend
+                {t("developerFrontend")}
               </h3>
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-                <li>• React 18+</li>
-                <li>• TypeScript</li>
-                <li>• Tailwind CSS</li>
-                <li>• i18n Support</li>
+                <li>{t("developerFrontendItem1")}</li>
+                <li>{t("developerFrontendItem2")}</li>
+                <li>{t("developerFrontendItem3")}</li>
+                <li>{t("developerFrontendItem4")}</li>
               </ul>
             </div>
 
             <div>
               <h3 className="mb-4 font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <span className="material-symbols-outlined text-green-600">security</span>
-                Security
+                {t("developerSecurity")}
               </h3>
               <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
-                <li>• End-to-End Encryption</li>
-                <li>• SOC 2 Compliance</li>
-                <li>• Data Privacy</li>
-                <li>• Secure APIs</li>
+                <li>{t("developerSecurityItem1")}</li>
+                <li>{t("developerSecurityItem2")}</li>
+                <li>{t("developerSecurityItem3")}</li>
+                <li>{t("developerSecurityItem4")}</li>
               </ul>
             </div>
           </div>
@@ -183,10 +183,10 @@ const DeveloperPage: React.FC = () => {
         {/* Call to Action */}
         <section className="text-center">
           <h2 className="mb-4 text-3xl font-bold text-slate-900 dark:text-white">
-            Ready to Contribute?
+            {t("developerReadyTitle")}
           </h2>
           <p className="mb-8 text-lg text-slate-600 dark:text-slate-400">
-            Join us in making legal information accessible to everyone.
+            {t("developerReadyDescription")}
           </p>
           <a
             href="https://github.com/shashinherath/OpenJustice"
@@ -195,7 +195,7 @@ const DeveloperPage: React.FC = () => {
             className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-white px-8 py-4 text-lg font-bold hover:bg-slate-800 dark:hover:bg-slate-700 transition-colors shadow-lg"
           >
             <span className="material-symbols-outlined">fork_right</span>
-            Fork on GitHub
+            {t("developerForkGithub")}
           </a>
         </section>
       </main>

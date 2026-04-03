@@ -38,13 +38,13 @@ const Navbar: React.FC = () => {
             <div className="relative flex items-center rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 dark:border-border-dark dark:bg-surface-dark">
               <span className="material-symbols-outlined text-[16px] text-slate-500">language</span>
               <select
-                className="appearance-none bg-transparent px-2 pr-5 text-xs font-bold text-slate-800 outline-none dark:text-white"
+                className="appearance-none bg-transparent px-2 pr-5 text-sm font-semibold text-slate-900 outline-none dark:text-slate-100"
                 value={currentLanguage}
                 onChange={handleLanguageChange}
                 aria-label={t("selectLanguage")}
               >
                 {availableLanguages.map((language) => (
-                  <option key={language} value={language}>
+                  <option key={language} value={language} className="bg-white text-slate-900">
                     {language === "en" ? t("langEnglish") : language === "si" ? t("langSinhala") : t("langTamil")}
                   </option>
                 ))}

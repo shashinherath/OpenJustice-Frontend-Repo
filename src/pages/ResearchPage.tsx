@@ -10,25 +10,25 @@ const ResearchPage: React.FC = () => {
     {
       icon: "library_books",
       title: t("researchLibrary"),
-      description: "Browse our comprehensive legal research library and discover solutions to common legal questions.",
+      description: t("researchTopicLibraryDescription"),
       link: "/topics",
     },
     {
       icon: "search",
       title: t("legalResearch"),
-      description: "Search through our database of legal information, case studies, and procedural guides.",
+      description: t("researchTopicLegalResearchDescription"),
       link: "/chat",
     },
     {
       icon: "gavel",
       title: t("caseLaw"),
-      description: "Explore relevant case law and legal precedents that apply to your situation.",
+      description: t("researchTopicCaseLawDescription"),
       link: "/topics",
     },
     {
       icon: "description",
       title: t("statutes"),
-      description: "Access up-to-date statutes, regulations, and legal frameworks.",
+      description: t("researchTopicStatutesDescription"),
       link: "/topics",
     },
   ];
@@ -61,11 +61,11 @@ const ResearchPage: React.FC = () => {
         <section className="mb-16 flex flex-col items-center text-center">
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-blue-700 dark:border-blue-900 dark:bg-blue-900/20 dark:text-blue-400">
             <span className="material-symbols-outlined text-sm">search</span>
-            Legal Research
+            {t("legalResearch")}
           </div>
 
           <h1 className="mb-6 text-5xl font-black text-slate-900 dark:text-white md:text-6xl">
-            Explore Legal Solutions
+            {t("researchHeroTitle")}
           </h1>
 
           <p className="mb-8 max-w-2xl text-xl leading-relaxed text-slate-600 dark:text-slate-400">
@@ -118,7 +118,7 @@ const ResearchPage: React.FC = () => {
                 </p>
 
                 <div className="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 dark:text-blue-400 group-hover:gap-3 transition-all">
-                  Explore
+                  {t("researchExplore")}
                   <span className="material-symbols-outlined text-sm">arrow_forward</span>
                 </div>
 
@@ -141,9 +141,9 @@ const ResearchPage: React.FC = () => {
                   verified_user
                 </span>
               </div>
-              <h3 className="mb-2 font-bold text-slate-900 dark:text-white">Secure Research</h3>
+              <h3 className="mb-2 font-bold text-slate-900 dark:text-white">{t("researchFeatureSecureTitle")}</h3>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                Your research queries are protected with enterprise-grade encryption.
+                {t("researchFeatureSecureBody")}
               </p>
             </div>
 
@@ -153,9 +153,9 @@ const ResearchPage: React.FC = () => {
                   languages
                 </span>
               </div>
-              <h3 className="mb-2 font-bold text-slate-900 dark:text-white">Multilingual</h3>
+              <h3 className="mb-2 font-bold text-slate-900 dark:text-white">{t("researchFeatureMultilingualTitle")}</h3>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                Access legal information in your preferred language.
+                {t("researchFeatureMultilingualBody")}
               </p>
             </div>
 
@@ -165,9 +165,9 @@ const ResearchPage: React.FC = () => {
                   lightbulb
                 </span>
               </div>
-              <h3 className="mb-2 font-bold text-slate-900 dark:text-white">AI-Powered</h3>
+              <h3 className="mb-2 font-bold text-slate-900 dark:text-white">{t("researchFeatureAiTitle")}</h3>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                Get instant insights from our AI-powered legal research tool.
+                {t("researchFeatureAiBody")}
               </p>
             </div>
           </div>

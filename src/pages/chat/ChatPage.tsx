@@ -122,13 +122,13 @@ const ChatPage: React.FC = () => {
                     <div className="relative flex items-center h-full gap-2 bg-slate-50 dark:bg-surface-dark px-3 py-1.5 rounded-lg border border-slate-200 dark:border-border-dark">
                         <span className="material-symbols-outlined text-[18px] text-slate-500">language</span>
                         <select
-                            className="appearance-none bg-transparent pr-5 text-xs font-bold tracking-tight text-slate-900 outline-none dark:text-white"
+                            className="appearance-none bg-transparent pr-5 text-sm font-semibold tracking-tight text-slate-900 outline-none dark:text-slate-100"
                             value={currentLanguage}
                             onChange={handleLanguageChange}
                             aria-label={t("selectLanguage")}
                         >
                             {availableLanguages.map((language) => (
-                                <option key={language} value={language}>
+                                <option key={language} value={language} className="bg-white text-slate-900">
                                     {languageLabelMap[language] || language.toUpperCase()}
                                 </option>
                             ))}
