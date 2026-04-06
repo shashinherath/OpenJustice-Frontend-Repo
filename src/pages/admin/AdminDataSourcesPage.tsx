@@ -103,35 +103,35 @@ const AdminDataSourcesPage: React.FC = () => {
 
         <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Total Documents</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">Total Documents</p>
             <p className="mt-3 text-2xl font-black text-white">{documents.length}</p>
             <p className="mt-2 text-xs text-slate-400">All uploaded legal PDFs in this source.</p>
           </article>
           <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Processed</p>
-            <p className="mt-3 text-2xl font-black text-white">{processedCount}</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">Processed</p>
+            <p className="mt-3 text-2xl font-black text-emerald-300">{processedCount}</p>
             <p className="mt-2 text-xs text-slate-400">Documents with generated chunks and embeddings.</p>
           </article>
           <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Pending</p>
-            <p className="mt-3 text-2xl font-black text-white">{pendingCount}</p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">Pending</p>
+            <p className="mt-3 text-2xl font-black text-amber-300">{pendingCount}</p>
             <p className="mt-2 text-xs text-slate-400">Documents waiting for processing.</p>
           </article>
         </section>
 
-        <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
+        <section className="rounded border border-cyan-400/15 bg-[#191919] p-6">
           <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">Upload Legal Document (PDF)</h3>
           <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_180px_auto_auto]">
             <input
               type="file"
               accept="application/pdf,.pdf"
               onChange={handleFileChange}
-              className="w-full rounded border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-300 file:mr-4 file:rounded file:border-0 file:bg-white/10 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-white hover:file:bg-white/20"
+              className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 file:mr-4 file:rounded file:border-0 file:bg-cyan-500/15 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-cyan-100 hover:file:bg-cyan-500/25"
             />
             <select
               value={selectedLanguage}
               onChange={event => setSelectedLanguage(event.target.value)}
-              className="rounded border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-300"
+              className="rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300"
             >
               <option>English</option>
               <option>Sinhala</option>
@@ -140,14 +140,14 @@ const AdminDataSourcesPage: React.FC = () => {
             <button
               type="button"
               onClick={handleUploadDocument}
-              className="rounded border border-white/10 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-white/20"
+              className="rounded border border-cyan-400/30 bg-cyan-500/15 px-4 py-2 text-xs font-bold uppercase tracking-widest text-cyan-100 transition-colors hover:bg-cyan-500/25"
             >
               Upload
             </button>
             <button
               type="button"
               onClick={handleProcessAll}
-              className="rounded border border-white/10 bg-black/30 px-4 py-2 text-xs font-bold uppercase tracking-widest text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+              className="rounded border border-slate-700 bg-black/30 px-4 py-2 text-xs font-bold uppercase tracking-widest text-slate-300 transition-colors hover:border-cyan-400/30 hover:bg-cyan-500/10 hover:text-cyan-100"
             >
               Trigger Processing
             </button>
@@ -158,16 +158,16 @@ const AdminDataSourcesPage: React.FC = () => {
           {errorMessage && <p className="mt-3 text-xs font-semibold text-red-400">{errorMessage}</p>}
         </section>
 
-        <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
+        <section className="rounded border border-cyan-400/15 bg-[#191919] p-6">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">All Documents</h3>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{documents.length} entries</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-200/70">{documents.length} entries</span>
           </div>
 
           <div className="overflow-x-auto">
             <table className="min-w-full border-collapse text-sm">
               <thead>
-                <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-widest text-slate-500">
+                <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-widest text-cyan-200/70">
                   <th className="px-3 py-3 font-semibold">Document Name</th>
                   <th className="px-3 py-3 font-semibold">Language</th>
                   <th className="px-3 py-3 font-semibold">Status</th>
@@ -198,7 +198,7 @@ const AdminDataSourcesPage: React.FC = () => {
                           type="button"
                           onClick={() => handleProcessDocument(document.id)}
                           disabled={document.status === "Processed"}
-                          className="rounded border border-white/10 bg-white/5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-300 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                          className="rounded border border-cyan-400/25 bg-cyan-500/10 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-cyan-100 transition-colors hover:bg-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           Process
                         </button>

@@ -1,5 +1,5 @@
 export interface AdminModule {
-  key: "overview" | "users" | "knowledge-monitoring" | "query-monitoring" | "logs" | "error-monitoring" | "analytics" | "settings";
+  key: "overview" | "users" | "data-sources" | "knowledge-monitoring" | "query-monitoring" | "logs" | "error-monitoring" | "analytics" | "settings";
   label: string;
   navLabel: string;
   path: string;
@@ -26,6 +26,15 @@ export const ADMIN_MODULES: AdminModule[] = [
     icon: "group",
     subtitle: "Roles, permissions, and account governance",
     description: "Review user activity, approval queues, and privileged role assignments.",
+  },
+  {
+    key: "data-sources",
+    label: "Data Sources",
+    navLabel: "Data Sources",
+    path: "/admin/data-sources",
+    icon: "dataset",
+    subtitle: "Document ingestion and source-level processing controls",
+    description: "Upload legal documents, process sources, and manage source records.",
   },
   {
     key: "knowledge-monitoring",
