@@ -1,45 +1,23 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import MainLayout from "@/layout/MainLayout";
-import HomePage from "@/pages/HomePage";
-import ChatLayout from "@/layout/ChatLayout";
-import ChatPage from "@/pages/chat/ChatPage";
-import TrustPage from "@/pages/legal/TrustPage";
-import AdminDashboard from "@/pages/admin/AdminDashboard";
-import TopicBrowserPage from "@/pages/topics/TopicBrowserPage";
+import { useEffect } from "react";
+import { BrowserRouter as Router, Routes, useLocation } from "react-router-dom";
+import { APP_ROUTES } from "@/config/routes.config";
+import { renderRoutes } from "@/utils/routeRenderer";
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [pathname]);
+
+  return null;
+}
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <MainLayout>
-              <HomePage />
-            </MainLayout>
-          }
-        />
-        <Route
-          path="/chat"
-          element={
-            <ChatLayout>
-              <ChatPage />
-            </ChatLayout>
-          }
-        />
-        <Route
-          path="/trust"
-          element={<TrustPage />}
-        />
-        <Route
-          path="/admin"
-          element={<AdminDashboard />}
-        />
-        <Route
-          path="/topics"
-          element={<TopicBrowserPage />}
-        />
-      </Routes>
+      <ScrollToTop />
+      <Routes>{renderRoutes(APP_ROUTES)}</Routes>
     </Router>
   );
 }

@@ -2,6 +2,15 @@ import React, { createContext, useState, useEffect, useCallback } from "react";
 
 type Theme = "light" | "dark";
 const STORAGE_KEY = "oj-theme";
+const ACCENT_STORAGE_KEY = "oj-accent-color";
+
+const accentColorHexMap: Record<string, string> = {
+  default: "#64748b",
+  blue: "#3b82f6",
+  emerald: "#10b981",
+  amber: "#f59e0b",
+  rose: "#f43f5e",
+};
 
 interface ThemeContextType {
   theme: Theme;
@@ -31,6 +40,12 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       root.classList.add("light");
     }
   };
+
+  useEffect(() => {
+    const storedAccent = localStorage.getItem(ACCENT_STORAGE_KEY);
+    const accentHex = storedAccent ? accentColorHexMap[storedAccent] : undefined;
+    document.documentElement.style.setProperty("--oj-accent-color", accentHex || accentColorHexMap.blue);
+  }, []);
 
   useEffect(() => {
     applyTheme(theme);
