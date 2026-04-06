@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+﻿import React, { useState } from "react";
 import AdminLayout from "@/layout/AdminLayout";
 
 type ErrorType = "LLM" | "DB" | "API";
@@ -45,25 +44,16 @@ const ErrorMonitoringPage: React.FC = () => {
   return (
     <AdminLayout>
       <div className="space-y-8 p-8">
-        <section className="rounded border border-white/10 bg-white/3 p-6">
-          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">Error Monitoring</h2>
-              <p className="mt-3 max-w-3xl text-sm text-slate-400">
-                Monitor system failures across LLM, database, and API layers and inspect detailed diagnostics for each error.
-              </p>
-            </div>
-            <Link
-              to="/admin"
-              className="inline-flex items-center gap-2 rounded border border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-300 transition-colors hover:bg-white/5 hover:text-white"
-            >
-              <span className="material-symbols-outlined text-sm">arrow_back</span>
-              Back to Overview
-            </Link>
+        <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
+          <div>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">Error Monitoring</h2>
+            <p className="mt-3 max-w-3xl text-sm text-slate-300">
+              Monitor system failures across LLM, database, and API layers and inspect detailed diagnostics for each error.
+            </p>
           </div>
         </section>
 
-        <section className="rounded border border-white/10 bg-white/2 p-6">
+        <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">System Failures</h3>
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{errors.length} entries</span>
@@ -114,7 +104,7 @@ const ErrorMonitoringPage: React.FC = () => {
         </section>
 
         {selectedError && (
-          <section className="rounded border border-white/10 bg-black/30 p-6">
+          <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Error Detail</p>
@@ -130,21 +120,21 @@ const ErrorMonitoringPage: React.FC = () => {
             </div>
 
             <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-              <article className="rounded border border-white/10 bg-black/20 p-4 text-xs text-slate-400">
+              <article className="rounded border border-white/10 bg-[#191919] p-4 text-xs text-slate-400">
                 <p className="uppercase tracking-wider text-slate-500">Type</p>
                 <p className="mt-2 text-sm font-semibold text-slate-200">{selectedError.type}</p>
               </article>
-              <article className="rounded border border-white/10 bg-black/20 p-4 text-xs text-slate-400">
+              <article className="rounded border border-white/10 bg-[#191919] p-4 text-xs text-slate-400">
                 <p className="uppercase tracking-wider text-slate-500">Timestamp</p>
                 <p className="mt-2 text-sm font-semibold text-slate-200">{selectedError.timestamp}</p>
               </article>
-              <article className="rounded border border-white/10 bg-black/20 p-4 text-xs text-slate-400">
+              <article className="rounded border border-white/10 bg-[#191919] p-4 text-xs text-slate-400">
                 <p className="uppercase tracking-wider text-slate-500">Message</p>
                 <p className="mt-2 text-sm text-slate-200">{selectedError.message}</p>
               </article>
             </div>
 
-            <div className="mt-4 rounded border border-white/10 bg-black/20 p-4">
+            <div className="mt-4 rounded border border-white/10 bg-[#191919] p-4">
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Diagnostic Details</p>
               <p className="mt-2 text-sm text-slate-300">{selectedError.details}</p>
             </div>
@@ -156,3 +146,4 @@ const ErrorMonitoringPage: React.FC = () => {
 };
 
 export default ErrorMonitoringPage;
+

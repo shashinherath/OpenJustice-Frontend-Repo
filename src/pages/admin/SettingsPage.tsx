@@ -1,5 +1,4 @@
-import React, { useContext, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+﻿import React, { useContext, useMemo, useState } from "react";
 import AdminLayout from "@/layout/AdminLayout";
 import { LanguageContext } from "@/contexts/LanguageContext";
 import { LANGUAGE_OPTIONS, type AppLanguage } from "@/constants/languages";
@@ -85,26 +84,17 @@ const SettingsPage: React.FC = () => {
   return (
     <AdminLayout>
       <div className="space-y-8 p-8">
-        <section className="rounded border border-white/10 bg-white/3 p-6">
-          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">System Settings</h2>
-              <p className="mt-3 max-w-3xl text-sm text-slate-400">
-                Configure language availability, default language, and translation pipeline behavior.
-              </p>
-            </div>
-            <Link
-              to="/admin"
-              className="inline-flex items-center gap-2 rounded border border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-300 transition-colors hover:bg-white/5 hover:text-white"
-            >
-              <span className="material-symbols-outlined text-sm">arrow_back</span>
-              Back to Overview
-            </Link>
+        <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
+          <div>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">System Settings</h2>
+            <p className="mt-3 max-w-3xl text-sm text-slate-300">
+              Configure language availability, default language, and translation pipeline behavior.
+            </p>
           </div>
         </section>
 
-        <section className="rounded border border-white/10 bg-white/2 p-6 space-y-6">
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+        <section className="space-y-6 rounded border border-slate-700/70 bg-[#191919] p-6">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">Enable or Disable Languages</h3>
             <div className="mt-4 space-y-3">
               {languages.map(language => (
@@ -121,7 +111,7 @@ const SettingsPage: React.FC = () => {
             </div>
           </article>
 
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">Set Default Language</h3>
             <select
               value={defaultLanguage}
@@ -139,7 +129,7 @@ const SettingsPage: React.FC = () => {
             </select>
           </article>
 
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">Toggle Translation Pipeline</h3>
             <label className="mt-4 flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-3 md:w-80">
               <span className="text-sm text-slate-200">Translation Pipeline</span>
@@ -172,3 +162,4 @@ const SettingsPage: React.FC = () => {
 };
 
 export default SettingsPage;
+

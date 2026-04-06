@@ -1,5 +1,4 @@
-import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+﻿import React, { useMemo, useState } from "react";
 import AdminLayout from "@/layout/AdminLayout";
 
 interface DailyQuery {
@@ -49,40 +48,31 @@ const AnalyticsPage: React.FC = () => {
   return (
     <AdminLayout>
       <div className="space-y-8 p-8">
-        <section className="rounded border border-white/10 bg-white/3 p-6">
-          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">Simple Analytics</h2>
-              <p className="mt-3 max-w-3xl text-sm text-slate-400">
-                View basic usage insights including daily query volume and language distribution.
-              </p>
-            </div>
-            <Link
-              to="/admin"
-              className="inline-flex items-center gap-2 rounded border border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-300 transition-colors hover:bg-white/5 hover:text-white"
-            >
-              <span className="material-symbols-outlined text-sm">arrow_back</span>
-              Back to Overview
-            </Link>
+        <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
+          <div>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">Simple Analytics</h2>
+            <p className="mt-3 max-w-3xl text-sm text-slate-300">
+              View basic usage insights including daily query volume and language distribution.
+            </p>
           </div>
         </section>
 
         <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Queries This Week</p>
             <p className="mt-3 text-2xl font-black text-white">{totalQueries}</p>
           </article>
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Peak Day</p>
             <p className="mt-3 text-2xl font-black text-white">{maxDailyCount}</p>
           </article>
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Tracked Languages</p>
             <p className="mt-3 text-2xl font-black text-white">3</p>
           </article>
         </section>
 
-        <section className="rounded border border-white/10 bg-white/2 p-6">
+        <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">Queries Per Day</h3>
             <button
@@ -99,7 +89,7 @@ const AnalyticsPage: React.FC = () => {
               const heightPercentage = Math.max(18, Math.round((item.count / maxDailyCount) * 100));
               return (
                 <div key={item.day} className="space-y-2 text-center">
-                  <div className="flex h-40 items-end rounded border border-white/10 bg-black/20 p-2">
+                  <div className="flex h-40 items-end rounded border border-white/10 bg-[#191919] p-2">
                     <div
                       className={`w-full rounded-sm ${showTrendView ? "bg-cyan-400/80" : "bg-white/60"}`}
                       style={{ height: `${heightPercentage}%` }}
@@ -114,13 +104,13 @@ const AnalyticsPage: React.FC = () => {
           </div>
         </section>
 
-        <section className="rounded border border-white/10 bg-white/2 p-6">
+        <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
           <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">Language Distribution (EN / SI / TA)</h3>
           <div className="mt-4 space-y-4">
             {LANGUAGE_DATA.map(item => {
               const percentage = Math.round((item.count / totalLanguageCount) * 100);
               return (
-                <article key={item.code} className="rounded border border-white/10 bg-black/20 p-4">
+                <article key={item.code} className="rounded border border-white/10 bg-[#191919] p-4">
                   <div className="mb-2 flex items-center justify-between">
                     <p className="text-sm font-semibold text-slate-200">{item.code} - {item.label}</p>
                     <p className="text-xs text-slate-400">{item.count} queries ({percentage}%)</p>
@@ -139,3 +129,4 @@ const AnalyticsPage: React.FC = () => {
 };
 
 export default AnalyticsPage;
+

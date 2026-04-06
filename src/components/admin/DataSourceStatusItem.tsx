@@ -25,13 +25,13 @@ const DataSourceStatusItem: React.FC<DataSourceStatusItemProps> = ({
           {statusLabel}
         </span>
       </div>
-      <div className="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+      <div className="h-1 w-full overflow-hidden rounded-full bg-slate-700/70">
         <div 
           className={`h-full ${progressColorClass}`} 
           style={{ width: `${progressPercent}%` }}
         ></div>
       </div>
-      <p className="text-[9px] text-slate-600">{footerText}</p>
+      <p className="text-[9px] text-slate-400">{footerText}</p>
     </div>
   );
 };

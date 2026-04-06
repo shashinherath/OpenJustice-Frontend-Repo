@@ -1,5 +1,5 @@
 export interface AdminModule {
-  key: "overview" | "users" | "data-sources" | "moderation" | "logs" | "error-monitoring" | "analytics" | "settings";
+  key: "overview" | "users" | "knowledge-monitoring" | "query-monitoring" | "logs" | "error-monitoring" | "analytics" | "settings";
   label: string;
   navLabel: string;
   path: string;
@@ -28,22 +28,22 @@ export const ADMIN_MODULES: AdminModule[] = [
     description: "Review user activity, approval queues, and privileged role assignments.",
   },
   {
-    key: "data-sources",
-    label: "Data Sources",
-    navLabel: "Data Sources",
-    path: "/admin/data-sources",
+    key: "knowledge-monitoring",
+    label: "Knowledge Monitoring",
+    navLabel: "Knowledge Monitoring",
+    path: "/admin/knowledge-monitoring",
     icon: "database",
-    subtitle: "Ingestion health, indexing status, and sync timelines",
-    description: "Track source freshness and control indexing priorities for legal corpora.",
+    subtitle: "RAG chunk indexing and embedding health visibility",
+    description: "Inspect indexed chunks, embedding models, and document-level processing status.",
   },
   {
-    key: "moderation",
-    label: "Content Moderation",
-    navLabel: "Moderation",
-    path: "/admin/moderation",
-    icon: "policy",
-    subtitle: "Flag review, policy decisions, and ethical safeguards",
-    description: "Triage AI outputs and enforce safety rules with auditable actions.",
+    key: "query-monitoring",
+    label: "Query Monitoring",
+    navLabel: "Query Monitoring",
+    path: "/admin/query-monitoring",
+    icon: "monitoring",
+    subtitle: "User question and AI response visibility with language-level filtering",
+    description: "Review user questions, response previews, detected language, and open full conversation details.",
   },
   {
     key: "logs",

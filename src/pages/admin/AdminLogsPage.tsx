@@ -1,5 +1,4 @@
-import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+﻿import React, { useMemo, useState } from "react";
 import AdminLayout from "@/layout/AdminLayout";
 
 type TraceStatus = "Completed" | "Pending" | "Failed" | "Reviewed";
@@ -177,53 +176,44 @@ const AdminLogsPage: React.FC = () => {
   return (
     <AdminLayout>
       <div className="space-y-8 p-8">
-        <section className="rounded border border-white/10 bg-white/3 p-6">
-          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">AI Logs & Traceability</h2>
-              <p className="mt-3 max-w-3xl text-sm text-slate-400">
-                Audit LLM request and response events, monitor correlation IDs, token usage, retrieval evidence, and investigation outcomes.
-              </p>
-            </div>
-            <Link
-              to="/admin"
-              className="inline-flex items-center gap-2 rounded border border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-300 transition-colors hover:bg-white/5 hover:text-white"
-            >
-              <span className="material-symbols-outlined text-sm">arrow_back</span>
-              Back to Overview
-            </Link>
+        <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
+          <div>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">AI Logs & Traceability</h2>
+            <p className="mt-3 max-w-3xl text-sm text-slate-300">
+              Audit LLM request and response events, monitor correlation IDs, token usage, retrieval evidence, and investigation outcomes.
+            </p>
           </div>
         </section>
 
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-6">
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Total AI Logs</p>
             <p className="mt-3 text-2xl font-black text-white">{logs.length}</p>
           </article>
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Completed</p>
             <p className="mt-3 text-2xl font-black text-white">{completedCount}</p>
           </article>
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Reviewed</p>
             <p className="mt-3 text-2xl font-black text-white">{reviewedCount}</p>
           </article>
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Pending</p>
             <p className="mt-3 text-2xl font-black text-white">{pendingCount}</p>
           </article>
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Failed</p>
             <p className="mt-3 text-2xl font-black text-white">{failedCount}</p>
           </article>
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Token Volume</p>
             <p className="mt-3 text-2xl font-black text-white">{totalTokens}</p>
             <p className="mt-1 text-[10px] text-slate-500">Avg latency: {avgLatency} ms</p>
           </article>
         </section>
 
-        <section className="rounded border border-white/10 bg-white/2 p-6">
+        <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
           <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_170px_180px_170px_auto_auto]">
             <input
               type="text"
@@ -430,10 +420,10 @@ const AdminLogsPage: React.FC = () => {
             <div className="mt-5 rounded border border-white/10 bg-black/30 p-4">
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Trace Timeline</p>
               <ol className="mt-3 space-y-2 text-xs text-slate-300">
-                <li className="rounded border border-white/10 bg-black/20 px-3 py-2">1. Query request received and sanitized for logging.</li>
-                <li className="rounded border border-white/10 bg-black/20 px-3 py-2">2. Retrieval pipeline executed with chunk ranking and score logging.</li>
-                <li className="rounded border border-white/10 bg-black/20 px-3 py-2">3. LLM generation completed with token and latency capture.</li>
-                <li className="rounded border border-white/10 bg-black/20 px-3 py-2">4. Citation validation and final trace status recorded.</li>
+                <li className="rounded border border-white/10 bg-[#191919] px-3 py-2">1. Query request received and sanitized for logging.</li>
+                <li className="rounded border border-white/10 bg-[#191919] px-3 py-2">2. Retrieval pipeline executed with chunk ranking and score logging.</li>
+                <li className="rounded border border-white/10 bg-[#191919] px-3 py-2">3. LLM generation completed with token and latency capture.</li>
+                <li className="rounded border border-white/10 bg-[#191919] px-3 py-2">4. Citation validation and final trace status recorded.</li>
               </ol>
             </div>
           </section>
@@ -444,3 +434,4 @@ const AdminLogsPage: React.FC = () => {
 };
 
 export default AdminLogsPage;
+

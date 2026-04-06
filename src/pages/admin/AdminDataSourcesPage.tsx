@@ -1,5 +1,4 @@
-import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+﻿import React, { useMemo, useState } from "react";
 import AdminLayout from "@/layout/AdminLayout";
 
 type DocumentStatus = "Processed" | "Pending";
@@ -93,43 +92,34 @@ const AdminDataSourcesPage: React.FC = () => {
   return (
     <AdminLayout>
       <div className="space-y-8 p-8">
-        <section className="rounded border border-white/10 bg-white/3 p-6">
-          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">Data Sources</h2>
-              <p className="mt-3 max-w-3xl text-sm text-slate-400">
-                Upload legal PDF documents, view all documents, trigger chunking and embedding processing, and remove documents.
-              </p>
-            </div>
-            <Link
-              to="/admin"
-              className="inline-flex items-center gap-2 rounded border border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-300 transition-colors hover:bg-white/5 hover:text-white"
-            >
-              <span className="material-symbols-outlined text-sm">arrow_back</span>
-              Back to Overview
-            </Link>
+        <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
+          <div>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">Data Sources</h2>
+            <p className="mt-3 max-w-3xl text-sm text-slate-300">
+              Upload legal PDF documents, view all documents, trigger chunking and embedding processing, and remove documents.
+            </p>
           </div>
         </section>
 
         <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Total Documents</p>
             <p className="mt-3 text-2xl font-black text-white">{documents.length}</p>
             <p className="mt-2 text-xs text-slate-400">All uploaded legal PDFs in this source.</p>
           </article>
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Processed</p>
             <p className="mt-3 text-2xl font-black text-white">{processedCount}</p>
             <p className="mt-2 text-xs text-slate-400">Documents with generated chunks and embeddings.</p>
           </article>
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Pending</p>
             <p className="mt-3 text-2xl font-black text-white">{pendingCount}</p>
             <p className="mt-2 text-xs text-slate-400">Documents waiting for processing.</p>
           </article>
         </section>
 
-        <section className="rounded border border-white/10 bg-white/2 p-6">
+        <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
           <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">Upload Legal Document (PDF)</h3>
           <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_180px_auto_auto]">
             <input
@@ -168,7 +158,7 @@ const AdminDataSourcesPage: React.FC = () => {
           {errorMessage && <p className="mt-3 text-xs font-semibold text-red-400">{errorMessage}</p>}
         </section>
 
-        <section className="rounded border border-white/10 bg-white/2 p-6">
+        <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">All Documents</h3>
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{documents.length} entries</span>
@@ -233,3 +223,4 @@ const AdminDataSourcesPage: React.FC = () => {
 };
 
 export default AdminDataSourcesPage;
+

@@ -1,5 +1,4 @@
-import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+﻿import React, { useMemo, useState } from "react";
 import AdminLayout from "@/layout/AdminLayout";
 
 type UserStatus = "Active" | "Blocked";
@@ -51,40 +50,31 @@ const UserManagementPage: React.FC = () => {
   return (
     <AdminLayout>
       <div className="space-y-8 p-8">
-        <section className="rounded border border-white/10 bg-white/3 p-6">
-          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-            <div>
-              <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">User Management</h2>
-              <p className="mt-3 max-w-3xl text-sm text-slate-400">
-                View user accounts and quickly block or unblock users using the simple admin controls.
-              </p>
-            </div>
-            <Link
-              to="/admin"
-              className="inline-flex items-center gap-2 rounded border border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-300 transition-colors hover:bg-white/5 hover:text-white"
-            >
-              <span className="material-symbols-outlined text-sm">arrow_back</span>
-              Back to Overview
-            </Link>
+        <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
+          <div>
+            <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">User Management</h2>
+            <p className="mt-3 max-w-3xl text-sm text-slate-300">
+              View user accounts and quickly block or unblock users using the simple admin controls.
+            </p>
           </div>
         </section>
 
         <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Total Users</p>
             <p className="mt-3 text-2xl font-black text-white">{users.length}</p>
           </article>
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Active</p>
             <p className="mt-3 text-2xl font-black text-white">{activeCount}</p>
           </article>
-          <article className="rounded border border-white/10 bg-black/20 p-5">
+          <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Blocked</p>
             <p className="mt-3 text-2xl font-black text-white">{blockedCount}</p>
           </article>
         </section>
 
-        <section className="rounded border border-white/10 bg-white/2 p-6">
+        <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">Users</h3>
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{users.length} entries</span>
@@ -149,3 +139,4 @@ const UserManagementPage: React.FC = () => {
 };
 
 export default UserManagementPage;
+

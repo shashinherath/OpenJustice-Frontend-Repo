@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Link } from "react-router-dom";
 import AdminLayout from "@/layout/AdminLayout";
 import { ADMIN_MODULES } from "@/constants/admin-flow";
@@ -52,7 +52,7 @@ const AdminModulePageTemplate: React.FC<AdminModulePageTemplateProps> = ({
 
         <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {metrics.map(metric => (
-            <article key={metric.label} className="rounded border border-white/10 bg-black/20 p-5">
+            <article key={metric.label} className="rounded border border-white/10 bg-[#191919] p-5">
               <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">{metric.label}</p>
               <p className="mt-3 text-2xl font-black text-white">{metric.value}</p>
               <p className="mt-2 text-xs text-slate-400">{metric.note}</p>
@@ -85,3 +85,4 @@ const AdminModulePageTemplate: React.FC<AdminModulePageTemplateProps> = ({
 };
 
 export default AdminModulePageTemplate;
+
