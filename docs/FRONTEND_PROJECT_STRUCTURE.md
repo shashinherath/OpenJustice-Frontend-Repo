@@ -150,8 +150,8 @@ src/
 │   │   ├── common.json
 │   │   ├── legal.json
 │   │   └── errors.json
-│   ├── hi/               # Hindi translations
-│   ├── mr/               # Marathi translations
+│   ├── Si/               # Sinhala translations
+│   ├── TL/               # Tamil translations
 │   └── index.ts          # Locale exports
 │
 ├── pages/                # Page components (route targets)

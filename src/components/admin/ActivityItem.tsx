@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 
 interface ActivityItemProps {
   title: string;
@@ -10,17 +10,18 @@ interface ActivityItemProps {
 
 const ActivityItem: React.FC<ActivityItemProps> = ({ title, description, timeAgo, icon, iconColorClass }) => {
   return (
-    <div className="flex items-center justify-between p-4 rounded bg-[#191919] border border-white/5 group hover:border-white/20 transition-all">
+    <div className="group flex items-center justify-between rounded border border-slate-700/70 bg-[#191919] p-4 transition-all hover:border-cyan-400/30">
       <div className="flex items-center gap-4">
         <span className={`material-symbols-outlined ${iconColorClass}`}>{icon}</span>
         <div>
           <p className="text-sm font-bold text-white">{title}</p>
-          <p className="text-[10px] text-slate-500 uppercase tracking-widest">{description}</p>
+          <p className="text-[10px] uppercase tracking-widest text-cyan-200/60">{description}</p>
         </div>
       </div>
-      <span className="text-[10px] font-bold text-slate-500">{timeAgo}</span>
+      <span className="text-[10px] font-bold text-slate-400">{timeAgo}</span>
     </div>
   );
 };
 
 export default ActivityItem;
+
