@@ -5,10 +5,10 @@ import ActivityItem from "@/components/admin/ActivityItem";
 import DataSourceStatusItem from "@/components/admin/DataSourceStatusItem";
 
 const STATS = [
-  { id: 1, title: "Total Queries", value: "142,842", change: "+12%", statusType: "neutral" as const },
-  { id: 2, title: "Average Retrieval Accuracy", value: "99.2%", change: "Stable", statusType: "neutral" as const },
-  { id: 3, title: "System Uptime", value: "99.98%", change: "Optimal", statusType: "positive" as const },
-  { id: 4, title: "Flagged Outputs", value: "12", change: "Requires Review", statusType: "warning" as const },
+  { id: 1, title: "Total Users", value: "12,406", change: "+4.2%", statusType: "neutral" as const },
+  { id: 2, title: "Total Queries", value: "142,842", change: "+12%", statusType: "neutral" as const },
+  { id: 3, title: "Total Documents", value: "96,215", change: "+1,238", statusType: "positive" as const },
+  { id: 4, title: "Total Errors", value: "12", change: "Needs review", statusType: "warning" as const },
 ];
 
 const ACTIVITIES = [
@@ -24,7 +24,7 @@ const DATA_SOURCES = [
   { id: 4, title: "Administrative Law", statusLabel: "Active", statusColorClass: "text-white", progressPercent: 100, footerText: "Last sync: Yesterday" },
 ];
 
-const QUICKS_ACTIONS = [
+const QUICK_ACTIONS = [
   { icon: "refresh", label: "Clear Cache" },
   { icon: "download", label: "Export Report" },
   { icon: "lock_reset", label: "Reset API" },
@@ -40,7 +40,7 @@ const AdminDashboard: React.FC = () => {
             <StatCard key={stat.id} title={stat.title} value={stat.value} change={stat.change} statusType={stat.statusType} />
           ))}
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             <section className="p-8 rounded border border-white/10 bg-white/2">
@@ -122,7 +122,7 @@ const AdminDashboard: React.FC = () => {
             <section className="p-6 rounded border border-white/10 bg-white/2">
               <h2 className="text-sm font-bold text-white mb-4 uppercase tracking-[0.15em]">Admin Quick Actions</h2>
               <div className="grid grid-cols-2 gap-3">
-                {QUICKS_ACTIONS.map(action => (
+                {QUICK_ACTIONS.map(action => (
                   <button key={action.label} className={`p-3 rounded border border-white/5 bg-[#191919] hover:bg-white/10 text-center space-y-2 transition-all ${action.highlight ? 'text-white' : ''}`}>
                     <span className="material-symbols-outlined text-white">{action.icon}</span>
                     <span className="block text-[9px] font-bold text-slate-400 uppercase">{action.label}</span>

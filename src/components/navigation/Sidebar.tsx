@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSettingsModal } from '@/hooks/common/useSettingsModal';
 import { useChatStore } from '@/stores/chatStore';
+import { useAuthStore } from '@/stores/authStore';
 import BrandLogo from '@/components/ui/BrandLogo';
 
 interface SidebarProps {
@@ -12,9 +13,11 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const [helpOpen, setHelpOpen] = useState(false);
     const [activeChatMenu, setActiveChatMenu] = useState<string | null>(null);
+    const profileMenuRef = useRef<HTMLDivElement | null>(null);
     const navigate = useNavigate();
     const location = useLocation();
     const { openSettings, openProfile } = useSettingsModal();
+    const logout = useAuthStore((state) => state.logout);
     const { sidebarChats, archiveChat, deleteChat, pinChat, renameChat, setActiveConversation } = useChatStore();
 
     const activeChats = sidebarChats
@@ -35,6 +38,29 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
         document.addEventListener("click", handleClickOutside);
         return () => document.removeEventListener("click", handleClickOutside);
     }, []);
+
+    useEffect(() => {
+        const handleOutsideProfileClick = (event: MouseEvent) => {
+            if (!menuOpen) {
+                return;
+            }
+
+            if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+                setMenuOpen(false);
+                setHelpOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleOutsideProfileClick);
+        return () => document.removeEventListener("mousedown", handleOutsideProfileClick);
+    }, [menuOpen]);
+
+    const handleLogout = () => {
+        logout();
+        setMenuOpen(false);
+        setHelpOpen(false);
+        navigate('/');
+    };
 
     return (
         <aside className="w-64 border-r border-slate-200 dark:border-border-dark flex flex-col justify-between bg-white dark:bg-brand-bg relative shrink-0">
@@ -160,7 +186,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
             </div>
 
             <div className="p-4 border-t border-slate-200 dark:border-border-dark">
-                <div className="relative profile-menu">
+                <div className="relative profile-menu" ref={profileMenuRef}>
                     <button 
                         className="flex items-center gap-3 w-full px-2 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-surface-dark transition-colors group text-slate-900 dark:text-white text-left focus:outline-none"
                         onClick={() => setMenuOpen(!menuOpen)}
@@ -244,10 +270,14 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                             
                             <div className="my-1 border-t border-slate-100 dark:border-border-dark"></div>
                             
-                            <a className="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors" href="#">
+                            <button
+                                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
+                                type="button"
+                                onClick={handleLogout}
+                            >
                                 <span className="material-symbols-outlined text-[18px]">logout</span>
                                 Logout
-                            </a>
+                            </button>
                         </div>
                     )}
                 </div>
