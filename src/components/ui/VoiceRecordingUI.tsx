@@ -48,7 +48,7 @@ const VoiceRecordingUI: React.FC<VoiceRecordingUIProps> = ({
       </div>
 
       {/* Recording Indicator */}
-      <div className="flex items-center gap-1.5 min-w-[60px]">
+      <div className="flex items-center gap-1.5 min-w-15">
         <div className={`size-2 rounded-full ${isPaused ? "bg-slate-400" : "animate-pulse bg-red-500"}`} />
         <span className={`font-mono font-semibold text-sm ${isPaused ? "text-slate-500" : "text-red-500"}`}>
           {durationLabel}
