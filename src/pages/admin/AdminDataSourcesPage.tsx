@@ -1,5 +1,6 @@
 ﻿import React, { useMemo, useState } from "react";
 import AdminLayout from "@/layout/AdminLayout";
+import LanguageSelect from "@/components/ui/LanguageSelect";
 
 type DocumentStatus = "Processed" | "Pending";
 
@@ -128,15 +129,18 @@ const AdminDataSourcesPage: React.FC = () => {
               onChange={handleFileChange}
               className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 file:mr-4 file:rounded file:border-0 file:bg-cyan-500/15 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-cyan-100 hover:file:bg-cyan-500/25"
             />
-            <select
-              value={selectedLanguage}
-              onChange={event => setSelectedLanguage(event.target.value)}
-              className="rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300"
-            >
-              <option>English</option>
-              <option>Sinhala</option>
-              <option>Tamil</option>
-            </select>
+            <div className="lg:ml-2">
+              <LanguageSelect
+                value={selectedLanguage}
+                onChange={(v) => setSelectedLanguage(v)}
+                options={[
+                  { value: "English", label: "English" },
+                  { value: "Sinhala", label: "Sinhala" },
+                  { value: "Tamil", label: "Tamil" },
+                ]}
+                ariaLabel="Select document language"
+              />
+            </div>
             <button
               type="button"
               onClick={handleUploadDocument}

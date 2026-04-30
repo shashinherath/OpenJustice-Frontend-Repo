@@ -2,6 +2,7 @@
 import AdminLayout from "@/layout/AdminLayout";
 import { LanguageContext } from "@/contexts/LanguageContext";
 import { LANGUAGE_OPTIONS, type AppLanguage } from "@/constants/languages";
+import LanguageSelect from "@/components/ui/LanguageSelect";
 
 interface LanguageOption {
   code: AppLanguage;
@@ -113,20 +114,17 @@ const SettingsPage: React.FC = () => {
 
           <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
             <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">Set Default Language</h3>
-            <select
-              value={defaultLanguage}
-              onChange={event => {
-                setDefaultLanguage(event.target.value as AppLanguage);
-                setSaveNotice("");
-              }}
-              className="mt-4 w-full rounded border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-300 md:w-80"
-            >
-              {normalizedLanguages
-                .filter(language => language.enabled)
-                .map(language => (
-                  <option key={language.code} value={language.code}>{language.code.toUpperCase()} - {language.label}</option>
-                ))}
-            </select>
+            <div className="mt-4 md:w-80">
+              <LanguageSelect
+                value={defaultLanguage}
+                onChange={(v) => {
+                  setDefaultLanguage(v as AppLanguage);
+                  setSaveNotice("");
+                }}
+                options={normalizedLanguages.filter(l => l.enabled).map(l => ({ value: l.code, label: `${l.code.toUpperCase()} - ${l.label}` }))}
+                ariaLabel="Select default language"
+              />
+            </div>
           </article>
 
           <article className="rounded border border-slate-700/70 bg-[#191919] p-5">

@@ -2,14 +2,29 @@ import React, { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useChatStore } from "@/stores/chatStore";
+import { useVoiceStore } from "@/stores/voiceStore";
+import { useVoiceRecording } from "@/hooks/useVoiceRecording";
+import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
 
 const AnswerPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { chatId = "" } = useParams<{ chatId: string }>();
   const [question, setQuestion] = useState("");
+  const [isVoicePreview, setIsVoicePreview] = useState(false);
 
   const { sidebarChats, chatMessagesById, sendMessageToChat } = useChatStore();
+  const { recordingState, audioBlob, reset } = useVoiceStore();
+  const {
+    startRecording,
+    pauseRecording,
+    resumeRecording,
+    stopRecording,
+    cancelRecording,
+    formatDuration,
+    voiceLevel,
+    isPaused,
+  } = useVoiceRecording();
 
   const chat = sidebarChats.find((item) => item.id === chatId);
   const messages = chatMessagesById[chatId] || [];
@@ -35,6 +50,51 @@ const AnswerPage: React.FC = () => {
       event.preventDefault();
       handleSend();
     }
+  };
+
+  const handleMicClick = async () => {
+    setIsVoicePreview(false);
+    await startRecording();
+  };
+
+  const handlePauseResumeVoice = () => {
+    if (isPaused) {
+      resumeRecording();
+      return;
+    }
+    pauseRecording();
+  };
+
+  const handleStopVoice = async () => {
+    await stopRecording();
+    setIsVoicePreview(true);
+  };
+
+  const handleCancelVoice = () => {
+    cancelRecording();
+    setIsVoicePreview(false);
+  };
+
+  const handlePlayVoice = () => {
+    if (!audioBlob) {
+      return;
+    }
+
+    const url = URL.createObjectURL(audioBlob);
+    const audio = new Audio(url);
+    void audio.play();
+    audio.onended = () => URL.revokeObjectURL(url);
+  };
+
+  const handleSendVoice = () => {
+    if (!audioBlob) {
+      return;
+    }
+
+    const voiceMessage = `[Voice message ${(audioBlob.size / 1024).toFixed(1)}KB]`;
+    sendMessageToChat(chatId, voiceMessage);
+    reset();
+    setIsVoicePreview(false);
   };
 
   if (!chat) {
@@ -101,24 +161,57 @@ const AnswerPage: React.FC = () => {
       </div>
 
       <footer className="border-t border-slate-200 bg-white px-4 py-4 dark:border-border-dark dark:bg-brand-bg shrink-0">
-        <div className="mx-auto flex w-full max-w-4xl items-center gap-2">
-          <input
-            className="h-12 flex-1 rounded-full border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition-all placeholder:text-slate-400 focus:border-slate-400 dark:border-border-dark dark:bg-surface-dark dark:text-white"
-            placeholder={t("followUpQuestionPlaceholder")}
-            type="text"
-            value={question}
-            onChange={(event) => setQuestion(event.target.value)}
-            onKeyDown={handleKeyDown}
-          />
+        <div className="mx-auto flex w-full max-w-4xl items-center gap-3">
           <button
-            className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full text-white shadow-lg transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
-            style={{ backgroundColor: "var(--oj-accent-color)" }}
+            className="flex items-center justify-center size-10 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0"
+            title={t("attachDocument")}
             type="button"
-            onClick={handleSend}
-            disabled={!question.trim()}
           >
-            <span className="material-symbols-outlined text-[22px]">arrow_upward</span>
+            <span className="material-symbols-outlined text-[20px]">attach_file</span>
           </button>
+          {(recordingState.isRecording || isVoicePreview) ? (
+            <VoiceRecordingUI
+              durationLabel={formatDuration(recordingState.duration)}
+              voiceLevel={voiceLevel}
+              isPaused={isPaused}
+              isPreview={isVoicePreview}
+              onPauseResume={handlePauseResumeVoice}
+              onStop={handleStopVoice}
+              onPlay={handlePlayVoice}
+              onSend={handleSendVoice}
+              onCancel={handleCancelVoice}
+            />
+          ) : (
+            <>
+              <div className="relative flex-1 flex items-center bg-white dark:bg-surface-dark rounded-full border border-slate-200 dark:border-border-dark shadow-md px-4 py-2.5 focus-within:ring-2 focus-within:ring-slate-200 dark:focus-within:ring-slate-700 transition-all">
+                <input
+                  className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-slate-900 dark:text-white text-sm px-2 placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                  placeholder={t("queryPlaceholder")}
+                  type="text"
+                  value={question}
+                  onChange={(event) => setQuestion(event.target.value)}
+                  onKeyDown={handleKeyDown}
+                />
+                <button
+                  className="flex items-center justify-center size-8 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0"
+                  title={t("voiceInput")}
+                  type="button"
+                  onClick={handleMicClick}
+                >
+                  <span className="material-symbols-outlined text-[18px]">mic</span>
+                </button>
+              </div>
+              <button
+                className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full font-bold text-white transition-all shadow-lg shrink-0 disabled:cursor-not-allowed disabled:opacity-50"
+                style={{ backgroundColor: "var(--oj-accent-color)" }}
+                type="button"
+                onClick={handleSend}
+                disabled={!question.trim()}
+              >
+                <span className="material-symbols-outlined text-[24px]">arrow_upward</span>
+              </button>
+            </>
+          )}
         </div>
       </footer>
     </>
