@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from "react";
 import { LanguageContext } from "@/contexts/LanguageContext";
+import LanguageSelect from "@/components/ui/LanguageSelect";
 import { useTheme } from "@/hooks/common/useTheme";
 import { useChatStore } from "@/stores/chatStore";
 import { LANGUAGE_OPTIONS, type AppLanguage } from "@/constants/languages";
@@ -247,17 +248,13 @@ const SettingsPage: React.FC = () => {
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">{tr("Language", "භාෂාව", "மொழி")}</label>
                 <div className="flex items-center gap-2">
-                  <select
-                    className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100"
+                  <LanguageSelect
                     value={language}
-                    onChange={(event) => setLanguage(event.target.value as AppLanguage)}
-                  >
-                    {LANGUAGE_OPTIONS.map((item) => (
-                      <option key={item.value} value={item.value}>
-                        {item.label}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(v) => setLanguage(v as AppLanguage)}
+                    options={LANGUAGE_OPTIONS.map(item => ({ value: item.value, label: item.label }))}
+                    ariaLabel={tr("Select interface language", "අතුරුමුහුණත් භාෂාව තෝරන්න", "இணைமுக மொழியை தேர்ந்தெடுக்கவும்")}
+                    className="w-full"
+                  />
                   <button
                     className="rounded-lg border border-zinc-700 px-3 py-2 text-xs font-semibold text-zinc-300 hover:bg-zinc-800"
                     type="button"
@@ -271,17 +268,13 @@ const SettingsPage: React.FC = () => {
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">{tr("Spoken Language", "කථන භාෂාව", "பேச்சு மொழி")}</label>
                 <div className="flex items-center gap-2">
-                  <select
-                    className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100"
+                  <LanguageSelect
                     value={spokenLanguage}
-                    onChange={(event) => setSpokenLanguage(event.target.value as AppLanguage)}
-                  >
-                    {LANGUAGE_OPTIONS.map((item) => (
-                      <option key={item.value} value={item.value}>
-                        {item.label}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(v) => setSpokenLanguage(v as AppLanguage)}
+                    options={LANGUAGE_OPTIONS.map(item => ({ value: item.value, label: item.label }))}
+                    ariaLabel={tr("Select spoken language", "කථන භාෂාව තෝරන්න", "பேச்சு மொழியை தேர்ந்தெடுக்கவும்")}
+                    className="w-full"
+                  />
                   <button
                     className="rounded-lg border border-zinc-700 px-3 py-2 text-xs font-semibold text-zinc-300 hover:bg-zinc-800"
                     type="button"
