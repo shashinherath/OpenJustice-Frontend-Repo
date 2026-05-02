@@ -179,9 +179,10 @@ const AnswerPage: React.FC = () => {
       <footer className="border-t border-slate-200 bg-white px-4 py-4 dark:border-border-dark dark:bg-brand-bg shrink-0">
         <div className="mx-auto flex w-full max-w-4xl items-center gap-3">
           <button
-            className="flex items-center justify-center size-10 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0"
+            className="flex items-center justify-center size-10 text-slate-400 transition-colors shrink-0 disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-500"
             title={t("attachDocument")}
             type="button"
+            disabled
           >
             <span className="material-symbols-outlined text-[20px]">attach_file</span>
           </button>
