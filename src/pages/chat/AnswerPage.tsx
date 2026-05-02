@@ -82,8 +82,24 @@ const AnswerPage: React.FC = () => {
 
     const url = URL.createObjectURL(audioBlob);
     const audio = new Audio(url);
-    void audio.play();
-    audio.onended = () => URL.revokeObjectURL(url);
+    let isCleanedUp = false;
+
+    const cleanup = () => {
+      if (isCleanedUp) {
+        return;
+      }
+      isCleanedUp = true;
+      audio.onended = null;
+      audio.onerror = null;
+      URL.revokeObjectURL(url);
+    };
+
+    audio.onended = cleanup;
+    audio.onerror = cleanup;
+
+    void audio.play().catch(() => {
+      cleanup();
+    });
   };
 
   const handleSendVoice = () => {
