@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import BrandLogo from "@/components/ui/BrandLogo";
 import LoginModal from "@/components/ui/LoginModal";
 import { LanguageContext } from "@/contexts/LanguageContext";
+import LanguageSelect from "@/components/ui/LanguageSelect";
 import { SUPPORTED_LANGUAGES, type AppLanguage } from "@/constants/languages";
 
 const Navbar: React.FC = () => {
@@ -37,19 +38,18 @@ const Navbar: React.FC = () => {
           <div className="flex items-center gap-3">
             <div className="relative flex items-center rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 dark:border-border-dark dark:bg-surface-dark">
               <span className="material-symbols-outlined text-[16px] text-slate-500">language</span>
-              <select
-                className="appearance-none bg-transparent px-2 pr-5 text-sm font-semibold text-slate-900 outline-none dark:text-slate-100"
+              <LanguageSelect
                 value={currentLanguage}
-                onChange={handleLanguageChange}
-                aria-label={t("selectLanguage")}
-              >
-                {availableLanguages.map((language) => (
-                  <option key={language} value={language} className="bg-white text-slate-900">
-                    {language === "en" ? t("langEnglish") : language === "si" ? t("langSinhala") : t("langTamil")}
-                  </option>
-                ))}
-              </select>
-              <span className="material-symbols-outlined pointer-events-none absolute right-1 text-[14px] text-slate-500">expand_more</span>
+                onChange={(v) => {
+                  const next = v as AppLanguage;
+                  if (languageContext?.changeLanguage) {
+                    void languageContext.changeLanguage(next);
+                  }
+                }}
+                options={availableLanguages.map((lang) => ({ value: lang, label: lang === "en" ? t("langEnglish") : lang === "si" ? t("langSinhala") : t("langTamil") }))}
+                ariaLabel={t("selectLanguage")}
+                className="ml-2"
+              />
             </div>
 
             {/* Login Button */}

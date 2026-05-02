@@ -1,5 +1,6 @@
 ﻿import React, { useMemo, useState } from "react";
 import AdminLayout from "@/layout/AdminLayout";
+import LanguageSelect from "@/components/ui/LanguageSelect";
 
 interface QueryMonitorRecord {
   id: string;
@@ -68,16 +69,17 @@ const QueryMonitoringPage: React.FC = () => {
         <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
           <div className="mb-4 flex items-center justify-between gap-3">
             <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">User Queries and AI Answers</h3>
-            <select
+            <LanguageSelect
               value={languageFilter}
-              onChange={event => setLanguageFilter(event.target.value as "All" | QueryMonitorRecord["language"])}
-              className="rounded border border-white/10 bg-black/30 px-3 py-2 text-xs font-semibold text-slate-300"
-            >
-              <option value="All">All Languages</option>
-              <option value="English">English</option>
-              <option value="Sinhala">Sinhala</option>
-              <option value="Tamil">Tamil</option>
-            </select>
+              onChange={(v) => setLanguageFilter(v as "All" | QueryMonitorRecord["language"])}
+              options={[
+                { value: "All", label: "All Languages" },
+                { value: "English", label: "English" },
+                { value: "Sinhala", label: "Sinhala" },
+                { value: "Tamil", label: "Tamil" },
+              ]}
+              ariaLabel="Filter language"
+            />
           </div>
 
           <div className="overflow-x-auto">
