@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import BrandLogo from "@/components/ui/BrandLogo";
+import { authService } from "@/services/authService";
+import { useAuthStore } from "@/stores/authStore";
+import { LANGUAGE_OPTIONS } from "@/constants/languages";
 
 const SignUpPage: React.FC = () => {
   const { t } = useTranslation();
@@ -13,6 +16,7 @@ const SignUpPage: React.FC = () => {
     phone: "",
     password: "",
     confirmPassword: "",
+    preferredLanguage: "en",
     agreeToTerms: false,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -20,11 +24,16 @@ const SignUpPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const login = useAuthStore((state) => state.login);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+      [name]:
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
     // Clear error for this field when user starts typing
     if (errors[name]) {
@@ -58,7 +67,11 @@ const SignUpPage: React.FC = () => {
 
     if (!formData.password) {
       newErrors.password = t("signupErrorPasswordRequired");
-    } else if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/.test(formData.password)) {
+    } else if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/.test(
+        formData.password,
+      )
+    ) {
       newErrors.password = t("signupErrorPasswordCriteria");
     }
 
@@ -75,7 +88,7 @@ const SignUpPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     const newErrors = validateForm();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -84,17 +97,47 @@ const SignUpPage: React.FC = () => {
 
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      // Store user data (in a real app, this would go to backend)
-      console.log("User data:", formData);
-      
-      // Redirect to chat page
-      navigate("/chat");
-    } catch (error) {
+      const response = await authService.register({
+        first_name: formData.firstName.trim(),
+        last_name: formData.lastName.trim(),
+        email: formData.email.trim(),
+        phone_number: formData.phone.trim(),
+        password: formData.password,
+        preferred_language: formData.preferredLanguage,
+      });
+
+      const { data } = response;
+      const fallbackName = data.first_name
+        ? `${data.first_name} ${data.last_name || ""}`.trim()
+        : formData.email.split("@")[0] || "User";
+
+      // If backend returns token inside data, we log them in immediately.
+      // Otherwise, you may redirect them to a login prompt or automatically set token.
+      if (data.access_token) {
+        login(
+          {
+            id: data.uuid,
+            name: fallbackName,
+            email: formData.email,
+            preferences: {
+              language: data.preferred_language,
+            },
+          },
+          data.access_token,
+        );
+        navigate("/chat");
+      } else {
+        // Fallback or login flow
+        navigate("/?login=true");
+      }
+    } catch (error: any) {
       console.error("Sign up failed:", error);
-      setErrors({ form: t("signupErrorGeneric") });
+      setErrors({
+        form:
+          error.response?.data?.message ||
+          error.response?.data?.detail ||
+          t("signupErrorGeneric"),
+      });
     } finally {
       setIsLoading(false);
     }
@@ -105,13 +148,16 @@ const SignUpPage: React.FC = () => {
       {/* Header */}
       <header className="border-b border-slate-200 bg-white/95 backdrop-blur dark:border-border-dark dark:bg-[#191919]/95">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link className="flex items-center gap-3 text-lg font-black tracking-tight text-slate-900 dark:text-white" to="/">
+          <Link
+            className="flex items-center gap-3 text-lg font-black tracking-tight text-slate-900 dark:text-white"
+            to="/"
+          >
             <BrandLogo
               containerClassName="flex size-9 items-center justify-center overflow-hidden rounded-lg bg-primary text-white dark:bg-white dark:text-primary"
               iconClassName="text-2xl"
             />
             <span>OpenJustice</span>
-          </Link>   
+          </Link>
         </div>
       </header>
 
@@ -127,7 +173,9 @@ const SignUpPage: React.FC = () => {
                   iconClassName="text-2xl"
                 />
               </div>
-              <h1 className="mb-2 text-3xl font-black text-slate-900 dark:text-white">{t("createAccount")}</h1>
+              <h1 className="mb-2 text-3xl font-black text-slate-900 dark:text-white">
+                {t("createAccount")}
+              </h1>
               <p className="text-slate-600 dark:text-slate-400">
                 {t("signupSubtitle")}
               </p>
@@ -154,11 +202,15 @@ const SignUpPage: React.FC = () => {
                     onChange={handleInputChange}
                     placeholder={t("firstNamePlaceholder")}
                     className={`w-full rounded-lg border ${
-                      errors.firstName ? "border-red-500" : "border-slate-300 dark:border-slate-600"
+                      errors.firstName
+                        ? "border-red-500"
+                        : "border-slate-300 dark:border-slate-600"
                     } bg-white px-4 py-2.5 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white dark:placeholder-slate-400`}
                   />
                   {errors.firstName && (
-                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.firstName}</p>
+                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                      {errors.firstName}
+                    </p>
                   )}
                 </div>
 
@@ -173,11 +225,15 @@ const SignUpPage: React.FC = () => {
                     onChange={handleInputChange}
                     placeholder={t("lastNamePlaceholder")}
                     className={`w-full rounded-lg border ${
-                      errors.lastName ? "border-red-500" : "border-slate-300 dark:border-slate-600"
+                      errors.lastName
+                        ? "border-red-500"
+                        : "border-slate-300 dark:border-slate-600"
                     } bg-white px-4 py-2.5 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white dark:placeholder-slate-400`}
                   />
                   {errors.lastName && (
-                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.lastName}</p>
+                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                      {errors.lastName}
+                    </p>
                   )}
                 </div>
               </div>
@@ -195,11 +251,15 @@ const SignUpPage: React.FC = () => {
                     onChange={handleInputChange}
                     placeholder={t("emailPlaceholder")}
                     className={`w-full rounded-lg border ${
-                      errors.email ? "border-red-500" : "border-slate-300 dark:border-slate-600"
+                      errors.email
+                        ? "border-red-500"
+                        : "border-slate-300 dark:border-slate-600"
                     } bg-white px-4 py-2.5 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white dark:placeholder-slate-400`}
                   />
                   {errors.email && (
-                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.email}</p>
+                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                      {errors.email}
+                    </p>
                   )}
                 </div>
 
@@ -214,11 +274,15 @@ const SignUpPage: React.FC = () => {
                     onChange={handleInputChange}
                     placeholder={t("phonePlaceholder")}
                     className={`w-full rounded-lg border ${
-                      errors.phone ? "border-red-500" : "border-slate-300 dark:border-slate-600"
+                      errors.phone
+                        ? "border-red-500"
+                        : "border-slate-300 dark:border-slate-600"
                     } bg-white px-4 py-2.5 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white dark:placeholder-slate-400`}
                   />
                   {errors.phone && (
-                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.phone}</p>
+                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                      {errors.phone}
+                    </p>
                   )}
                 </div>
               </div>
@@ -237,22 +301,32 @@ const SignUpPage: React.FC = () => {
                       onChange={handleInputChange}
                       placeholder="••••••••"
                       className={`w-full rounded-lg border ${
-                        errors.password ? "border-red-500" : "border-slate-300 dark:border-slate-600"
+                        errors.password
+                          ? "border-red-500"
+                          : "border-slate-300 dark:border-slate-600"
                       } bg-white px-4 py-2.5 pr-11 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white dark:placeholder-slate-400`}
                     />
                     <button
                       type="button"
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-white transition-colors"
-                      aria-label={showPassword ? "Hide password" : "Show password"}
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
                       onClick={() => setShowPassword((prev) => !prev)}
                     >
-                      <span className="material-symbols-outlined text-[18px]">{showPassword ? "visibility_off" : "visibility"}</span>
+                      <span className="material-symbols-outlined text-[18px]">
+                        {showPassword ? "visibility_off" : "visibility"}
+                      </span>
                     </button>
                   </div>
                   {errors.password && (
-                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.password}</p>
+                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                      {errors.password}
+                    </p>
                   )}
-                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{t("passwordCriteria")}</p>
+                  <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                    {t("passwordCriteria")}
+                  </p>
                 </div>
 
                 <div>
@@ -267,21 +341,53 @@ const SignUpPage: React.FC = () => {
                       onChange={handleInputChange}
                       placeholder="••••••••"
                       className={`w-full rounded-lg border ${
-                        errors.confirmPassword ? "border-red-500" : "border-slate-300 dark:border-slate-600"
+                        errors.confirmPassword
+                          ? "border-red-500"
+                          : "border-slate-300 dark:border-slate-600"
                       } bg-white px-4 py-2.5 pr-11 text-slate-900 placeholder-slate-500 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white dark:placeholder-slate-400`}
                     />
                     <button
                       type="button"
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:hover:text-white transition-colors"
-                      aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                      aria-label={
+                        showConfirmPassword ? "Hide password" : "Show password"
+                      }
                       onClick={() => setShowConfirmPassword((prev) => !prev)}
                     >
-                      <span className="material-symbols-outlined text-[18px]">{showConfirmPassword ? "visibility_off" : "visibility"}</span>
+                      <span className="material-symbols-outlined text-[18px]">
+                        {showConfirmPassword ? "visibility_off" : "visibility"}
+                      </span>
                     </button>
                   </div>
                   {errors.confirmPassword && (
-                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">{errors.confirmPassword}</p>
+                    <p className="mt-1 text-xs text-red-600 dark:text-red-400">
+                      {errors.confirmPassword}
+                    </p>
                   )}
+                </div>
+              </div>
+
+              {/* Preferred Language */}
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  {t("preferredLanguage", "Preferred Language")}
+                </label>
+                <div className="relative">
+                  <select
+                    name="preferredLanguage"
+                    value={formData.preferredLanguage}
+                    onChange={handleInputChange}
+                    className="w-full appearance-none rounded-lg border border-slate-300 dark:border-slate-600 bg-white px-4 py-2.5 text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white"
+                  >
+                    {LANGUAGE_OPTIONS.map((lang) => (
+                      <option key={lang.value} value={lang.value}>
+                        {lang.label}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500 dark:text-slate-400">
+                    expand_more
+                  </span>
                 </div>
               </div>
 
@@ -296,17 +402,29 @@ const SignUpPage: React.FC = () => {
                 />
                 <label className="text-sm text-slate-600 dark:text-slate-400">
                   {t("agreeToTermsPrefix")}{" "}
-                  <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+                  <a
+                    href="/privacy-policy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                  >
                     {t("privacyPolicyLabel")}
-                  </a>
-                  {" "}{t("and")}{" "}
-                  <a href="/terms-of-service" target="_blank" rel="noopener noreferrer" className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+                  </a>{" "}
+                  {t("and")}{" "}
+                  <a
+                    href="/terms-of-service"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                  >
                     {t("termsOfServiceLabel")}
                   </a>
                 </label>
               </div>
               {errors.agreeToTerms && (
-                <p className="text-xs text-red-600 dark:text-red-400">{errors.agreeToTerms}</p>
+                <p className="text-xs text-red-600 dark:text-red-400">
+                  {errors.agreeToTerms}
+                </p>
               )}
 
               {/* Submit Button */}
