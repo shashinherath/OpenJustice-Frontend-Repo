@@ -20,11 +20,19 @@ const LanguageSelect: React.FC<Props> = ({ value, onChange, options, className =
   const uid = useId();
   const listboxId = `${uid}-listbox`;
   const getOptionId = (index: number) => `${uid}-option-${index}`;
+  const hasOptions = options.length > 0;
 
-  const selectedOption = useMemo(
-    () => options.find((option) => option.value === value) ?? options[0],
-    [options, value],
-  );
+  const selectedOption = useMemo(() => {
+    const matchingOption = options.find((option) => option.value === value);
+    if (matchingOption) {
+      return matchingOption;
+    }
+
+    return {
+      value,
+      label: value,
+    };
+  }, [options, value]);
 
   const selectedIndex = useMemo(
     () => options.findIndex((option) => option.value === value),
@@ -32,6 +40,10 @@ const LanguageSelect: React.FC<Props> = ({ value, onChange, options, className =
   );
 
   const openDropdown = () => {
+    if (!hasOptions) {
+      return;
+    }
+
     setIsOpen(true);
     const initialIndex = selectedIndex >= 0 ? selectedIndex : 0;
     setFocusedIndex(initialIndex);
