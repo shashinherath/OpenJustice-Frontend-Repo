@@ -78,7 +78,9 @@ const LanguageSelect: React.FC<Props> = ({ value, onChange, options, className =
         break;
       case "ArrowUp":
         event.preventDefault();
-        if (isOpen) {
+        if (!isOpen) {
+          openDropdown();
+        } else {
           const prev = Math.max(focusedIndex - 1, 0);
           setFocusedIndex(prev);
         }
@@ -106,6 +108,11 @@ const LanguageSelect: React.FC<Props> = ({ value, onChange, options, className =
       case "ArrowUp":
         event.preventDefault();
         setFocusedIndex(Math.max(index - 1, 0));
+        break;
+      case "Enter":
+      case " ":
+        event.preventDefault();
+        handleSelect(options[index].value);
         break;
       case "Escape":
         event.preventDefault();
