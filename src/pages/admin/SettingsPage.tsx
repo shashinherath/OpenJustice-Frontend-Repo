@@ -121,7 +121,12 @@ const SettingsPage: React.FC = () => {
                   setDefaultLanguage(v as AppLanguage);
                   setSaveNotice("");
                 }}
-                options={normalizedLanguages.filter(l => l.enabled).map(l => ({ value: l.code, label: `${l.code.toUpperCase()} - ${l.label}` }))}
+                options={normalizedLanguages
+                  .filter(l => l.enabled || l.code === defaultLanguage)
+                  .map(l => ({
+                    value: l.code,
+                    label: `${l.code.toUpperCase()} - ${l.label}${l.enabled ? "" : " (disabled)"}`,
+                  }))}
                 ariaLabel="Select default language"
               />
             </div>
