@@ -145,7 +145,7 @@ const LanguageSelect: React.FC<Props> = ({ value, onChange, options, className =
       >
         <span className="truncate">{selectedOption?.label ?? value}</span>
         <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-slate-600 transition-transform duration-200 dark:border-white/10 dark:bg-white/5 dark:text-cyan-200">
-          <svg className={`h-3.5 w-3.5 transition-transform ${isOpen ? "rotate-180" : ""}`} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+          <svg className={`h-3.5 w-3.5 transition-transform ${isOpen ? "rotate-180" : ""}`} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden={true}>
             <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </span>
@@ -179,7 +179,7 @@ const LanguageSelect: React.FC<Props> = ({ value, onChange, options, className =
                 >
                   <span className="font-semibold">{option.label}</span>
                   <span className={`flex h-6 w-6 items-center justify-center rounded-full border ${isSelected ? "border-cyan-300/30 bg-cyan-400/10 text-slate-900 dark:text-slate-100" : "border-slate-200 bg-slate-100 text-slate-400 dark:border-white/10 dark:bg-white/5 dark:text-slate-500"}`}>
-                    <svg className="h-3 w-3" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                    <svg className="h-3 w-3" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden={true}>
                       <path d="M7.5 10.5l2 2 4-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                   </span>
