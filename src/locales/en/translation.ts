@@ -1,4 +1,4 @@
-﻿const translation = {
+const translation = {
           // Navigation & Common
           "welcome": "Welcome to OpenJustice",
           "logIn": "Log In",
@@ -10,7 +10,7 @@
           "browseTopics": "Browse Topics",
           "searchPlaceholder": "Search laws or procedures...",
           "policySearchPlaceholder": "Search policy...",
-          "queryPlaceholder": "Type your legal query or research question here...",
+          "queryPlaceholder": "Type your legal query here...",
           "attachDocument": "Attach Document",
           "voiceInput": "Voice Input",
           
@@ -97,15 +97,16 @@
           "research": "Research",
 
           // Chat page
-          "chatResearchHeading": "How can we help with your legal research?",
-          "chatResearchSubheading": "Ask a question to start your legal analysis.",
-          "suggestions": "Suggestions:",
-          "rights": "Rights",
-          "procedures": "Procedures",
+          "chatResearchHeading": "How can we help with your legal query?",
+          "chatResearchSubheading": "Ask a question to start your analysis.",
+          "suggestions": "Try asking:",
+          "suggestionRights": "What are my basic tenant rights?",
+          "suggestionProcedures": "How do I file a small claims case?",
+          "suggestionDefinitions": "What does 'Force Majeure' mean?",
           "aiVerificationNotice": "AI verification required by professional counsel",
           "justNow": "Just now",
           "chatNotFound": "Chat not found",
-          "chatNotFoundDescription": "This conversation may have been deleted or archived. Start a new question to continue legal research.",
+          "chatNotFoundDescription": "This conversation may have been deleted or archived. Start a new question to continue.",
           "goToChatHome": "Go to chat home",
           "startedAt": "Started: {{value}}",
           "back": "Back",
@@ -125,7 +126,7 @@
           "aboutValueLegalClarityTitle": "Legal clarity",
           "aboutValueLegalClarityBody": "We translate dense legal language into practical guidance that people can understand and act on.",
           "aboutValueAccessibleDesignTitle": "Accessible design",
-          "aboutValueAccessibleDesignBody": "The experience is built for fast navigation, multilingual use, and low-friction research.",
+          "aboutValueAccessibleDesignBody": "The experience is built for fast navigation, multilingual use, and low-friction access.",
           "aboutValueResponsibleAiTitle": "Responsible AI",
           "aboutValueResponsibleAiBody": "Every answer is designed to stay grounded in sources, context, and transparent limitations.",
 

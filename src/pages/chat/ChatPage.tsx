@@ -8,6 +8,7 @@ import { useVoiceStore } from "@/stores/voiceStore";
 import { useVoiceRecording } from "@/hooks/useVoiceRecording";
 import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
 import { SUPPORTED_LANGUAGES, type AppLanguage } from "@/constants/languages";
+import { blobToDataURL } from "@/utils/audioUtils";
 
 const ChatPage: React.FC = () => {
     const { t } = useTranslation();
@@ -95,17 +96,22 @@ const ChatPage: React.FC = () => {
         audio.onended = () => URL.revokeObjectURL(url);
     };
 
-    const handleSendVoice = () => {
+    const handleSendVoice = async () => {
         if (!audioBlob) {
             return;
         }
 
-        const voiceMessage = `[Voice message ${(audioBlob.size / 1024).toFixed(1)}KB]`;
-        const chatId = createNewChat();
-        sendMessageToChat(chatId, voiceMessage);
-        reset();
-        setIsVoicePreview(false);
-        navigate(`/chat/${chatId}`);
+        try {
+            const audioUrl = await blobToDataURL(audioBlob);
+            const voiceMessage = "Voice Message";
+            const chatId = createNewChat();
+            sendMessageToChat(chatId, voiceMessage, audioUrl);
+            reset();
+            setIsVoicePreview(false);
+            navigate(`/chat/${chatId}`);
+        } catch (error) {
+            console.error("Failed to convert audio to data URL:", error);
+        }
     };
     
     return (
@@ -113,9 +119,6 @@ const ChatPage: React.FC = () => {
             <header className="flex items-center justify-between px-8 py-4 border-b border-slate-200 dark:border-border-dark bg-white dark:bg-brand-bg shrink-0">
                 <div className="flex items-center gap-6">
                     <nav className="flex items-center gap-6">
-                        <a className="text-sm font-semibold border-b-2 border-slate-900 dark:border-white py-1 text-slate-900 dark:text-white" href="#">Research</a>
-                        <a className="text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors" href="#">Documents</a>
-                        <a className="text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors" href="#">Archive</a>
                     </nav>
                 </div>
                 <div className="flex gap-3 h-full items-center">
@@ -149,21 +152,6 @@ const ChatPage: React.FC = () => {
                 </div>
                 
                 <div className="w-full max-w-3xl">
-                    <div className="flex items-center justify-center gap-3 mb-6 flex-wrap">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mr-1">{t("suggestions")}</span>
-                        <button className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#2d2d2d] transition-all px-4 group">
-                            <span className="material-symbols-outlined text-[16px] text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300">balance</span>
-                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100">{t("rights")}</span>
-                        </button>
-                        <button className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#2d2d2d] transition-all px-4 group">
-                            <span className="material-symbols-outlined text-[16px] text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300">checklist</span>
-                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100">{t("procedures")}</span>
-                        </button>
-                        <button className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#2d2d2d] transition-all px-4 group">
-                            <span className="material-symbols-outlined text-[16px] text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300">menu_book</span>
-                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100">{t("commonDefinitions")}</span>
-                        </button>
-                    </div>
                     
                     <div className="flex flex-col md:flex-row items-center gap-3 w-full">
                         {(recordingState.isRecording || isVoicePreview) ? (
@@ -180,9 +168,7 @@ const ChatPage: React.FC = () => {
                             />
                         ) : (
                             <div className="relative flex-1 flex items-center bg-white dark:bg-surface-dark rounded-full border border-slate-200 dark:border-border-dark shadow-xl px-4 py-1.5 focus-within:ring-2 focus-within:ring-slate-200 dark:focus-within:ring-slate-700 transition-all w-full">
-                                <button className="flex items-center justify-center size-10 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0" title={t("attachDocument")}>
-                                    <span className="material-symbols-outlined">attach_file</span>
-                                </button>
+
                                 <input 
                                     className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-slate-900 dark:text-white text-base px-2 placeholder:text-slate-400 dark:placeholder:text-slate-600 min-w-0" 
                                     placeholder={t("queryPlaceholder")} 
@@ -191,6 +177,53 @@ const ChatPage: React.FC = () => {
                                     onChange={(event) => setQuestion(event.target.value)}
                                     onKeyDown={handleInputKeyDown}
                                 />
+                                {(() => {
+                                    const suggestions = [
+                                        "What is an offense under the Computer Crimes Act?",
+                                        "What are the penalties for unauthorized access?",
+                                        "How does Sri Lankan law define 'hacking'?",
+                                        "What is the procedure for reporting a computer crime in Sri Lanka?",
+                                        "What are the provisions for data theft under the Computer Crimes Act?",
+                                        "Which authorities handle computer crimes in Sri Lanka?",
+                                        "What is unauthorized modification of data?",
+                                        "How to take legal action against cyber bullying?",
+                                        "When does the Computer Crimes Act apply to international offenses?",
+                                        "Who is responsible for investigating computer crimes in Sri Lanka?",
+                                        "Which acts are considered criminal under the computer crimes law?",
+                                        "Why is unauthorized access considered a serious offense?",
+                                        "Where to report if someone hacked my social media account?",
+                                        "How can I protect my personal data under Sri Lankan law?",
+                                    ];
+                                    const questionWords = ["what", "when", "where", "who", "why", "how", "which"];
+                                    const lowerInput = question.toLowerCase().trim();
+                                    const startsWithQuestionWord = questionWords.some(word => lowerInput.startsWith(word));
+                                    const isFullWord = lowerInput.split(" ")[0].length >= 3;
+                                    const shouldShow = startsWithQuestionWord && isFullWord && lowerInput.length >= 3;
+
+                                    if (!shouldShow) return null;
+
+                                    const filtered = suggestions.filter(q => q.toLowerCase().includes(lowerInput));
+                                    if (filtered.length === 0) return null;
+
+                                    return (
+                                        <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark rounded-xl shadow-2xl overflow-hidden z-50">
+                                            {filtered.map((suggestion, index, array) => (
+                                                <button
+                                                    key={index}
+                                                    className={`w-full text-left px-4 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-brand-bg transition-colors flex items-center gap-3 ${
+                                                        index !== array.length - 1 ? "border-b border-slate-100 dark:border-border-dark" : ""
+                                                    }`}
+                                                    onClick={() => {
+                                                        setQuestion(suggestion);
+                                                    }}
+                                                >
+                                                    <span className="material-symbols-outlined text-[18px] text-blue-500">search</span>
+                                                    {suggestion}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    );
+                                })()}
                                 <button 
                                     className="flex items-center justify-center size-10 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0 rounded-lg"
                                     title={t("voiceInput")}

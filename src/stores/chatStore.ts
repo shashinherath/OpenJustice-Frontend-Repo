@@ -20,7 +20,7 @@ interface ChatStore {
   setActiveConversation: (id: string) => void;
   createNewChat: () => string;
   addMessage: (message: ChatMessage) => void;
-  sendMessageToChat: (chatId: string, question: string) => void;
+  sendMessageToChat: (chatId: string, question: string, audioUrl?: string) => void;
   setTyping: (isTyping: boolean) => void;
   clearMessages: () => void;
   archiveChat: (id: string) => void;
@@ -90,7 +90,10 @@ const buildAiResponse = (question: string): string => {
     return "Please share your legal question, and I can help you with a structured answer.";
   }
 
-  return `Here is a draft legal analysis based on your question: "${normalized}". I can break this down into applicable rights, procedures, and supporting sources next.`;
+  const isVoice = normalized.startsWith("Voice Message");
+  const displayQuestion = isVoice ? "your voice message" : `your question: "${normalized}"`;
+
+  return `Here is a draft legal analysis based on ${displayQuestion}. I can break this down into applicable rights, procedures, and supporting sources next.`;
 };
 
 const summarizeTitle = (text: string): string => {
@@ -98,6 +101,11 @@ const summarizeTitle = (text: string): string => {
   if (!cleaned) {
     return "New Question";
   }
+  
+  if (cleaned.startsWith("Voice Message")) {
+    return "Voice Message Query";
+  }
+  
   return cleaned.length > 44 ? `${cleaned.slice(0, 44)}...` : cleaned;
 };
 
@@ -149,7 +157,7 @@ export const useChatStore = create<ChatStore>()(
       },
       addMessage: (message) =>
         set((state) => ({ messages: [...state.messages, message] })),
-      sendMessageToChat: (chatId, question) =>
+      sendMessageToChat: (chatId, question, audioUrl) =>
         set((state) => {
           const trimmed = question.trim();
           if (!trimmed) {
@@ -161,6 +169,7 @@ export const useChatStore = create<ChatStore>()(
             sender: "user",
             content: trimmed,
             timestamp: new Date(),
+            audioUrl: audioUrl,
           };
 
           const aiMessage: ChatMessage = {
