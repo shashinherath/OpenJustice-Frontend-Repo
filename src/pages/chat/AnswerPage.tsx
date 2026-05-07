@@ -1,12 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useChatStore } from "@/stores/chatStore";
 import { useVoiceStore } from "@/stores/voiceStore";
 import { useVoiceRecording } from "@/hooks/useVoiceRecording";
 import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
-import VoiceMessagePlayer from "@/components/ui/VoiceMessagePlayer";
-import { blobToDataURL } from "@/utils/audioUtils";
+
 
 const AnswerPage: React.FC = () => {
   const { t } = useTranslation();
@@ -15,7 +14,12 @@ const AnswerPage: React.FC = () => {
   const [question, setQuestion] = useState("");
   const [isVoicePreview, setIsVoicePreview] = useState(false);
 
-  const { sidebarChats, chatMessagesById, sendMessageToChat } = useChatStore();
+  const {
+    sidebarChats,
+    chatMessagesById,
+    sendMessageToChat,
+    loadConversation,
+  } = useChatStore();
   const { recordingState, audioBlob, reset } = useVoiceStore();
   const {
     startRecording,
@@ -39,18 +43,26 @@ const AnswerPage: React.FC = () => {
     return firstMessage.timestamp.toLocaleString();
   }, [messages, t]);
 
-  const handleSend = () => {
+  useEffect(() => {
+    if (chatId) {
+      void loadConversation(chatId);
+    }
+  }, [chatId, loadConversation]);
+
+  const handleSend = async () => {
     if (!chatId || !question.trim()) {
       return;
     }
-    sendMessageToChat(chatId, question.trim());
+    await sendMessageToChat(chatId, question.trim());
     setQuestion("");
   };
 
-  const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
+  const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (
+    event,
+  ) => {
     if (event.key === "Enter") {
       event.preventDefault();
-      handleSend();
+      void handleSend();
     }
   };
 
@@ -109,21 +121,18 @@ const AnswerPage: React.FC = () => {
       return;
     }
 
-    try {
-      const audioUrl = await blobToDataURL(audioBlob);
-      const voiceMessage = "Voice Message";
-      sendMessageToChat(chatId, voiceMessage, audioUrl);
-      reset();
-      setIsVoicePreview(false);
-    } catch (error) {
-      console.error("Failed to convert audio to data URL:", error);
-    }
+    const voiceMessage = `[Voice message ${(audioBlob.size / 1024).toFixed(1)}KB]`;
+    await sendMessageToChat(chatId, voiceMessage);
+    reset();
+    setIsVoicePreview(false);
   };
 
   if (!chat) {
     return (
       <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-        <h2 className="mb-2 text-2xl font-bold text-slate-900 dark:text-white">{t("chatNotFound")}</h2>
+        <h2 className="mb-2 text-2xl font-bold text-slate-900 dark:text-white">
+          {t("chatNotFound")}
+        </h2>
         <p className="mb-6 max-w-md text-sm text-slate-500 dark:text-slate-400">
           {t("chatNotFoundDescription")}
         </p>
@@ -143,8 +152,12 @@ const AnswerPage: React.FC = () => {
     <>
       <header className="flex items-center justify-between border-b border-slate-200 bg-white px-8 py-4 dark:border-border-dark dark:bg-brand-bg shrink-0">
         <div className="min-w-0">
-          <h1 className="truncate text-lg font-bold text-slate-900 dark:text-white">{chat.title}</h1>
-          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{t("startedAt", { value: createdAtLabel })}</p>
+          <h1 className="truncate text-lg font-bold text-slate-900 dark:text-white">
+            {chat.title}
+          </h1>
+          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
+            {t("startedAt", { value: createdAtLabel })}
+          </p>
         </div>
         <button
           className="rounded-md border border-slate-300 px-3 py-1.5 text-xs font-semibold text-slate-600 transition-colors hover:bg-slate-100 dark:border-border-dark dark:text-slate-300 dark:hover:bg-surface-dark"
@@ -165,30 +178,22 @@ const AnswerPage: React.FC = () => {
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`max-w-[88%] rounded-xl text-sm ${
+            className={`max-w-[88%] rounded-xl text-sm shadow-sm p-3 px-4 ${
               message.sender === "user"
-                ? "ml-auto"
-                : "mr-auto"
-            } ${message.audioUrl ? "" : `shadow-sm p-3 px-4 ${
-              message.sender === "user"
-                ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                : "border border-slate-200 bg-white text-slate-700 dark:border-border-dark dark:bg-surface-dark dark:text-slate-200"
-            }`}`}
+                ? "ml-auto bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                : "mr-auto border border-slate-200 bg-white text-slate-700 dark:border-border-dark dark:bg-surface-dark dark:text-slate-200"
+            }`}
           >
-            {message.audioUrl ? (
-              <VoiceMessagePlayer audioUrl={message.audioUrl} sender={message.sender} />
-            ) : (
-              <p className="whitespace-pre-wrap leading-6">{message.content}</p>
-            )}
-            {!message.audioUrl && (
-              <p
-                className={`mt-2 text-[10px] font-semibold uppercase tracking-wide ${
-                  message.sender === "user" ? "text-slate-300 dark:text-slate-600" : "text-slate-400"
-                }`}
-              >
-                {message.sender === "user" ? t("you") : t("openJusticeAi")}
-              </p>
-            )}
+            <p className="whitespace-pre-wrap leading-6">{message.content}</p>
+            <p
+              className={`mt-2 text-[10px] font-semibold uppercase tracking-wide ${
+                message.sender === "user"
+                  ? "text-slate-300 dark:text-slate-600"
+                  : "text-slate-400"
+              }`}
+            >
+              {message.sender === "user" ? t("you") : t("openJusticeAi")}
+            </p>
           </div>
         ))}
       </div>
@@ -201,9 +206,11 @@ const AnswerPage: React.FC = () => {
             type="button"
             disabled
           >
-            <span className="material-symbols-outlined text-[20px]">attach_file</span>
+            <span className="material-symbols-outlined text-[20px]">
+              attach_file
+            </span>
           </button>
-          {(recordingState.isRecording || isVoicePreview) ? (
+          {recordingState.isRecording || isVoicePreview ? (
             <VoiceRecordingUI
               durationLabel={formatDuration(recordingState.duration)}
               voiceLevel={voiceLevel}
@@ -232,7 +239,9 @@ const AnswerPage: React.FC = () => {
                   type="button"
                   onClick={handleMicClick}
                 >
-                  <span className="material-symbols-outlined text-[18px]">mic</span>
+                  <span className="material-symbols-outlined text-[18px]">
+                    mic
+                  </span>
                 </button>
               </div>
               <button
@@ -242,7 +251,9 @@ const AnswerPage: React.FC = () => {
                 onClick={handleSend}
                 disabled={!question.trim()}
               >
-                <span className="material-symbols-outlined text-[24px]">arrow_upward</span>
+                <span className="material-symbols-outlined text-[24px]">
+                  arrow_upward
+                </span>
               </button>
             </>
           )}
