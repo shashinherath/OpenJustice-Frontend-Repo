@@ -5,7 +5,7 @@ export interface ChatMessage {
   sender: ChatSender;
   content: string;
   timestamp: Date;
-  messageType?: string;
+  audioUrl?: string;
 }
 
 export interface Conversation {
