@@ -5,6 +5,7 @@ export interface ChatMessage {
   sender: ChatSender;
   content: string;
   timestamp: Date;
+  messageType?: string;
   audioUrl?: string;
 }
 
@@ -13,6 +14,8 @@ export interface Conversation {
   title: string;
   createdAt: Date;
   messages: ChatMessage[];
+  isArchived?: boolean;
+  isPinned?: boolean;
 }
 
 export interface ApiConversationCreate {
@@ -25,7 +28,15 @@ export interface ApiConversationResponse {
   user_id: string;
   title: string;
   channel: string;
+  is_archived: boolean;
+  is_pinned: boolean;
   created_at: string;
+}
+
+export interface ApiConversationUpdate {
+  title?: string;
+  is_archived?: boolean;
+  is_pinned?: boolean;
 }
 
 export interface ApiMessageCreate {
@@ -45,6 +56,11 @@ export interface ApiMessageResponse {
 
 export interface ApiConversationDetailResponse extends ApiConversationResponse {
   messages: ApiMessageResponse[];
+}
+
+export interface ApiMessageCompleteRequest {
+  query: string;
+  context?: string;
 }
 
 export interface LegalQuery {

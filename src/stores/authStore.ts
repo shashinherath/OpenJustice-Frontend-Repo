@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type { User } from "@/types/user.types";
 
 interface AuthStore {
@@ -11,15 +12,22 @@ interface AuthStore {
   updateUser: (data: Partial<User>) => void;
 }
 
-export const useAuthStore = create<AuthStore>((set) => ({
-  user: null,
-  isAuthenticated: false,
-  token: null,
-  
-  login: (user, token) => set({ user, token, isAuthenticated: true }),
-  logout: () => set({ user: null, token: null, isAuthenticated: false }),
-  updateUser: (data) => 
-    set((state) => ({ 
-      user: state.user ? { ...state.user, ...data } : null 
-    }))
-}));
+export const useAuthStore = create<AuthStore>()(
+  persist(
+    (set) => ({
+      user: null,
+      isAuthenticated: false,
+      token: null,
+      
+      login: (user, token) => set({ user, token, isAuthenticated: true }),
+      logout: () => set({ user: null, token: null, isAuthenticated: false }),
+      updateUser: (data) => 
+        set((state) => ({ 
+          user: state.user ? { ...state.user, ...data } : null 
+        }))
+    }),
+    {
+      name: "oj-auth-store",
+    }
+  )
+);

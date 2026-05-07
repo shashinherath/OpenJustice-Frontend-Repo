@@ -1,12 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useChatStore } from "@/stores/chatStore";
+import { useChatStore } from "../../stores/chatStore";
+import type { SidebarChatItem } from "../../stores/chatStore";
+import type { ChatMessage } from "../../types/chat.types";
 import { useVoiceStore } from "@/stores/voiceStore";
 import { useVoiceRecording } from "@/hooks/useVoiceRecording";
 import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
 import VoiceMessagePlayer from "@/components/ui/VoiceMessagePlayer";
-import { blobToDataURL } from "@/utils/audioUtils";
 
 const AnswerPage: React.FC = () => {
   const { t } = useTranslation();
@@ -19,6 +20,7 @@ const AnswerPage: React.FC = () => {
     sidebarChats,
     chatMessagesById,
     sendMessageToChat,
+    sendVoiceMessageToChat,
     loadConversation,
   } = useChatStore();
   const { recordingState, audioBlob, reset } = useVoiceStore();
@@ -33,8 +35,8 @@ const AnswerPage: React.FC = () => {
     isPaused,
   } = useVoiceRecording();
 
-  const chat = sidebarChats.find((item) => item.id === chatId);
-  const messages = chatMessagesById[chatId] || [];
+  const chat = sidebarChats.find((item: SidebarChatItem) => item.id === chatId);
+  const messages = (chatMessagesById[chatId] || []) as ChatMessage[];
 
   const createdAtLabel = useMemo(() => {
     const firstMessage = messages[0];
@@ -122,15 +124,9 @@ const AnswerPage: React.FC = () => {
       return;
     }
 
-    try {
-      const audioUrl = await blobToDataURL(audioBlob);
-      const voiceMessage = "Voice Message";
-      sendMessageToChat(chatId, voiceMessage, audioUrl);
-      reset();
-      setIsVoicePreview(false);
-    } catch (error) {
-      console.error("Failed to convert audio to data URL:", error);
-    }
+    await sendVoiceMessageToChat(chatId, audioBlob);
+    reset();
+    setIsVoicePreview(false);
   };
 
   if (!chat) {
@@ -181,28 +177,35 @@ const AnswerPage: React.FC = () => {
           </div>
         )}
 
-        {messages.map((message) => (
+        {messages.map((message: ChatMessage) => (
           <div
             key={message.id}
             className={`max-w-[88%] rounded-xl text-sm ${
-              message.sender === "user"
-                ? "ml-auto"
-                : "mr-auto"
-            } ${message.audioUrl ? "" : `shadow-sm p-3 px-4 ${
-              message.sender === "user"
-                ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                : "border border-slate-200 bg-white text-slate-700 dark:border-border-dark dark:bg-surface-dark dark:text-slate-200"
-            }`}`}
+              message.sender === "user" ? "ml-auto" : "mr-auto"
+            } ${
+              message.audioUrl
+                ? ""
+                : `shadow-sm p-3 px-4 ${
+                    message.sender === "user"
+                      ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                      : "border border-slate-200 bg-white text-slate-700 dark:border-border-dark dark:bg-surface-dark dark:text-slate-200"
+                  }`
+            }`}
           >
             {message.audioUrl ? (
-              <VoiceMessagePlayer audioUrl={message.audioUrl} sender={message.sender} />
+              <VoiceMessagePlayer
+                audioUrl={message.audioUrl}
+                sender={message.sender}
+              />
             ) : (
               <p className="whitespace-pre-wrap leading-6">{message.content}</p>
             )}
             {!message.audioUrl && (
               <p
                 className={`mt-2 text-[10px] font-semibold uppercase tracking-wide ${
-                  message.sender === "user" ? "text-slate-300 dark:text-slate-600" : "text-slate-400"
+                  message.sender === "user"
+                    ? "text-slate-300 dark:text-slate-600"
+                    : "text-slate-400"
                 }`}
               >
                 {message.sender === "user" ? t("you") : t("openJusticeAi")}
@@ -259,8 +262,12 @@ const AnswerPage: React.FC = () => {
                 </button>
               </div>
               <button
-                className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full font-bold text-white transition-all shadow-lg shrink-0 disabled:cursor-not-allowed disabled:opacity-50"
-                style={{ backgroundColor: "var(--oj-accent-color)" }}
+                className={`flex h-11 w-11 items-center justify-center rounded-full font-bold transition-all shadow-lg shrink-0 ${
+                  !question.trim()
+                    ? "bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-600 cursor-not-allowed shadow-none"
+                    : "text-white cursor-pointer hover:opacity-90"
+                }`}
+                style={!question.trim() ? {} : { backgroundColor: "var(--oj-accent-color)" }}
                 type="button"
                 onClick={handleSend}
                 disabled={!question.trim()}
