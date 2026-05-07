@@ -1,6 +1,13 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { ChatMessage, Conversation } from "@/types/chat.types";
+import type {
+  ApiConversationDetailResponse,
+  ApiConversationResponse,
+  ApiMessageResponse,
+  ChatMessage,
+  Conversation,
+} from "@/types/chat.types";
+import { chatService } from "@/services/chatService";
 
 export interface SidebarChatItem {
   id: string;
@@ -12,11 +19,14 @@ export interface SidebarChatItem {
 interface ChatStore {
   conversations: Conversation[];
   activeConversationId: string | null;
-  messages: ChatMessage[];
   isTyping: boolean;
   sidebarChats: SidebarChatItem[];
   chatMessagesById: Record<string, ChatMessage[]>;
-  
+  isLoading: boolean;
+  error: string | null;
+
+  loadConversations: () => Promise<void>;
+  loadConversation: (id: string) => Promise<void>;
   setActiveConversation: (id: string) => void;
   createNewChat: () => string;
   addMessage: (message: ChatMessage) => void;
@@ -109,11 +119,49 @@ const summarizeTitle = (text: string): string => {
   return cleaned.length > 44 ? `${cleaned.slice(0, 44)}...` : cleaned;
 };
 
+const mapApiMessage = (message: ApiMessageResponse): ChatMessage => {
+  const sender =
+    message.sender === "ai" || message.sender === "assistant" ? "ai" : "user";
+  return {
+    id: message.id,
+    sender,
+    content: message.content,
+    timestamp: new Date(message.created_at),
+    messageType: message.message_type,
+  };
+};
+
+const mapConversation = (
+  conversation: ApiConversationResponse,
+): Conversation => ({
+  id: conversation.id,
+  title: conversation.title || "New Question",
+  createdAt: new Date(conversation.created_at),
+  messages: [],
+});
+
+const mergeSidebarChats = (
+  existing: SidebarChatItem[],
+  incoming: Conversation[],
+): SidebarChatItem[] => {
+  const existingMap = new Map(existing.map((chat) => [chat.id, chat]));
+
+  return incoming.map((conversation) => {
+    const previous = existingMap.get(conversation.id);
+    return {
+      id: conversation.id,
+      title: conversation.title,
+      isArchived: previous?.isArchived ?? false,
+      isPinned: previous?.isPinned ?? false,
+    };
+  });
+};
+
 const normalizeMessageMap = (
   map: Record<string, ChatMessage[]> | undefined,
 ): Record<string, ChatMessage[]> => {
   if (!map) {
-    return initialMessagesById;
+    return {};
   }
 
   return Object.fromEntries(
@@ -122,7 +170,9 @@ const normalizeMessageMap = (
       (messages || []).map((message) => ({
         ...message,
         timestamp:
-          message.timestamp instanceof Date ? message.timestamp : new Date(message.timestamp),
+          message.timestamp instanceof Date
+            ? message.timestamp
+            : new Date(message.timestamp),
       })),
     ]),
   );
@@ -130,30 +180,94 @@ const normalizeMessageMap = (
 
 export const useChatStore = create<ChatStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       conversations: [],
-      activeConversationId: "chat-1",
-      messages: [],
+      activeConversationId: null,
       isTyping: false,
-      sidebarChats: [
-        { id: "chat-1", title: "Tenant rights in CA", isArchived: false, isPinned: false },
-        { id: "chat-2", title: "IP protection for software", isArchived: false, isPinned: false },
-        { id: "chat-3", title: "Employment law basics", isArchived: false, isPinned: false },
-      ],
-      chatMessagesById: initialMessagesById,
+      sidebarChats: [],
+      chatMessagesById: {},
+      isLoading: false,
+      error: null,
+
+      loadConversations: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          const conversations = await chatService.listConversations();
+          const mapped = conversations.map(mapConversation);
+          set((state) => ({
+            conversations: mapped,
+            sidebarChats: mergeSidebarChats(state.sidebarChats, mapped),
+          }));
+        } catch (error: any) {
+          set({ error: error?.message || "Failed to load conversations." });
+        } finally {
+          set({ isLoading: false });
+        }
+      },
+
+      loadConversation: async (id) => {
+        if (!id) {
+          return;
+        }
+        set({ isLoading: true, error: null });
+        try {
+          const conversation = await chatService.getConversation(id);
+          const mappedMessages = conversation.messages.map(mapApiMessage);
+          set((state) => ({
+            activeConversationId: id,
+            chatMessagesById: {
+              ...state.chatMessagesById,
+              [id]: mappedMessages,
+            },
+            sidebarChats: mergeSidebarChats(state.sidebarChats, [
+              mapConversation(conversation),
+            ]),
+          }));
+        } catch (error: any) {
+          set({ error: error?.message || "Failed to load conversation." });
+        } finally {
+          set({ isLoading: false });
+        }
+      },
 
       setActiveConversation: (id) => set({ activeConversationId: id }),
-      createNewChat: () => {
-        const chatId = `chat-${Date.now()}`;
-        set((state) => ({
-          activeConversationId: chatId,
-          sidebarChats: [{ id: chatId, title: "New Question", isArchived: false, isPinned: false }, ...state.sidebarChats],
-          chatMessagesById: {
-            ...state.chatMessagesById,
-            [chatId]: [],
-          },
-        }));
-        return chatId;
+
+      createNewChat: async (title) => {
+        const safeTitle =
+          title && title.trim() ? summarizeTitle(title) : "New Question";
+        set({ isLoading: true, error: null });
+        try {
+          const conversation = await chatService.createConversation({
+            title: safeTitle,
+            channel: "web",
+          });
+          set((state) => ({
+            activeConversationId: conversation.id,
+            conversations: [
+              mapConversation(conversation),
+              ...state.conversations,
+            ],
+            sidebarChats: [
+              {
+                id: conversation.id,
+                title: safeTitle,
+                isArchived: false,
+                isPinned: false,
+              },
+              ...state.sidebarChats,
+            ],
+            chatMessagesById: {
+              ...state.chatMessagesById,
+              [conversation.id]: [],
+            },
+          }));
+          return conversation.id;
+        } catch (error: any) {
+          set({ error: error?.message || "Failed to create conversation." });
+          throw error;
+        } finally {
+          set({ isLoading: false });
+        }
       },
       addMessage: (message) =>
         set((state) => ({ messages: [...state.messages, message] })),
@@ -172,44 +286,86 @@ export const useChatStore = create<ChatStore>()(
             audioUrl: audioUrl,
           };
 
-          const aiMessage: ChatMessage = {
-            id: `${chatId}-ai-${Date.now() + 1}`,
-            sender: "ai",
-            content: buildAiResponse(trimmed),
-            timestamp: new Date(),
-          };
+        const tempId = `${chatId}-temp-${Date.now()}`;
+        const optimisticMessage: ChatMessage = {
+          id: tempId,
+          sender: "user",
+          content: trimmed,
+          timestamp: new Date(),
+          messageType: "text",
+        };
 
+        set((state) => {
           const existing = state.chatMessagesById[chatId] || [];
-          const nextMessages = [...existing, userMessage, aiMessage];
-
           return {
-            activeConversationId: chatId,
+            chatMessagesById: {
+              ...state.chatMessagesById,
+              [chatId]: [...existing, optimisticMessage],
+            },
             sidebarChats: state.sidebarChats.map((chat) => {
               if (chat.id !== chatId) {
                 return chat;
               }
-
-              const nextTitle = chat.title === "New Question" ? summarizeTitle(trimmed) : chat.title;
+              const nextTitle =
+                chat.title === "New Question"
+                  ? summarizeTitle(trimmed)
+                  : chat.title;
               return { ...chat, title: nextTitle };
             }),
+          };
+        });
+
+        try {
+          const created = await chatService.createMessage(chatId, {
+            content: trimmed,
+            sender: "user",
+            message_type: "text",
+          });
+
+          set((state) => {
+            const existing = state.chatMessagesById[chatId] || [];
+            const withoutTemp = existing.filter(
+              (message) => message.id !== tempId,
+            );
+            return {
+              chatMessagesById: {
+                ...state.chatMessagesById,
+                [chatId]: [...withoutTemp, mapApiMessage(created)],
+              },
+            };
+          });
+        } catch (error: any) {
+          set((state) => ({
+            error: error?.message || "Failed to send message.",
             chatMessagesById: {
               ...state.chatMessagesById,
-              [chatId]: nextMessages,
+              [chatId]: (state.chatMessagesById[chatId] || []).filter(
+                (message) => message.id !== tempId,
+              ),
             },
-          };
-        }),
+          }));
+          throw error;
+        }
+      },
+
       setTyping: (isTyping) => set({ isTyping }),
-      clearMessages: () => set({ messages: [] }),
+      clearMessages: () => set({ chatMessagesById: {} }),
       archiveChat: (id) =>
         set((state) => ({
           sidebarChats: state.sidebarChats.map((chat) =>
             chat.id === id ? { ...chat, isArchived: true } : chat,
           ),
-          activeConversationId: state.activeConversationId === id ? null : state.activeConversationId,
+          activeConversationId:
+            state.activeConversationId === id
+              ? null
+              : state.activeConversationId,
         })),
       archiveAllChats: () =>
         set((state) => ({
-          sidebarChats: state.sidebarChats.map((chat) => ({ ...chat, isArchived: true })),
+          sidebarChats: state.sidebarChats.map((chat) => ({
+            ...chat,
+            isArchived: true,
+          })),
         })),
       unarchiveChat: (id) =>
         set((state) => ({
@@ -221,16 +377,20 @@ export const useChatStore = create<ChatStore>()(
         set((state) => ({
           sidebarChats: state.sidebarChats.filter((chat) => chat.id !== id),
           chatMessagesById: Object.fromEntries(
-            Object.entries(state.chatMessagesById).filter(([key]) => key !== id),
+            Object.entries(state.chatMessagesById).filter(
+              ([key]) => key !== id,
+            ),
           ),
-          activeConversationId: state.activeConversationId === id ? null : state.activeConversationId,
+          activeConversationId:
+            state.activeConversationId === id
+              ? null
+              : state.activeConversationId,
         })),
       deleteAllChats: () =>
         set({
           sidebarChats: [],
           chatMessagesById: {},
           activeConversationId: null,
-          messages: [],
         }),
       renameChat: (id, title) =>
         set((state) => ({

@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import BrandLogo from "@/components/ui/BrandLogo";
 import { useAuthStore } from "@/stores/authStore";
+import { authService } from "@/services/authService";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -17,11 +18,14 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleClose = () => {
     setEmail("");
     setPassword("");
     setShowPassword(false);
+    setError(null);
     onClose();
   };
 
@@ -30,22 +34,49 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     navigate("/signup");
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError(null);
 
-    const fallbackName = email.split("@")[0] || "User";
-    login(
-      {
-        id: `user-${Date.now()}`,
-        name: fallbackName,
-        email,
-      },
-      `token-${Date.now()}`,
-    );
+    try {
+      const response = await authService.login({
+        email: email.trim().toLowerCase(),
+        password,
+      });
 
-    const redirectPath = new URLSearchParams(location.search).get("redirect") || "/chat";
-    handleClose();
-    navigate(redirectPath);
+      const { data } = response;
+      const fallbackName = data.first_name
+        ? `${data.first_name} ${data.last_name || ""}`.trim()
+        : email.split("@")[0] || "User";
+
+      login(
+        {
+          id: data.uuid,
+          name: fallbackName,
+          email,
+          preferences: {
+            language: data.preferred_language,
+          },
+        },
+        data.access_token || `token-${Date.now()}`,
+      );
+
+      const redirectPath =
+        new URLSearchParams(location.search).get("redirect") || "/chat";
+      handleClose();
+      navigate(redirectPath);
+    } catch (err: any) {
+      console.error("Login failed:", err);
+      // Typically backend returns 422 for validation, or 401 for unauthorized
+      setError(
+        err.response?.data?.message ||
+          err.response?.data?.detail ||
+          "Invalid login credentials. Please try again.",
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (!isOpen) return null;
@@ -71,7 +102,10 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         {/* Header */}
         <div className="flex flex-col items-center mb-8 text-center">
           <div className="w-16 h-16 bg-slate-600 dark:bg-slate-200 rounded-full flex items-center justify-center mb-6 border border-slate-500 dark:border-slate-600">
-            <BrandLogo containerClassName="w-full h-full flex items-center justify-center" iconClassName="text-yellow-400 dark:text-blue-300 text-3xl" />
+            <BrandLogo
+              containerClassName="w-full h-full flex items-center justify-center"
+              iconClassName="text-yellow-400 dark:text-blue-300 text-3xl"
+            />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-white dark:text-white mb-2">
             {t("loginWelcomeBack")}
@@ -83,6 +117,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
         {/* Form */}
         <form className="space-y-6" onSubmit={handleSubmit}>
+          {error && (
+            <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-3 text-sm text-red-200 text-center">
+              {error}
+            </div>
+          )}
+
           {/* Email Field */}
           <div className="space-y-2">
             <label
@@ -142,20 +182,29 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
                 aria-label={showPassword ? "Hide password" : "Show password"}
                 onClick={() => setShowPassword((prev) => !prev)}
               >
-                <span className="material-symbols-outlined text-[18px]">{showPassword ? "visibility_off" : "visibility"}</span>
+                <span className="material-symbols-outlined text-[18px]">
+                  {showPassword ? "visibility_off" : "visibility"}
+                </span>
               </button>
             </div>
           </div>
 
           {/* Login Button */}
           <button
-            className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 group shadow-lg"
+            className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 group shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             type="submit"
+            disabled={isLoading}
           >
-            {t("logIn")}
-            <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">
-              arrow_forward
-            </span>
+            {isLoading ? (
+              <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></span>
+            ) : (
+              <>
+                {t("logIn")}
+                <span className="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">
+                  arrow_forward
+                </span>
+              </>
+            )}
           </button>
         </form>
 

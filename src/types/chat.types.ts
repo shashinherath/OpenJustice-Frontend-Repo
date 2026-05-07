@@ -1,6 +1,8 @@
+export type ChatSender = "user" | "ai";
+
 export interface ChatMessage {
   id: string;
-  sender: 'user' | 'ai';
+  sender: ChatSender;
   content: string;
   timestamp: Date;
   audioUrl?: string;
@@ -10,8 +12,39 @@ export interface Conversation {
   id: string;
   title: string;
   createdAt: Date;
-  updatedAt: Date;
   messages: ChatMessage[];
+}
+
+export interface ApiConversationCreate {
+  title: string;
+  channel?: string;
+}
+
+export interface ApiConversationResponse {
+  id: string;
+  user_id: string;
+  title: string;
+  channel: string;
+  created_at: string;
+}
+
+export interface ApiMessageCreate {
+  sender?: string;
+  content: string;
+  message_type?: string;
+}
+
+export interface ApiMessageResponse {
+  id: string;
+  conversation_id: string;
+  sender: string;
+  content: string;
+  message_type: string;
+  created_at: string;
+}
+
+export interface ApiConversationDetailResponse extends ApiConversationResponse {
+  messages: ApiMessageResponse[];
 }
 
 export interface LegalQuery {
