@@ -8,6 +8,7 @@ import { useVoiceStore } from "@/stores/voiceStore";
 import { useVoiceRecording } from "@/hooks/useVoiceRecording";
 import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
 import { SUPPORTED_LANGUAGES, type AppLanguage } from "@/constants/languages";
+import { blobToDataURL } from "@/utils/audioUtils";
 
 const ChatPage: React.FC = () => {
   const { t } = useTranslation();

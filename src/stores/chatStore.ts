@@ -48,6 +48,11 @@ const summarizeTitle = (text: string): string => {
   if (!cleaned) {
     return "New Question";
   }
+  
+  if (cleaned.startsWith("Voice Message")) {
+    return "Voice Message Query";
+  }
+  
   return cleaned.length > 44 ? `${cleaned.slice(0, 44)}...` : cleaned;
 };
 
