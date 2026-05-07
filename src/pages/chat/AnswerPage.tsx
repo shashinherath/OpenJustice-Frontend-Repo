@@ -5,6 +5,8 @@ import { useChatStore } from "@/stores/chatStore";
 import { useVoiceStore } from "@/stores/voiceStore";
 import { useVoiceRecording } from "@/hooks/useVoiceRecording";
 import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
+import VoiceMessagePlayer from "@/components/ui/VoiceMessagePlayer";
+import { blobToDataURL } from "@/utils/audioUtils";
 
 const AnswerPage: React.FC = () => {
   const { t } = useTranslation();
@@ -102,15 +104,20 @@ const AnswerPage: React.FC = () => {
     });
   };
 
-  const handleSendVoice = () => {
+  const handleSendVoice = async () => {
     if (!audioBlob) {
       return;
     }
 
-    const voiceMessage = `[Voice message ${(audioBlob.size / 1024).toFixed(1)}KB]`;
-    sendMessageToChat(chatId, voiceMessage);
-    reset();
-    setIsVoicePreview(false);
+    try {
+      const audioUrl = await blobToDataURL(audioBlob);
+      const voiceMessage = "Voice Message";
+      sendMessageToChat(chatId, voiceMessage, audioUrl);
+      reset();
+      setIsVoicePreview(false);
+    } catch (error) {
+      console.error("Failed to convert audio to data URL:", error);
+    }
   };
 
   if (!chat) {
@@ -158,20 +165,30 @@ const AnswerPage: React.FC = () => {
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`max-w-[88%] rounded-xl px-4 py-3 text-sm shadow-sm ${
+            className={`max-w-[88%] rounded-xl text-sm ${
               message.sender === "user"
-                ? "ml-auto bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                : "mr-auto border border-slate-200 bg-white text-slate-700 dark:border-border-dark dark:bg-surface-dark dark:text-slate-200"
-            }`}
+                ? "ml-auto"
+                : "mr-auto"
+            } ${message.audioUrl ? "" : `shadow-sm p-3 px-4 ${
+              message.sender === "user"
+                ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                : "border border-slate-200 bg-white text-slate-700 dark:border-border-dark dark:bg-surface-dark dark:text-slate-200"
+            }`}`}
           >
-            <p className="whitespace-pre-wrap leading-6">{message.content}</p>
-            <p
-              className={`mt-2 text-[10px] font-semibold uppercase tracking-wide ${
-                message.sender === "user" ? "text-slate-300 dark:text-slate-600" : "text-slate-400"
-              }`}
-            >
-              {message.sender === "user" ? t("you") : t("openJusticeAi")}
-            </p>
+            {message.audioUrl ? (
+              <VoiceMessagePlayer audioUrl={message.audioUrl} sender={message.sender} />
+            ) : (
+              <p className="whitespace-pre-wrap leading-6">{message.content}</p>
+            )}
+            {!message.audioUrl && (
+              <p
+                className={`mt-2 text-[10px] font-semibold uppercase tracking-wide ${
+                  message.sender === "user" ? "text-slate-300 dark:text-slate-600" : "text-slate-400"
+                }`}
+              >
+                {message.sender === "user" ? t("you") : t("openJusticeAi")}
+              </p>
+            )}
           </div>
         ))}
       </div>

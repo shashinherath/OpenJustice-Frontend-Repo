@@ -125,17 +125,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                                         className="absolute right-1 top-10 z-30 w-40 rounded-lg border border-slate-200 bg-white py-1 shadow-xl dark:border-border-dark dark:bg-surface-dark"
                                         onClick={(event) => event.stopPropagation()}
                                     >
-                                        <button
-                                            className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
-                                            type="button"
-                                            onClick={() => {
-                                                archiveChat(chat.id);
-                                                setActiveChatMenu(null);
-                                            }}
-                                        >
-                                            <span className="material-symbols-outlined text-[14px]">archive</span>
-                                            Archive
-                                        </button>
+
                                         <button className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark" type="button">
                                             <span className="material-symbols-outlined text-[14px]">share</span>
                                             Share
@@ -232,41 +222,45 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                                 Settings
                             </button>
                             
-                            <div 
-                                className="relative help-item group/help"
-                                onMouseEnter={() => setHelpOpen(true)}
-                                onMouseLeave={() => setHelpOpen(false)}
-                            >
-                                <div className="flex items-center justify-between px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors cursor-pointer">
-                                    <div className="flex items-center gap-3">
-                                        <span className="material-symbols-outlined text-[18px]">help_outline</span>
-                                        Help
-                                    </div>
-                                    <span className="material-symbols-outlined text-[16px]" style={{ color: "var(--oj-accent-color)" }}>chevron_right</span>
-                                </div>
-                                
-                                {helpOpen && (
-                                    <div className="absolute left-full bottom-0 ml-1 w-48 bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark rounded-xl shadow-2xl py-2">
-                                        <Link className="group flex items-center gap-2 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors" to="/help">
-                                            <span className="material-symbols-outlined text-[16px]" style={{ color: "var(--oj-accent-color)" }}>help_outline</span>
-                                            <span>Help Center</span>
-                                            <span className="material-symbols-outlined ml-auto text-[7px] opacity-0 transition-opacity group-hover:opacity-100" style={{ color: "var(--oj-accent-color)" }}>north_east</span>
-                                        </Link>
-                                        <Link className="group flex items-center justify-between px-4 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark" target="_blank" to="/privacy-policy">
-                                            <span className="flex items-center gap-2">
-                                                <span className="material-symbols-outlined text-[16px]" style={{ color: "var(--oj-accent-color)" }}>policy</span>
-                                                <span>Terms and Policies</span>
-                                            </span>
-                                            <span className="material-symbols-outlined text-[7px] opacity-0 transition-opacity group-hover:opacity-100" style={{ color: "var(--oj-accent-color)" }}>north_east</span>
-                                        </Link>
-                                        <Link className="group flex items-center gap-2 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors" to="/release-notes">
-                                            <span className="material-symbols-outlined text-[16px]" style={{ color: "var(--oj-accent-color)" }}>new_releases</span>
-                                            <span>Release Notes</span>
-                                            <span className="material-symbols-outlined ml-auto text-[7px] opacity-0 transition-opacity group-hover:opacity-100" style={{ color: "var(--oj-accent-color)" }}>north_east</span>
-                                        </Link>
-                                    </div>
-                                )}
-                            </div>
+                             <div 
+                                 className="relative help-item group/help"
+                                 onMouseEnter={() => setHelpOpen(true)}
+                                 onMouseLeave={() => setHelpOpen(false)}
+                             >
+                                 <div className="flex items-center justify-between px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors cursor-pointer">
+                                     <div className="flex items-center gap-3">
+                                         <span className="material-symbols-outlined text-[18px]">help_outline</span>
+                                         Help
+                                     </div>
+                                     <span className="material-symbols-outlined text-[16px]" style={{ color: "var(--oj-accent-color)" }}>chevron_right</span>
+                                 </div>
+                                 
+                                 {helpOpen && (
+                                     <div className="absolute left-full bottom-0 ml-1 w-48 bg-white dark:bg-surface-dark border border-slate-200 dark:border-border-dark rounded-xl shadow-2xl py-2">
+                                         <Link 
+                                            className="group flex items-center gap-2 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors" 
+                                            to="/help"
+                                            target="_blank"
+                                         >
+                                             <span className="material-symbols-outlined text-[16px]" style={{ color: "var(--oj-accent-color)" }}>help_outline</span>
+                                             <span>Help Center</span>
+                                             <span className="material-symbols-outlined ml-auto text-[7px] opacity-0 transition-opacity group-hover:opacity-100" style={{ color: "var(--oj-accent-color)" }}>north_east</span>
+                                         </Link>
+                                         <Link className="group flex items-center justify-between px-4 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark" target="_blank" to="/privacy-policy">
+                                             <span className="flex items-center gap-2">
+                                                 <span className="material-symbols-outlined text-[16px]" style={{ color: "var(--oj-accent-color)" }}>policy</span>
+                                                 <span>Terms and Policies</span>
+                                             </span>
+                                             <span className="material-symbols-outlined text-[7px] opacity-0 transition-opacity group-hover:opacity-100" style={{ color: "var(--oj-accent-color)" }}>north_east</span>
+                                         </Link>
+                                         <Link className="group flex items-center gap-2 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors" to="/release-notes">
+                                             <span className="material-symbols-outlined text-[16px]" style={{ color: "var(--oj-accent-color)" }}>new_releases</span>
+                                             <span>Release Notes</span>
+                                             <span className="material-symbols-outlined ml-auto text-[7px] opacity-0 transition-opacity group-hover:opacity-100" style={{ color: "var(--oj-accent-color)" }}>north_east</span>
+                                         </Link>
+                                     </div>
+                                 )}
+                             </div>
                             
                             <div className="my-1 border-t border-slate-100 dark:border-border-dark"></div>
                             

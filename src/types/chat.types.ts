@@ -3,6 +3,7 @@ export interface ChatMessage {
   sender: 'user' | 'ai';
   content: string;
   timestamp: Date;
+  audioUrl?: string;
 }
 
 export interface Conversation {
