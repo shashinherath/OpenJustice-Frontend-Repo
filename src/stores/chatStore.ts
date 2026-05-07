@@ -28,8 +28,9 @@ interface ChatStore {
   loadConversations: () => Promise<void>;
   loadConversation: (id: string) => Promise<void>;
   setActiveConversation: (id: string) => void;
-  createNewChat: (title?: string) => Promise<string>;
-  sendMessageToChat: (chatId: string, question: string) => Promise<void>;
+  createNewChat: () => string;
+  addMessage: (message: ChatMessage) => void;
+  sendMessageToChat: (chatId: string, question: string, audioUrl?: string) => void;
   setTyping: (isTyping: boolean) => void;
   clearMessages: () => void;
   archiveChat: (id: string) => void;
@@ -42,6 +43,68 @@ interface ChatStore {
 }
 
 const CHAT_STORAGE_KEY = "oj-chat-store";
+
+const now = new Date();
+
+const initialMessagesById: Record<string, ChatMessage[]> = {
+  "chat-1": [
+    {
+      id: "chat-1-user-1",
+      sender: "user",
+      content: "What are my rights if a landlord refuses urgent repairs in California?",
+      timestamp: new Date(now.getTime() - 1000 * 60 * 12),
+    },
+    {
+      id: "chat-1-ai-1",
+      sender: "ai",
+      content:
+        "In California, tenants may request repairs in writing and use remedies such as repair-and-deduct in limited conditions. Document all communication and timelines before taking action.",
+      timestamp: new Date(now.getTime() - 1000 * 60 * 11),
+    },
+  ],
+  "chat-2": [
+    {
+      id: "chat-2-user-1",
+      sender: "user",
+      content: "How do I protect source code and product branding for my startup?",
+      timestamp: new Date(now.getTime() - 1000 * 60 * 9),
+    },
+    {
+      id: "chat-2-ai-1",
+      sender: "ai",
+      content:
+        "Use copyright notices for code, trademark filings for brand elements, and clear contributor agreements for ownership. NDA and licensing terms should align with your commercialization plan.",
+      timestamp: new Date(now.getTime() - 1000 * 60 * 8),
+    },
+  ],
+  "chat-3": [
+    {
+      id: "chat-3-user-1",
+      sender: "user",
+      content: "What should an employment contract include for remote hires?",
+      timestamp: new Date(now.getTime() - 1000 * 60 * 6),
+    },
+    {
+      id: "chat-3-ai-1",
+      sender: "ai",
+      content:
+        "Include role scope, compensation, confidentiality, IP ownership, termination clauses, and jurisdiction terms. Ensure labor-law compliance for the employee's work location.",
+      timestamp: new Date(now.getTime() - 1000 * 60 * 5),
+    },
+  ],
+};
+
+const buildAiResponse = (question: string): string => {
+  const normalized = question.trim();
+  if (!normalized) {
+    return "Please share your legal question, and I can help you with a structured answer.";
+  }
+
+  const isVoice = normalized.startsWith("Voice Message");
+  const displayQuestion = isVoice ? "your voice message" : `your question: "${normalized}"`;
+
+  return `Here is a draft legal analysis based on ${displayQuestion}. I can break this down into applicable rights, procedures, and supporting sources next.`;
+};
 
 const summarizeTitle = (text: string): string => {
   const cleaned = text.trim();
@@ -206,12 +269,22 @@ export const useChatStore = create<ChatStore>()(
           set({ isLoading: false });
         }
       },
+      addMessage: (message) =>
+        set((state) => ({ messages: [...state.messages, message] })),
+      sendMessageToChat: (chatId, question, audioUrl) =>
+        set((state) => {
+          const trimmed = question.trim();
+          if (!trimmed) {
+            return state;
+          }
 
-      sendMessageToChat: async (chatId, question) => {
-        const trimmed = question.trim();
-        if (!trimmed) {
-          return;
-        }
+          const userMessage: ChatMessage = {
+            id: `${chatId}-user-${Date.now()}`,
+            sender: "user",
+            content: trimmed,
+            timestamp: new Date(),
+            audioUrl: audioUrl,
+          };
 
         const tempId = `${chatId}-temp-${Date.now()}`;
         const optimisticMessage: ChatMessage = {

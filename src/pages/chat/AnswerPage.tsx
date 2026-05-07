@@ -128,6 +128,72 @@ const AnswerPage: React.FC = () => {
     }
   };
 
+  const handleMicClick = async () => {
+    setIsVoicePreview(false);
+    await startRecording();
+  };
+
+  const handlePauseResumeVoice = () => {
+    if (isPaused) {
+      resumeRecording();
+      return;
+    }
+    pauseRecording();
+  };
+
+  const handleStopVoice = async () => {
+    await stopRecording();
+    setIsVoicePreview(true);
+  };
+
+  const handleCancelVoice = () => {
+    cancelRecording();
+    setIsVoicePreview(false);
+  };
+
+  const handlePlayVoice = () => {
+    if (!audioBlob) {
+      return;
+    }
+
+    const url = URL.createObjectURL(audioBlob);
+    const audio = new Audio(url);
+    let isCleanedUp = false;
+
+    const cleanup = () => {
+      if (isCleanedUp) {
+        return;
+      }
+      isCleanedUp = true;
+      audio.onended = null;
+      audio.onerror = null;
+      URL.revokeObjectURL(url);
+    };
+
+    audio.onended = cleanup;
+    audio.onerror = cleanup;
+
+    void audio.play().catch(() => {
+      cleanup();
+    });
+  };
+
+  const handleSendVoice = async () => {
+    if (!audioBlob) {
+      return;
+    }
+
+    try {
+      const audioUrl = await blobToDataURL(audioBlob);
+      const voiceMessage = "Voice Message";
+      sendMessageToChat(chatId, voiceMessage, audioUrl);
+      reset();
+      setIsVoicePreview(false);
+    } catch (error) {
+      console.error("Failed to convert audio to data URL:", error);
+    }
+  };
+
   if (!chat) {
     return (
       <div className="flex h-full flex-col items-center justify-center px-6 text-center">
