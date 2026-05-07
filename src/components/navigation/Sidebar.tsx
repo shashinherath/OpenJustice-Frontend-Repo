@@ -180,7 +180,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                       className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
                       type="button"
                       onClick={() => {
-                        archiveChat(chat.id);
+                        void archiveChat(chat.id);
                         setActiveChatMenu(null);
                       }}
                     >
@@ -207,7 +207,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                           chat.title,
                         );
                         if (nextTitle && nextTitle.trim()) {
-                          renameChat(chat.id, nextTitle.trim());
+                          void renameChat(chat.id, nextTitle.trim());
                         }
                         setActiveChatMenu(null);
                       }}
@@ -221,7 +221,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                       className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
                       type="button"
                       onClick={() => {
-                        pinChat(chat.id);
+                        void pinChat(chat.id);
                         setActiveChatMenu(null);
                       }}
                     >
@@ -234,7 +234,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                       className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-red-500 transition-colors hover:bg-red-500/10"
                       type="button"
                       onClick={() => {
-                        deleteChat(chat.id);
+                        void deleteChat(chat.id);
                         setActiveChatMenu(null);
                       }}
                     >

@@ -35,28 +35,62 @@ const SettingsPage: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const languageContext = useContext(LanguageContext);
   const currentLang = (languageContext?.currentLanguage as AppLanguage) || "en";
-  const tr = (en: string, si: string, ta: string) => (currentLang === "si" ? si : currentLang === "ta" ? ta : en);
+  const tr = (en: string, si: string, ta: string) =>
+    currentLang === "si" ? si : currentLang === "ta" ? ta : en;
 
-  const sectionItems: Array<{ id: SettingsSection; label: string; icon: string }> = [
+  const sectionItems: Array<{
+    id: SettingsSection;
+    label: string;
+    icon: string;
+  }> = [
     { id: "general", label: tr("General", "සාමාන්‍ය", "பொது"), icon: "tune" },
-    { id: "data-controls", label: tr("Data Controls", "දත්ත පාලන", "தரவு கட்டுப்பாடுகள்"), icon: "database" },
-    { id: "security", label: tr("Security", "ආරක්ෂාව", "பாதுகாப்பு"), icon: "shield_lock" },
-    { id: "account", label: tr("Account", "ගිණුම", "கணக்கு"), icon: "manage_accounts" },
+    {
+      id: "data-controls",
+      label: tr("Data Controls", "දත්ත පාලන", "தரவு கட்டுப்பாடுகள்"),
+      icon: "database",
+    },
+    {
+      id: "security",
+      label: tr("Security", "ආරක්ෂාව", "பாதுகாப்பு"),
+      icon: "shield_lock",
+    },
+    {
+      id: "account",
+      label: tr("Account", "ගිණුම", "கணக்கு"),
+      icon: "manage_accounts",
+    },
   ];
-  const { sidebarChats, chatMessagesById, activeConversationId, archiveAllChats, unarchiveChat, deleteChat, deleteAllChats } = useChatStore();
+  const {
+    sidebarChats,
+    chatMessagesById,
+    activeConversationId,
+    archiveAllChats,
+    unarchiveChat,
+    deleteChat,
+    deleteAllChats,
+  } = useChatStore();
 
-  const [activeSection, setActiveSection] = useState<SettingsSection>("general");
+  const [activeSection, setActiveSection] =
+    useState<SettingsSection>("general");
 
-  const [appearance, setAppearance] = useState<"system" | "light" | "dark">(theme);
-  const [accentColor, setAccentColor] = useState<AccentColor>(getAccentFromStorage);
-  const [language, setLanguage] = useState<AppLanguage>((languageContext?.currentLanguage as AppLanguage) || "en");
-  const [spokenLanguage, setSpokenLanguage] = useState<AppLanguage>((languageContext?.currentLanguage as AppLanguage) || "en");
+  const [appearance, setAppearance] = useState<"system" | "light" | "dark">(
+    theme,
+  );
+  const [accentColor, setAccentColor] =
+    useState<AccentColor>(getAccentFromStorage);
+  const [language, setLanguage] = useState<AppLanguage>(
+    (languageContext?.currentLanguage as AppLanguage) || "en",
+  );
+  const [spokenLanguage, setSpokenLanguage] = useState<AppLanguage>(
+    (languageContext?.currentLanguage as AppLanguage) || "en",
+  );
   const [voice, setVoice] = useState<VoiceOption>("alloy");
 
   const [improveModel, setImproveModel] = useState(false);
 
   const [authenticatorEnabled, setAuthenticatorEnabled] = useState(false);
-  const [pushNotificationsEnabled, setPushNotificationsEnabled] = useState(false);
+  const [pushNotificationsEnabled, setPushNotificationsEnabled] =
+    useState(false);
   const [showQrPanel, setShowQrPanel] = useState(false);
 
   const [currentPassword, setCurrentPassword] = useState("");
@@ -96,7 +130,9 @@ const SettingsPage: React.FC = () => {
       return;
     }
 
-    const utterance = new SpeechSynthesisUtterance(textByLanguage[spokenLanguage]);
+    const utterance = new SpeechSynthesisUtterance(
+      textByLanguage[spokenLanguage],
+    );
     utterance.lang = spokenLanguage;
     utterance.rate = voice === "alloy" ? 1 : voice === "nova" ? 0.92 : 1.07;
     window.speechSynthesis.cancel();
@@ -105,7 +141,9 @@ const SettingsPage: React.FC = () => {
 
   useEffect(() => {
     if (appearance === "system") {
-      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)",
+      ).matches;
       setTheme(prefersDark ? "dark" : "light");
       return;
     }
@@ -153,7 +191,9 @@ const SettingsPage: React.FC = () => {
       })),
     };
 
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: "application/json",
+    });
     const url = URL.createObjectURL(blob);
     const fileDate = new Date().toISOString().slice(0, 10);
     const anchor = document.createElement("a");
@@ -188,7 +228,9 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="grid h-full grid-cols-1 gap-5 lg:grid-cols-12">
       <aside className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-3 lg:col-span-3">
-        <p className="px-2 pb-2 text-[11px] font-bold uppercase tracking-widest text-zinc-500">{tr("Settings", "සැකසුම්", "அமைப்புகள்")}</p>
+        <p className="px-2 pb-2 text-[11px] font-bold uppercase tracking-widest text-zinc-500">
+          {tr("Settings", "සැකසුම්", "அமைப்புகள்")}
+        </p>
         <div className="space-y-1.5">
           {sectionItems.map((item) => {
             const active = activeSection === item.id;
@@ -203,7 +245,9 @@ const SettingsPage: React.FC = () => {
                 type="button"
                 onClick={() => setActiveSection(item.id)}
               >
-                <span className="material-symbols-outlined text-[18px]">{item.icon}</span>
+                <span className="material-symbols-outlined text-[18px]">
+                  {item.icon}
+                </span>
                 <span>{item.label}</span>
               </button>
             );
@@ -214,14 +258,22 @@ const SettingsPage: React.FC = () => {
       <div className="space-y-4 lg:col-span-9">
         {activeSection === "general" && (
           <section className="space-y-4 rounded-xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <h3 className="text-lg font-semibold text-zinc-100">{tr("General", "සාමාන්‍ය", "பொது")}</h3>
+            <h3 className="text-lg font-semibold text-zinc-100">
+              {tr("General", "සාමාන්‍ය", "பொது")}
+            </h3>
 
             <div className="space-y-2">
-              <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">{tr("Appearance", "පෙනුම", "தோற்றம்")}</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                {tr("Appearance", "පෙනුම", "தோற்றம்")}
+              </p>
               <select
                 className="max-w-56 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs font-semibold capitalize text-zinc-100"
                 value={appearance}
-                onChange={(event) => setAppearance(event.target.value as "system" | "light" | "dark")}
+                onChange={(event) =>
+                  setAppearance(
+                    event.target.value as "system" | "light" | "dark",
+                  )
+                }
               >
                 <option value="system">System</option>
                 <option value="light">Light</option>
@@ -230,11 +282,15 @@ const SettingsPage: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">{tr("Accent Color", "ඇක්සන්ට් වර්ණය", "உச்ச நிறம்")}</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                {tr("Accent Color", "ඇක්සන්ට් වර්ණය", "உச்ச நிறம்")}
+              </p>
               <select
                 className="max-w-64 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs font-semibold text-zinc-100"
                 value={accentColor}
-                onChange={(event) => setAccentColor(event.target.value as AccentColor)}
+                onChange={(event) =>
+                  setAccentColor(event.target.value as AccentColor)
+                }
               >
                 <option value="default">⚫ Default</option>
                 <option value="blue">🔵 Blue</option>
@@ -246,13 +302,22 @@ const SettingsPage: React.FC = () => {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">{tr("Language", "භාෂාව", "மொழி")}</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                  {tr("Language", "භාෂාව", "மொழி")}
+                </label>
                 <div className="flex items-center gap-2">
                   <LanguageSelect
                     value={language}
                     onChange={(v) => setLanguage(v as AppLanguage)}
-                    options={LANGUAGE_OPTIONS.map(item => ({ value: item.value, label: item.label }))}
-                    ariaLabel={tr("Select interface language", "අතුරුමුහුණත් භාෂාව තෝරන්න", "இணைமுக மொழியை தேர்ந்தெடுக்கவும்")}
+                    options={LANGUAGE_OPTIONS.map((item) => ({
+                      value: item.value,
+                      label: item.label,
+                    }))}
+                    ariaLabel={tr(
+                      "Select interface language",
+                      "අතුරුමුහුණත් භාෂාව තෝරන්න",
+                      "இணைமுக மொழியை தேர்ந்தெடுக்கவும்",
+                    )}
                     className="w-full"
                   />
                   <button
@@ -266,13 +331,22 @@ const SettingsPage: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">{tr("Spoken Language", "කථන භාෂාව", "பேச்சு மொழி")}</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                  {tr("Spoken Language", "කථන භාෂාව", "பேச்சு மொழி")}
+                </label>
                 <div className="flex items-center gap-2">
                   <LanguageSelect
                     value={spokenLanguage}
                     onChange={(v) => setSpokenLanguage(v as AppLanguage)}
-                    options={LANGUAGE_OPTIONS.map(item => ({ value: item.value, label: item.label }))}
-                    ariaLabel={tr("Select spoken language", "කථන භාෂාව තෝරන්න", "பேச்சு மொழியை தேர்ந்தெடுக்கவும்")}
+                    options={LANGUAGE_OPTIONS.map((item) => ({
+                      value: item.value,
+                      label: item.label,
+                    }))}
+                    ariaLabel={tr(
+                      "Select spoken language",
+                      "කථන භාෂාව තෝරන්න",
+                      "பேச்சு மொழியை தேர்ந்தெடுக்கவும்",
+                    )}
                     className="w-full"
                   />
                   <button
@@ -287,12 +361,16 @@ const SettingsPage: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">{tr("Voice", "හඬ", "குரல்")}</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                {tr("Voice", "හඬ", "குரல்")}
+              </label>
               <div className="flex flex-wrap items-center gap-2">
                 <select
                   className="min-w-45 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100"
                   value={voice}
-                  onChange={(event) => setVoice(event.target.value as VoiceOption)}
+                  onChange={(event) =>
+                    setVoice(event.target.value as VoiceOption)
+                  }
                 >
                   <option value="alloy">Alloy</option>
                   <option value="nova">Nova</option>
@@ -303,8 +381,14 @@ const SettingsPage: React.FC = () => {
                   type="button"
                   onClick={playVoiceSample}
                 >
-                  <span className="material-symbols-outlined text-sm">play_arrow</span>
-                  {tr("Play sample voice", "නියැදි හඬ ධාවනය කරන්න", "மாதிரி குரலை இயக்கவும்")}
+                  <span className="material-symbols-outlined text-sm">
+                    play_arrow
+                  </span>
+                  {tr(
+                    "Play sample voice",
+                    "නියැදි හඬ ධාවනය කරන්න",
+                    "மாதிரி குரலை இயக்கவும்",
+                  )}
                 </button>
               </div>
             </div>
@@ -313,12 +397,26 @@ const SettingsPage: React.FC = () => {
 
         {activeSection === "data-controls" && (
           <section className="space-y-4 rounded-xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <h3 className="text-lg font-semibold text-zinc-100">{tr("Data Controls", "දත්ත පාලන", "தரவு கட்டுப்பாடுகள்")}</h3>
+            <h3 className="text-lg font-semibold text-zinc-100">
+              {tr("Data Controls", "දත්ත පාලන", "தரவு கட்டுப்பாடுகள்")}
+            </h3>
 
             <div className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950/50 px-4 py-3">
               <div>
-                <p className="text-sm font-medium text-zinc-100">{tr("Improve the model for everyone", "සියලු දෙනා සඳහා මොඩලය වැඩිදියුණු කරන්න", "அனைவருக்கும் மாதிரியை மேம்படுத்தவும்")}</p>
-                <p className="text-xs text-zinc-500">{tr("Allow anonymized conversations to improve quality.", "නිර්නාමික සංවාද ගුණාත්මකභාවය වැඩිදියුණු කිරීමට ඉඩ දෙන්න.", "அடையாளமற்ற உரையாடல்களை தர மேம்பாட்டிற்கு அனுமதிக்கவும்.")}</p>
+                <p className="text-sm font-medium text-zinc-100">
+                  {tr(
+                    "Improve the model for everyone",
+                    "සියලු දෙනා සඳහා මොඩලය වැඩිදියුණු කරන්න",
+                    "அனைவருக்கும் மாதிரியை மேம்படுத்தவும்",
+                  )}
+                </p>
+                <p className="text-xs text-zinc-500">
+                  {tr(
+                    "Allow anonymized conversations to improve quality.",
+                    "නිර්නාමික සංවාද ගුණාත්මකභාවය වැඩිදියුණු කිරීමට ඉඩ දෙන්න.",
+                    "அடையாளமற்ற உரையாடல்களை தர மேம்பாட்டிற்கு அனுமதிக்கவும்.",
+                  )}
+                </p>
               </div>
               <button
                 className={`flex h-6 w-12 items-center rounded-full px-1 transition-colors ${improveModel ? "justify-end bg-zinc-100" : "justify-start bg-zinc-700"}`}
@@ -326,7 +424,9 @@ const SettingsPage: React.FC = () => {
                 onClick={() => setImproveModel((value) => !value)}
                 aria-label="Toggle improve model"
               >
-                <span className={`h-4 w-4 rounded-full ${improveModel ? "bg-zinc-950" : "bg-zinc-300"}`} />
+                <span
+                  className={`h-4 w-4 rounded-full ${improveModel ? "bg-zinc-950" : "bg-zinc-300"}`}
+                />
               </button>
             </div>
 
@@ -336,7 +436,11 @@ const SettingsPage: React.FC = () => {
                 type="button"
                 onClick={archiveAllChats}
               >
-                {tr("Archive all chats", "සියලු චැට් සංරක්ෂිත කරන්න", "அனைத்து அரட்டைகளையும் காப்பகப்படுத்து")}
+                {tr(
+                  "Archive all chats",
+                  "සියලු චැට් සංරක්ෂිත කරන්න",
+                  "அனைத்து அரட்டைகளையும் காப்பகப்படுத்து",
+                )}
               </button>
               <button
                 className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800"
@@ -345,7 +449,10 @@ const SettingsPage: React.FC = () => {
               >
                 {tr("Export data", "දත්ත අපනයනය", "தரவை ஏற்றுமதி செய்")}
               </button>
-              <button className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800" type="button">
+              <button
+                className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800"
+                type="button"
+              >
                 {tr("Shared links", "බෙදාගත් සබැඳි", "பகிரப்பட்ட இணைப்புகள்")}
               </button>
               <button
@@ -354,15 +461,31 @@ const SettingsPage: React.FC = () => {
                 onClick={handleDeleteAllChats}
                 disabled={sidebarChats.length === 0}
               >
-                {tr("Delete all chats", "සියලු චැට් මකා දමන්න", "அனைத்து அரட்டைகளையும் நீக்கு")}
+                {tr(
+                  "Delete all chats",
+                  "සියලු චැට් මකා දමන්න",
+                  "அனைத்து அரட்டைகளையும் நீக்கு",
+                )}
               </button>
             </div>
 
             <div className="space-y-2 rounded-lg border border-zinc-800 bg-zinc-950/50 p-4">
-              <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">{tr("Manage archived chats", "සංරක්ෂිත චැට් කළමනාකරණය", "காப்பக அரட்டைகள் நிர்வகிக்க")}</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                {tr(
+                  "Manage archived chats",
+                  "සංරක්ෂිත චැට් කළමනාකරණය",
+                  "காப்பக அரட்டைகள் நிர்வகிக்க",
+                )}
+              </p>
 
               {archivedChats.length === 0 ? (
-                <p className="text-sm text-zinc-400">{tr("No archived chats available.", "සංරක්ෂිත චැට් නොමැත.", "காப்பக அரட்டைகள் இல்லை.")}</p>
+                <p className="text-sm text-zinc-400">
+                  {tr(
+                    "No archived chats available.",
+                    "සංරක්ෂිත චැට් නොමැත.",
+                    "காப்பக அரட்டைகள் இல்லை.",
+                  )}
+                </p>
               ) : (
                 <div className="space-y-2">
                   {archivedChats.map((chat) => (
@@ -371,7 +494,9 @@ const SettingsPage: React.FC = () => {
                       className="flex items-center justify-between gap-2 rounded-md border border-zinc-800 bg-zinc-900/60 px-3 py-2"
                     >
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-medium text-zinc-200">{chat.title}</p>
+                        <p className="truncate text-sm font-medium text-zinc-200">
+                          {chat.title}
+                        </p>
                       </div>
 
                       <div className="flex items-center gap-1">
@@ -379,17 +504,21 @@ const SettingsPage: React.FC = () => {
                           className="rounded-md p-1.5 text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-zinc-100"
                           type="button"
                           aria-label={`Unarchive ${chat.title}`}
-                          onClick={() => unarchiveChat(chat.id)}
+                          onClick={() => void unarchiveChat(chat.id)}
                         >
-                          <span className="material-symbols-outlined text-[18px]">unarchive</span>
+                          <span className="material-symbols-outlined text-[18px]">
+                            unarchive
+                          </span>
                         </button>
                         <button
                           className="rounded-md p-1.5 text-red-300 transition-colors hover:bg-red-900/30 hover:text-red-200"
                           type="button"
                           aria-label={`Delete ${chat.title}`}
-                          onClick={() => deleteChat(chat.id)}
+                          onClick={() => void deleteChat(chat.id)}
                         >
-                          <span className="material-symbols-outlined text-[18px]">delete</span>
+                          <span className="material-symbols-outlined text-[18px]">
+                            delete
+                          </span>
                         </button>
                       </div>
                     </div>
@@ -405,7 +534,9 @@ const SettingsPage: React.FC = () => {
             <h3 className="text-lg font-semibold text-zinc-100">Security</h3>
 
             <div className="rounded-lg border border-zinc-800 bg-zinc-950/50 p-4">
-              <h4 className="mb-3 text-sm font-semibold text-zinc-200">Password</h4>
+              <h4 className="mb-3 text-sm font-semibold text-zinc-200">
+                Password
+              </h4>
               <div className="grid gap-3 md:grid-cols-3">
                 <input
                   className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100"
@@ -437,8 +568,12 @@ const SettingsPage: React.FC = () => {
               <div className="space-y-3">
                 <div className="flex items-center justify-between rounded-md border border-zinc-800 px-3 py-2">
                   <div>
-                    <p className="text-sm font-medium text-zinc-100">Authenticator app</p>
-                    <p className="text-xs text-zinc-500">Use TOTP app for secure sign-in.</p>
+                    <p className="text-sm font-medium text-zinc-100">
+                      Authenticator app
+                    </p>
+                    <p className="text-xs text-zinc-500">
+                      Use TOTP app for secure sign-in.
+                    </p>
                   </div>
                   <button
                     className={`flex h-6 w-12 items-center rounded-full px-1 transition-colors ${authenticatorEnabled ? "justify-end bg-zinc-100" : "justify-start bg-zinc-700"}`}
@@ -452,35 +587,57 @@ const SettingsPage: React.FC = () => {
                     }}
                     aria-label="Toggle authenticator app"
                   >
-                    <span className={`h-4 w-4 rounded-full ${authenticatorEnabled ? "bg-zinc-950" : "bg-zinc-300"}`} />
+                    <span
+                      className={`h-4 w-4 rounded-full ${authenticatorEnabled ? "bg-zinc-950" : "bg-zinc-300"}`}
+                    />
                   </button>
                 </div>
 
                 <div className="flex items-center justify-between rounded-md border border-zinc-800 px-3 py-2">
                   <div>
-                    <p className="text-sm font-medium text-zinc-100">Push notifications</p>
-                    <p className="text-xs text-zinc-500">Approve sign-in from your trusted device.</p>
+                    <p className="text-sm font-medium text-zinc-100">
+                      Push notifications
+                    </p>
+                    <p className="text-xs text-zinc-500">
+                      Approve sign-in from your trusted device.
+                    </p>
                   </div>
                   <button
                     className={`flex h-6 w-12 items-center rounded-full px-1 transition-colors ${pushNotificationsEnabled ? "justify-end bg-zinc-100" : "justify-start bg-zinc-700"}`}
                     type="button"
-                    onClick={() => setPushNotificationsEnabled((value) => !value)}
+                    onClick={() =>
+                      setPushNotificationsEnabled((value) => !value)
+                    }
                     aria-label="Toggle push notifications"
                   >
-                    <span className={`h-4 w-4 rounded-full ${pushNotificationsEnabled ? "bg-zinc-950" : "bg-zinc-300"}`} />
+                    <span
+                      className={`h-4 w-4 rounded-full ${pushNotificationsEnabled ? "bg-zinc-950" : "bg-zinc-300"}`}
+                    />
                   </button>
                 </div>
               </div>
 
               {showQrPanel && (
                 <div className="mt-4 rounded-lg border border-zinc-700 bg-zinc-900 p-4">
-                  <p className="mb-2 text-sm font-semibold text-zinc-100">Scan QR code in your authenticator app</p>
+                  <p className="mb-2 text-sm font-semibold text-zinc-100">
+                    Scan QR code in your authenticator app
+                  </p>
                   <ol className="mb-3 list-decimal space-y-1 pl-4 text-xs text-zinc-400">
-                    <li>Open Google Authenticator, Microsoft Authenticator, or Authy.</li>
+                    <li>
+                      Open Google Authenticator, Microsoft Authenticator, or
+                      Authy.
+                    </li>
                     <li>Choose Add account and tap Scan QR code.</li>
-                    <li>Scan the code below and enter the 6-digit code on next sign-in.</li>
+                    <li>
+                      Scan the code below and enter the 6-digit code on next
+                      sign-in.
+                    </li>
                   </ol>
-                  <img alt="Authenticator QR code" className="h-40 w-40 rounded-md border border-zinc-700 bg-white p-2" src={qrCodeSrc} />
+                  <img
+                    alt="Authenticator QR code"
+                    className="h-40 w-40 rounded-md border border-zinc-700 bg-white p-2"
+                    src={qrCodeSrc}
+                  />
                 </div>
               )}
             </div>
@@ -495,16 +652,21 @@ const SettingsPage: React.FC = () => {
               <p>Plan: Research Prototype</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <button className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800" type="button">
+              <button
+                className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800"
+                type="button"
+              >
                 Manage linked devices
               </button>
-              <button className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800" type="button">
+              <button
+                className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800"
+                type="button"
+              >
                 Download account report
               </button>
             </div>
           </section>
         )}
-
       </div>
     </div>
   );

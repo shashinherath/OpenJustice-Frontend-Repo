@@ -1,7 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type {
-  ApiConversationDetailResponse,
   ApiConversationResponse,
   ApiMessageResponse,
   ChatMessage,
@@ -32,13 +31,13 @@ interface ChatStore {
   sendMessageToChat: (chatId: string, question: string) => Promise<void>;
   setTyping: (isTyping: boolean) => void;
   clearMessages: () => void;
-  archiveChat: (id: string) => void;
+  archiveChat: (id: string) => Promise<void>;
   archiveAllChats: () => void;
-  unarchiveChat: (id: string) => void;
-  deleteChat: (id: string) => void;
+  unarchiveChat: (id: string) => Promise<void>;
+  deleteChat: (id: string) => Promise<void>;
   deleteAllChats: () => void;
-  renameChat: (id: string, title: string) => void;
-  pinChat: (id: string) => void;
+  renameChat: (id: string, title: string) => Promise<void>;
+  pinChat: (id: string) => Promise<void>;
 }
 
 const CHAT_STORAGE_KEY = "oj-chat-store";
@@ -75,6 +74,8 @@ const mapConversation = (
   title: conversation.title || "New Question",
   createdAt: new Date(conversation.created_at),
   messages: [],
+  isArchived: conversation.is_archived,
+  isPinned: conversation.is_pinned,
 });
 
 const mergeSidebarChats = (
@@ -88,8 +89,8 @@ const mergeSidebarChats = (
     return {
       id: conversation.id,
       title: conversation.title,
-      isArchived: previous?.isArchived ?? false,
-      isPinned: previous?.isPinned ?? false,
+      isArchived: conversation.isArchived ?? previous?.isArchived ?? false,
+      isPinned: conversation.isPinned ?? previous?.isPinned ?? false,
     };
   });
 };
@@ -222,12 +223,21 @@ export const useChatStore = create<ChatStore>()(
           messageType: "text",
         };
 
+        const aiMessageId = `${chatId}-ai-${Date.now()}`;
+        const aiMessage: ChatMessage = {
+          id: aiMessageId,
+          sender: "ai",
+          content: "",
+          timestamp: new Date(),
+          messageType: "text",
+        };
+
         set((state) => {
           const existing = state.chatMessagesById[chatId] || [];
           return {
             chatMessagesById: {
               ...state.chatMessagesById,
-              [chatId]: [...existing, optimisticMessage],
+              [chatId]: [...existing, optimisticMessage, aiMessage],
             },
             sidebarChats: state.sidebarChats.map((chat) => {
               if (chat.id !== chatId) {
@@ -242,51 +252,63 @@ export const useChatStore = create<ChatStore>()(
           };
         });
 
-        try {
-          const created = await chatService.createMessage(chatId, {
-            content: trimmed,
-            sender: "user",
-            message_type: "text",
-          });
+        set({ isTyping: true });
 
-          set((state) => {
-            const existing = state.chatMessagesById[chatId] || [];
-            const withoutTemp = existing.filter(
-              (message) => message.id !== tempId,
-            );
-            return {
-              chatMessagesById: {
-                ...state.chatMessagesById,
-                [chatId]: [...withoutTemp, mapApiMessage(created)],
-              },
-            };
-          });
+        try {
+          await chatService.completeMessageStream(
+            chatId,
+            { query: trimmed, context: "" },
+            (chunk) => {
+              set((state) => {
+                const existing = state.chatMessagesById[chatId] || [];
+                return {
+                  chatMessagesById: {
+                    ...state.chatMessagesById,
+                    [chatId]: existing.map((message) =>
+                      message.id === aiMessageId
+                        ? { ...message, content: `${message.content}${chunk}` }
+                        : message,
+                    ),
+                  },
+                };
+              });
+            },
+          );
         } catch (error: any) {
           set((state) => ({
             error: error?.message || "Failed to send message.",
             chatMessagesById: {
               ...state.chatMessagesById,
               [chatId]: (state.chatMessagesById[chatId] || []).filter(
-                (message) => message.id !== tempId,
+                (message) =>
+                  message.id !== tempId && message.id !== aiMessageId,
               ),
             },
           }));
           throw error;
+        } finally {
+          set({ isTyping: false });
         }
       },
 
       setTyping: (isTyping) => set({ isTyping }),
       clearMessages: () => set({ chatMessagesById: {} }),
-      archiveChat: (id) =>
-        set((state) => ({
-          sidebarChats: state.sidebarChats.map((chat) =>
-            chat.id === id ? { ...chat, isArchived: true } : chat,
-          ),
-          activeConversationId:
-            state.activeConversationId === id
-              ? null
-              : state.activeConversationId,
-        })),
+      archiveChat: async (id) => {
+        try {
+          await chatService.archiveConversation(id);
+          set((state) => ({
+            sidebarChats: state.sidebarChats.map((chat) =>
+              chat.id === id ? { ...chat, isArchived: true } : chat,
+            ),
+            activeConversationId:
+              state.activeConversationId === id
+                ? null
+                : state.activeConversationId,
+          }));
+        } catch (error: any) {
+          set({ error: error?.message || "Failed to archive chat." });
+        }
+      },
       archiveAllChats: () =>
         set((state) => ({
           sidebarChats: state.sidebarChats.map((chat) => ({
@@ -294,43 +316,68 @@ export const useChatStore = create<ChatStore>()(
             isArchived: true,
           })),
         })),
-      unarchiveChat: (id) =>
-        set((state) => ({
-          sidebarChats: state.sidebarChats.map((chat) =>
-            chat.id === id ? { ...chat, isArchived: false } : chat,
-          ),
-        })),
-      deleteChat: (id) =>
-        set((state) => ({
-          sidebarChats: state.sidebarChats.filter((chat) => chat.id !== id),
-          chatMessagesById: Object.fromEntries(
-            Object.entries(state.chatMessagesById).filter(
-              ([key]) => key !== id,
+      unarchiveChat: async (id) => {
+        try {
+          await chatService.updateConversation(id, { is_archived: false });
+          set((state) => ({
+            sidebarChats: state.sidebarChats.map((chat) =>
+              chat.id === id ? { ...chat, isArchived: false } : chat,
             ),
-          ),
-          activeConversationId:
-            state.activeConversationId === id
-              ? null
-              : state.activeConversationId,
-        })),
+          }));
+        } catch (error: any) {
+          set({ error: error?.message || "Failed to unarchive chat." });
+        }
+      },
+      deleteChat: async (id) => {
+        try {
+          await chatService.deleteConversation(id);
+          set((state) => ({
+            sidebarChats: state.sidebarChats.filter((chat) => chat.id !== id),
+            chatMessagesById: Object.fromEntries(
+              Object.entries(state.chatMessagesById).filter(
+                ([key]) => key !== id,
+              ),
+            ),
+            activeConversationId:
+              state.activeConversationId === id
+                ? null
+                : state.activeConversationId,
+          }));
+        } catch (error: any) {
+          set({ error: error?.message || "Failed to delete chat." });
+        }
+      },
       deleteAllChats: () =>
         set({
           sidebarChats: [],
           chatMessagesById: {},
           activeConversationId: null,
         }),
-      renameChat: (id, title) =>
-        set((state) => ({
-          sidebarChats: state.sidebarChats.map((chat) =>
-            chat.id === id ? { ...chat, title } : chat,
-          ),
-        })),
-      pinChat: (id) =>
-        set((state) => ({
-          sidebarChats: state.sidebarChats.map((chat) =>
-            chat.id === id ? { ...chat, isPinned: !chat.isPinned } : chat,
-          ),
-        })),
+      renameChat: async (id, title) => {
+        try {
+          await chatService.updateConversation(id, { title });
+          set((state) => ({
+            sidebarChats: state.sidebarChats.map((chat) =>
+              chat.id === id ? { ...chat, title } : chat,
+            ),
+          }));
+        } catch (error: any) {
+          set({ error: error?.message || "Failed to rename chat." });
+        }
+      },
+      pinChat: async (id) => {
+        const current = get().sidebarChats.find((chat) => chat.id === id);
+        try {
+          await chatService.pinConversation(id);
+          set((state) => ({
+            sidebarChats: state.sidebarChats.map((chat) =>
+              chat.id === id ? { ...chat, isPinned: !current?.isPinned } : chat,
+            ),
+          }));
+        } catch (error: any) {
+          set({ error: error?.message || "Failed to pin chat." });
+        }
+      },
     }),
     {
       name: CHAT_STORAGE_KEY,
