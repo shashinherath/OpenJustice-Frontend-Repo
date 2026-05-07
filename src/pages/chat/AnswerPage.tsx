@@ -6,7 +6,6 @@ import { useVoiceStore } from "@/stores/voiceStore";
 import { useVoiceRecording } from "@/hooks/useVoiceRecording";
 import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
 import VoiceMessagePlayer from "@/components/ui/VoiceMessagePlayer";
-import { blobToDataURL } from "@/utils/audioUtils";
 
 const AnswerPage: React.FC = () => {
   const { t } = useTranslation();
@@ -15,7 +14,12 @@ const AnswerPage: React.FC = () => {
   const [question, setQuestion] = useState("");
   const [isVoicePreview, setIsVoicePreview] = useState(false);
 
-  const { sidebarChats, chatMessagesById, sendMessageToChat } = useChatStore();
+  const {
+    sidebarChats,
+    chatMessagesById,
+    sendMessageToChat,
+    loadConversation,
+  } = useChatStore();
   const { recordingState, audioBlob, reset } = useVoiceStore();
   const {
     startRecording,
@@ -117,15 +121,10 @@ const AnswerPage: React.FC = () => {
       return;
     }
 
-    try {
-      const audioUrl = await blobToDataURL(audioBlob);
-      const voiceMessage = "Voice Message";
-      sendMessageToChat(chatId, voiceMessage, audioUrl);
-      reset();
-      setIsVoicePreview(false);
-    } catch (error) {
-      console.error("Failed to convert audio to data URL:", error);
-    }
+    const voiceMessage = "Voice Message";
+    await sendMessageToChat(chatId, voiceMessage);
+    reset();
+    setIsVoicePreview(false);
   };
 
   if (!chat) {
@@ -180,24 +179,31 @@ const AnswerPage: React.FC = () => {
           <div
             key={message.id}
             className={`max-w-[88%] rounded-xl text-sm ${
-              message.sender === "user"
-                ? "ml-auto"
-                : "mr-auto"
-            } ${message.audioUrl ? "" : `shadow-sm p-3 px-4 ${
-              message.sender === "user"
-                ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                : "border border-slate-200 bg-white text-slate-700 dark:border-border-dark dark:bg-surface-dark dark:text-slate-200"
-            }`}`}
+              message.sender === "user" ? "ml-auto" : "mr-auto"
+            } ${
+              message.audioUrl
+                ? ""
+                : `shadow-sm p-3 px-4 ${
+                    message.sender === "user"
+                      ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                      : "border border-slate-200 bg-white text-slate-700 dark:border-border-dark dark:bg-surface-dark dark:text-slate-200"
+                  }`
+            }`}
           >
             {message.audioUrl ? (
-              <VoiceMessagePlayer audioUrl={message.audioUrl} sender={message.sender} />
+              <VoiceMessagePlayer
+                audioUrl={message.audioUrl}
+                sender={message.sender}
+              />
             ) : (
               <p className="whitespace-pre-wrap leading-6">{message.content}</p>
             )}
             {!message.audioUrl && (
               <p
                 className={`mt-2 text-[10px] font-semibold uppercase tracking-wide ${
-                  message.sender === "user" ? "text-slate-300 dark:text-slate-600" : "text-slate-400"
+                  message.sender === "user"
+                    ? "text-slate-300 dark:text-slate-600"
+                    : "text-slate-400"
                 }`}
               >
                 {message.sender === "user" ? t("you") : t("openJusticeAi")}
@@ -215,9 +221,11 @@ const AnswerPage: React.FC = () => {
             type="button"
             disabled
           >
-            <span className="material-symbols-outlined text-[20px]">attach_file</span>
+            <span className="material-symbols-outlined text-[20px]">
+              attach_file
+            </span>
           </button>
-          {(recordingState.isRecording || isVoicePreview) ? (
+          {recordingState.isRecording || isVoicePreview ? (
             <VoiceRecordingUI
               durationLabel={formatDuration(recordingState.duration)}
               voiceLevel={voiceLevel}
@@ -246,7 +254,9 @@ const AnswerPage: React.FC = () => {
                   type="button"
                   onClick={handleMicClick}
                 >
-                  <span className="material-symbols-outlined text-[18px]">mic</span>
+                  <span className="material-symbols-outlined text-[18px]">
+                    mic
+                  </span>
                 </button>
               </div>
               <button
@@ -256,7 +266,9 @@ const AnswerPage: React.FC = () => {
                 onClick={handleSend}
                 disabled={!question.trim()}
               >
-                <span className="material-symbols-outlined text-[24px]">arrow_upward</span>
+                <span className="material-symbols-outlined text-[24px]">
+                  arrow_upward
+                </span>
               </button>
             </>
           )}
