@@ -74,8 +74,8 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
       document.removeEventListener("mousedown", handleOutsideProfileClick);
   }, [menuOpen]);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     setMenuOpen(false);
     setHelpOpen(false);
     navigate("/");

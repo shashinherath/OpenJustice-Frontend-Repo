@@ -24,7 +24,11 @@ export const authService = {
   },
 
   logout: async (): Promise<void> => {
-    // If backend has a logout endpoint, call it here:
-    // await apiClient.post("/auth/logout");
+    try {
+      await apiClient.post("/auth/logout");
+    } catch (error) {
+      // Log error but don't throw - we want to clear local state regardless
+      console.error("Logout error:", error);
+    }
   },
 };

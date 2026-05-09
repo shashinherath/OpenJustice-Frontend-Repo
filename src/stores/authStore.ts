@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { User } from "@/types/user.types";
+import { authService } from "@/services/authService";
 
 interface AuthStore {
   user: User | null;
@@ -8,7 +9,7 @@ interface AuthStore {
   token: string | null;
   
   login: (user: User, token: string) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
   updateUser: (data: Partial<User>) => void;
 }
 
@@ -20,7 +21,10 @@ export const useAuthStore = create<AuthStore>()(
       token: null,
       
       login: (user, token) => set({ user, token, isAuthenticated: true }),
-      logout: () => set({ user: null, token: null, isAuthenticated: false }),
+      logout: async () => {
+        await authService.logout();
+        set({ user: null, token: null, isAuthenticated: false });
+      },
       updateUser: (data) => 
         set((state) => ({ 
           user: state.user ? { ...state.user, ...data } : null 

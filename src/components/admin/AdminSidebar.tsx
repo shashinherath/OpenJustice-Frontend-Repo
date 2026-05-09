@@ -11,8 +11,8 @@ const AdminSidebar: React.FC = () => {
   const logout = useAuthStore(state => state.logout);
   const { openProfile } = useSettingsModal();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/");
   };
 
