@@ -1,34 +1,9 @@
-﻿import React from "react";
+import React, { useEffect } from "react";
 import AdminLayout from "@/layout/AdminLayout";
 import StatCard from "@/components/admin/StatCard";
 import ActivityItem from "@/components/admin/ActivityItem";
 import DataSourceStatusItem from "@/components/admin/DataSourceStatusItem";
-
-const STATS = [
-  { id: 1, title: "Total Users", value: "12,406", change: "+4.2%", statusType: "neutral" as const },
-  { id: 2, title: "Total Queries", value: "142,842", change: "+12%", statusType: "neutral" as const },
-  { id: 3, title: "Total Documents", value: "96,215", change: "+1,238", statusType: "positive" as const },
-  { id: 4, title: "Total Errors", value: "12", change: "Needs review", statusType: "warning" as const },
-];
-
-const ACTIVITIES = [
-  { id: 1, title: "Query #82910 Processing Complete", description: "Semantic Analysis â€¢ Retrieval â€¢ Synthesis", timeAgo: "2 mins ago", icon: "check_circle", iconColorClass: "text-green-500" },
-  { id: 2, title: "Database Sync: Federal Statutes", description: "Updating 244 modified records", timeAgo: "14 mins ago", icon: "sync", iconColorClass: "text-cyan-300" },
-  { id: 3, title: "Flagged Output: Toxicity Threshold", description: "Manual review required for query #82895", timeAgo: "42 mins ago", icon: "warning", iconColorClass: "text-amber-300" },
-];
-
-const CORE_SERVICE_STATUS = [
-  { id: 1, title: "LLM Status", status: "Active" as const },
-  { id: 2, title: "Database Status", status: "Failed" as const },
-  { id: 3, title: "Vector DB Status", status: "Active" as const },
-];
-
-const DATA_SOURCES = [
-  { id: 1, title: "Federal Statutes", statusLabel: "Healthy", statusColorClass: "text-green-500", progressPercent: 100, footerText: "Last sync: 12 minutes ago" },
-  { id: 2, title: "Supreme Court Opinions", statusLabel: "Healthy", statusColorClass: "text-green-500", progressPercent: 100, footerText: "Last sync: 4 hours ago" },
-  { id: 3, title: "State Level Data", statusLabel: "Indexing", statusColorClass: "text-amber-300", progressPercent: 74, progressColorClass: "bg-amber-300", footerText: "74% Complete" },
-  { id: 4, title: "Administrative Law", statusLabel: "Active", statusColorClass: "text-cyan-200", progressPercent: 100, progressColorClass: "bg-cyan-300", footerText: "Last sync: Yesterday" },
-];
+import { useAdminStore } from "@/stores/adminStore";
 
 const QUICK_ACTIONS = [
   { icon: "refresh", label: "Clear Cache" },
@@ -38,11 +13,42 @@ const QUICK_ACTIONS = [
 ];
 
 const AdminDashboard: React.FC = () => {
+  const { overviewData: data, isLoading, error, fetchOverview } = useAdminStore();
+
+  useEffect(() => {
+    void fetchOverview();
+  }, [fetchOverview]);
+
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="p-8 flex justify-center items-center h-64">
+          <div className="text-cyan-400 animate-pulse font-bold tracking-widest uppercase text-sm">
+            Loading System Metrics...
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <AdminLayout>
+        <div className="p-8">
+          <div className="rounded border border-rose-500/30 bg-rose-500/10 p-6 text-rose-300">
+            <h2 className="font-bold mb-2">Error Loading Dashboard</h2>
+            <p className="text-sm">{error || "No data available."}</p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
   return (
     <AdminLayout>
       <div className="p-8 space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {STATS.map(stat => (
+          {data.stats.map(stat => (
             <StatCard key={stat.id} title={stat.title} value={stat.value} change={stat.change} statusType={stat.statusType} />
           ))}
         </div>
@@ -95,7 +101,7 @@ const AdminDashboard: React.FC = () => {
                 </span>
               </div>
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                {CORE_SERVICE_STATUS.map(service => (
+                {data.core_services.map(service => (
                   <article key={service.id} className="rounded-2xl bg-slate-950/95 p-5 ring-1 ring-white/5">
                     <div className="flex items-start justify-between gap-4">
                       <div>
@@ -130,7 +136,7 @@ const AdminDashboard: React.FC = () => {
                 Recent System Activity
               </h2>
               <div className="space-y-4">
-                {ACTIVITIES.map(activity => (
+                {data.activities.map(activity => (
                   <ActivityItem
                     key={activity.id}
                     title={activity.title}
@@ -151,7 +157,7 @@ const AdminDashboard: React.FC = () => {
             <section className="rounded border border-cyan-400/15 bg-[#191919] p-6">
               <h2 className="text-sm font-bold text-white mb-6 uppercase tracking-[0.15em]">Data Source Status</h2>
               <div className="space-y-6">
-                {DATA_SOURCES.map(source => (
+                {data.data_sources.map(source => (
                   <DataSourceStatusItem
                     key={source.id}
                     title={source.title}
@@ -192,4 +198,3 @@ const AdminDashboard: React.FC = () => {
 };
 
 export default AdminDashboard;
-

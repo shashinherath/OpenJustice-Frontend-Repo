@@ -1,30 +1,28 @@
-﻿import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import AdminLayout from "@/layout/AdminLayout";
 import LanguageSelect from "@/components/ui/LanguageSelect";
-
-type DocumentStatus = "Processed" | "Pending";
-
-interface LegalDocument {
-  id: string;
-  name: string;
-  language: string;
-  status: DocumentStatus;
-  uploadDate: string;
-}
-
-const getToday = (): string => new Date().toLocaleDateString();
-
-const INITIAL_DOCUMENTS: LegalDocument[] = [
-  { id: "doc-1", name: "Constitution_2024.pdf", language: "English", status: "Processed", uploadDate: "3/24/2026" },
-  { id: "doc-2", name: "Evidence_Ordinance_si.pdf", language: "Sinhala", status: "Pending", uploadDate: "4/1/2026" },
-  { id: "doc-3", name: "Civil_Procedure_ta.pdf", language: "Tamil", status: "Pending", uploadDate: "4/4/2026" },
-];
+import { useAdminDataSourcesStore } from "@/stores/adminDataSourcesStore";
 
 const AdminDataSourcesPage: React.FC = () => {
-  const [documents, setDocuments] = useState<LegalDocument[]>(INITIAL_DOCUMENTS);
+  const { 
+    documents, 
+    isLoading, 
+    error, 
+    isUploading, 
+    fetchDocuments, 
+    uploadDocument, 
+    processDocument, 
+    processAllPending, 
+    deleteDocument 
+  } = useAdminDataSourcesStore();
+
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("English");
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [localErrorMessage, setLocalErrorMessage] = useState<string>("");
+
+  useEffect(() => {
+    void fetchDocuments();
+  }, [fetchDocuments]);
 
   const processedCount = useMemo(
     () => documents.filter(document => document.status === "Processed").length,
@@ -34,7 +32,7 @@ const AdminDataSourcesPage: React.FC = () => {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nextFile = event.target.files?.[0] ?? null;
-    setErrorMessage("");
+    setLocalErrorMessage("");
 
     if (!nextFile) {
       setSelectedFile(null);
@@ -45,7 +43,7 @@ const AdminDataSourcesPage: React.FC = () => {
     const isPdfByName = nextFile.name.toLowerCase().endsWith(".pdf");
 
     if (!isPdfByType && !isPdfByName) {
-      setErrorMessage("Only PDF files are allowed.");
+      setLocalErrorMessage("Only PDF files are allowed.");
       setSelectedFile(null);
       return;
     }
@@ -53,42 +51,32 @@ const AdminDataSourcesPage: React.FC = () => {
     setSelectedFile(nextFile);
   };
 
-  const handleUploadDocument = () => {
+  const handleUploadDocument = async () => {
     if (!selectedFile) {
-      setErrorMessage("Please select a PDF document before uploading.");
+      setLocalErrorMessage("Please select a PDF document before uploading.");
       return;
     }
 
-    const newDocument: LegalDocument = {
-      id: `doc-${Date.now()}`,
-      name: selectedFile.name,
-      language: selectedLanguage,
-      status: "Pending",
-      uploadDate: getToday(),
-    };
-
-    setDocuments(previous => [newDocument, ...previous]);
-    setSelectedFile(null);
-    setErrorMessage("");
+    setLocalErrorMessage("");
+    try {
+      await uploadDocument(selectedFile, selectedLanguage);
+      setSelectedFile(null);
+    } catch (e: any) {
+      setLocalErrorMessage(e.message || "Upload failed");
+    }
   };
 
-  const handleProcessDocument = (documentId: string) => {
-    setDocuments(previous =>
-      previous.map(document =>
-        document.id === documentId ? { ...document, status: "Processed" } : document
-      )
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="p-8 flex justify-center items-center h-64">
+          <div className="text-cyan-400 animate-pulse font-bold tracking-widest uppercase text-sm">
+            Loading Data Sources...
+          </div>
+        </div>
+      </AdminLayout>
     );
-  };
-
-  const handleProcessAll = () => {
-    setDocuments(previous =>
-      previous.map(document => ({ ...document, status: "Processed" }))
-    );
-  };
-
-  const handleDeleteDocument = (documentId: string) => {
-    setDocuments(previous => previous.filter(document => document.id !== documentId));
-  };
+  }
 
   return (
     <AdminLayout>
@@ -101,6 +89,12 @@ const AdminDataSourcesPage: React.FC = () => {
             </p>
           </div>
         </section>
+
+        {(error || localErrorMessage) && (
+          <div className="rounded border border-rose-500/30 bg-rose-500/10 p-4 text-rose-300 text-sm">
+            {error || localErrorMessage}
+          </div>
+        )}
 
         <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
@@ -127,7 +121,8 @@ const AdminDataSourcesPage: React.FC = () => {
               type="file"
               accept="application/pdf,.pdf"
               onChange={handleFileChange}
-              className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 file:mr-4 file:rounded file:border-0 file:bg-cyan-500/15 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-cyan-100 hover:file:bg-cyan-500/25"
+              disabled={isUploading}
+              className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 file:mr-4 file:rounded file:border-0 file:bg-cyan-500/15 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-cyan-100 hover:file:bg-cyan-500/25 disabled:opacity-50"
             />
             <div className="lg:ml-2">
               <LanguageSelect
@@ -144,14 +139,16 @@ const AdminDataSourcesPage: React.FC = () => {
             <button
               type="button"
               onClick={handleUploadDocument}
-              className="rounded border border-cyan-400/30 bg-cyan-500/15 px-4 py-2 text-xs font-bold uppercase tracking-widest text-cyan-100 transition-colors hover:bg-cyan-500/25"
+              disabled={isUploading || !selectedFile}
+              className="rounded border border-cyan-400/30 bg-cyan-500/15 px-4 py-2 text-xs font-bold uppercase tracking-widest text-cyan-100 transition-colors hover:bg-cyan-500/25 disabled:opacity-50"
             >
-              Upload
+              {isUploading ? "Uploading..." : "Upload"}
             </button>
             <button
               type="button"
-              onClick={handleProcessAll}
-              className="rounded border border-slate-700 bg-black/30 px-4 py-2 text-xs font-bold uppercase tracking-widest text-slate-300 transition-colors hover:border-cyan-400/30 hover:bg-cyan-500/10 hover:text-cyan-100"
+              onClick={processAllPending}
+              disabled={pendingCount === 0}
+              className="rounded border border-slate-700 bg-black/30 px-4 py-2 text-xs font-bold uppercase tracking-widest text-slate-300 transition-colors hover:border-cyan-400/30 hover:bg-cyan-500/10 hover:text-cyan-100 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Trigger Processing
             </button>
@@ -159,7 +156,6 @@ const AdminDataSourcesPage: React.FC = () => {
           {selectedFile && (
             <p className="mt-3 text-xs text-slate-400">Selected: {selectedFile.name}</p>
           )}
-          {errorMessage && <p className="mt-3 text-xs font-semibold text-red-400">{errorMessage}</p>}
         </section>
 
         <section className="rounded border border-cyan-400/15 bg-[#191919] p-6">
@@ -182,25 +178,29 @@ const AdminDataSourcesPage: React.FC = () => {
               <tbody>
                 {documents.map(document => (
                   <tr key={document.id} className="border-b border-white/5">
-                    <td className="px-3 py-3 text-slate-200">{document.name}</td>
+                    <td className="px-3 py-3 text-slate-200">{document.title}</td>
                     <td className="px-3 py-3 text-slate-300">{document.language}</td>
                     <td className="px-3 py-3">
                       <span
                         className={`rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${
                           document.status === "Processed"
                             ? "bg-green-500/15 text-green-400"
+                            : document.status === "Failed"
+                            ? "bg-red-500/15 text-red-400"
                             : "bg-amber-500/15 text-amber-300"
                         }`}
                       >
                         {document.status}
                       </span>
                     </td>
-                    <td className="px-3 py-3 text-slate-400">{document.uploadDate}</td>
+                    <td className="px-3 py-3 text-slate-400">
+                      {new Date(document.created_at).toLocaleDateString()}
+                    </td>
                     <td className="px-3 py-3">
                       <div className="flex flex-wrap gap-2">
                         <button
                           type="button"
-                          onClick={() => handleProcessDocument(document.id)}
+                          onClick={() => processDocument(document.id)}
                           disabled={document.status === "Processed"}
                           className="rounded border border-cyan-400/25 bg-cyan-500/10 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-cyan-100 transition-colors hover:bg-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-40"
                         >
@@ -208,7 +208,7 @@ const AdminDataSourcesPage: React.FC = () => {
                         </button>
                         <button
                           type="button"
-                          onClick={() => handleDeleteDocument(document.id)}
+                          onClick={() => deleteDocument(document.id)}
                           className="rounded border border-red-400/30 bg-red-500/10 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-red-300 transition-colors hover:bg-red-500/20"
                         >
                           Delete
@@ -217,6 +217,13 @@ const AdminDataSourcesPage: React.FC = () => {
                     </td>
                   </tr>
                 ))}
+                {documents.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-xs text-slate-500">
+                      No documents found. Upload a PDF above.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -227,4 +234,3 @@ const AdminDataSourcesPage: React.FC = () => {
 };
 
 export default AdminDataSourcesPage;
-
