@@ -10,8 +10,19 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const userRole = useAuthStore((state) => state.userRole);
+  const loadProfile = useAuthStore((state) => state.loadProfile);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  // Load user profile from backend if authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadProfile().catch((error) => {
+        console.error("Failed to load profile:", error);
+        // Don't treat profile load failure as critical - user can continue
+      });
+    }
+  }, [isAuthenticated, loadProfile]);
 
   // Redirect authenticated users away from login
   useEffect(() => {
