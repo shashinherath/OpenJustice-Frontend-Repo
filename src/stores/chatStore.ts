@@ -301,8 +301,11 @@ export const useChatStore = create<ChatStore>()(
 
         try {
           // Send the voice message
-          const aiAudioBlob = await chatService.sendVoiceMessage(chatId, audioBlob);
-          
+          const aiAudioBlob = await chatService.sendVoiceMessage(
+            chatId,
+            audioBlob,
+          );
+
           // The backend saves the user message and AI message during the voice processing.
           // Let's reload the conversation to pull the newly transcribed text and AI reply
           await get().loadConversation(chatId);
@@ -312,16 +315,16 @@ export const useChatStore = create<ChatStore>()(
             const messages = state.chatMessagesById[chatId] || [];
             if (messages.length >= 2) {
               const updatedMessages = [...messages];
-              
+
               // The last message is the AI response, the second to last is the user's voice note
               const aiMsgIndex = updatedMessages.length - 1;
               const userMsgIndex = updatedMessages.length - 2;
-              
+
               updatedMessages[userMsgIndex] = {
                 ...updatedMessages[userMsgIndex],
                 audioUrl: URL.createObjectURL(audioBlob),
               };
-              
+
               updatedMessages[aiMsgIndex] = {
                 ...updatedMessages[aiMsgIndex],
                 audioUrl: URL.createObjectURL(aiAudioBlob),
@@ -341,8 +344,9 @@ export const useChatStore = create<ChatStore>()(
           const url = URL.createObjectURL(aiAudioBlob);
           const audio = new Audio(url);
           audio.onended = () => URL.revokeObjectURL(url);
-          await audio.play().catch((err) => console.error("Failed to play AI audio:", err));
-
+          await audio
+            .play()
+            .catch((err) => console.error("Failed to play AI audio:", err));
         } catch (error: any) {
           set({ error: error?.message || "Failed to send voice message." });
           throw error;
@@ -429,14 +433,15 @@ export const useChatStore = create<ChatStore>()(
       pinChat: async (id) => {
         const current = get().sidebarChats.find((chat) => chat.id === id);
         try {
-          await chatService.pinConversation(id);
+          const nextPinned = !current?.isPinned;
+          await chatService.updateConversation(id, { is_pinned: nextPinned });
           set((state) => ({
             sidebarChats: state.sidebarChats.map((chat) =>
-              chat.id === id ? { ...chat, isPinned: !current?.isPinned } : chat,
+              chat.id === id ? { ...chat, isPinned: nextPinned } : chat,
             ),
           }));
         } catch (error: any) {
-          set({ error: error?.message || "Failed to pin chat." });
+          set({ error: error?.message || "Failed to update chat pin." });
         }
       },
     }),

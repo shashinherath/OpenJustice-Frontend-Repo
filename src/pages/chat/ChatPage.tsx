@@ -15,8 +15,12 @@ const ChatPage: React.FC = () => {
   const languageContext = useContext(LanguageContext);
   const [question, setQuestion] = useState("");
   const [isVoicePreview, setIsVoicePreview] = useState(false);
-  const { createNewChat, sendMessageToChat, loadConversations, sendVoiceMessageToChat } =
-    useChatStore();
+  const {
+    createNewChat,
+    sendMessageToChat,
+    loadConversations,
+    sendVoiceMessageToChat,
+  } = useChatStore();
   const { recordingState, audioBlob, reset } = useVoiceStore();
   const {
     startRecording,
@@ -129,18 +133,6 @@ const ChatPage: React.FC = () => {
               href="#"
             >
               Research
-            </a>
-            <a
-              className="text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
-              href="#"
-            >
-              Documents
-            </a>
-            <a
-              className="text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
-              href="#"
-            >
-              Archive
             </a>
           </nav>
         </div>
@@ -260,7 +252,11 @@ const ChatPage: React.FC = () => {
                     ? "bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-600 cursor-not-allowed shadow-none"
                     : "text-white cursor-pointer hover:opacity-90"
                 }`}
-                style={!question.trim() ? {} : { backgroundColor: "var(--oj-accent-color)" }}
+                style={
+                  !question.trim()
+                    ? {}
+                    : { backgroundColor: "var(--oj-accent-color)" }
+                }
                 type="button"
                 onClick={handleSubmitQuestion}
                 disabled={!question.trim()}
