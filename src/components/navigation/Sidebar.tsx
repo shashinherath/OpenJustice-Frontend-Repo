@@ -18,6 +18,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
   const location = useLocation();
   const { openSettings, openProfile } = useSettingsModal();
   const logout = useAuthStore((state) => state.logout);
+  const user = useAuthStore((state) => state.user);
   const {
     sidebarChats,
     archiveChat,
@@ -74,8 +75,8 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
       document.removeEventListener("mousedown", handleOutsideProfileClick);
   }, [menuOpen]);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     setMenuOpen(false);
     setHelpOpen(false);
     navigate("/");
@@ -258,14 +259,24 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
             onClick={() => setMenuOpen(!menuOpen)}
           >
             <div className="size-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden border border-slate-300 dark:border-slate-600 shrink-0">
-              <span className="material-symbols-outlined text-[20px] text-slate-600 dark:text-slate-300">
-                account_circle
-              </span>
+              {user?.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt="User avatar"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="material-symbols-outlined text-[20px] text-slate-600 dark:text-slate-300">
+                  account_circle
+                </span>
+              )}
             </div>
             <div className="flex flex-col items-start overflow-hidden">
-              <span className="text-sm font-semibold truncate">J. Smith</span>
+              <span className="text-sm font-semibold truncate">
+                {user?.name || "User"}
+              </span>
               <span className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">
-                Researcher
+                {user?.role || "User"}
               </span>
             </div>
             <span className="material-symbols-outlined text-[16px] ml-auto text-slate-400 dark:text-slate-500">
@@ -280,7 +291,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                   Signed in as
                 </p>
                 <p className="text-sm font-bold text-slate-900 dark:text-white truncate">
-                  jsmith@university.edu
+                  {user?.email || "user@openjustice.org"}
                 </p>
               </div>
 

@@ -8,11 +8,11 @@ import { useSettingsModal } from "@/hooks/common/useSettingsModal";
 
 const AdminSidebar: React.FC = () => {
   const navigate = useNavigate();
-  const logout = useAuthStore(state => state.logout);
+  const logout = useAuthStore((state) => state.logout);
   const { openProfile } = useSettingsModal();
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate("/");
   };
 
@@ -26,13 +26,17 @@ const AdminSidebar: React.FC = () => {
             imageClassName="h-10 w-10 object-contain"
           />
           <Link to="/">
-            <h2 className="text-xl font-black leading-tight tracking-[0.15em] text-white">OPENJUSTICE</h2>
+            <h2 className="text-xl font-black leading-tight tracking-[0.15em] text-white">
+              OPENJUSTICE
+            </h2>
           </Link>
         </div>
       </div>
       <nav className="flex-1 px-4 py-6 space-y-1">
-        <p className="mb-4 px-3 text-[10px] font-bold uppercase tracking-widest text-slate-500">Administration</p>
-        {ADMIN_MODULES.map(module => (
+        <p className="mb-4 px-3 text-[10px] font-bold uppercase tracking-widest text-slate-500">
+          Administration
+        </p>
+        {ADMIN_MODULES.map((module) => (
           <NavLink
             key={module.key}
             to={module.path}
@@ -45,8 +49,14 @@ const AdminSidebar: React.FC = () => {
               }`
             }
           >
-            <span className="material-symbols-outlined text-[20px]">{module.icon}</span>
-            <span className={`text-sm ${module.path === "/admin" ? "font-semibold" : "font-medium"}`}>{module.navLabel}</span>
+            <span className="material-symbols-outlined text-[20px]">
+              {module.icon}
+            </span>
+            <span
+              className={`text-sm ${module.path === "/admin" ? "font-semibold" : "font-medium"}`}
+            >
+              {module.navLabel}
+            </span>
           </NavLink>
         ))}
       </nav>
@@ -59,14 +69,25 @@ const AdminSidebar: React.FC = () => {
             aria-label="Open profile settings"
           >
             <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded">
-              <span className="material-symbols-outlined text-white">account_circle</span>
+              <span className="material-symbols-outlined text-white">
+                account_circle
+              </span>
             </div>
             <div className="flex-1 overflow-hidden">
-              <p className="truncate text-sm font-bold text-white">Admin User</p>
-              <p className="truncate text-[10px] uppercase tracking-widest text-slate-500">System Overseer</p>
+              <p className="truncate text-sm font-bold text-white">
+                Admin User
+              </p>
+              <p className="truncate text-[10px] uppercase tracking-widest text-slate-500">
+                System Overseer
+              </p>
             </div>
           </button>
-          <button className="text-slate-400 hover:text-white" type="button" onClick={handleLogout} aria-label="Logout">
+          <button
+            className="text-slate-400 hover:text-white"
+            type="button"
+            onClick={handleLogout}
+            aria-label="Logout"
+          >
             <span className="material-symbols-outlined text-sm">logout</span>
           </button>
         </div>
@@ -76,4 +97,3 @@ const AdminSidebar: React.FC = () => {
 };
 
 export default AdminSidebar;
-

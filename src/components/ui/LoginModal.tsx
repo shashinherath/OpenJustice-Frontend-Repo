@@ -15,11 +15,17 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const login = useAuthStore((state) => state.login);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Prevent rendering if already authenticated
+  if (isAuthenticated) {
+    return null;
+  }
 
   const handleClose = () => {
     setEmail("");
@@ -55,6 +61,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           id: data.uuid,
           name: fallbackName,
           email,
+          role: data.role,
           preferences: {
             language: data.preferred_language,
           },
@@ -62,8 +69,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
         data.access_token || `token-${Date.now()}`,
       );
 
-      const redirectPath =
-        new URLSearchParams(location.search).get("redirect") || "/chat";
+      // Determine redirect path based on user role
+      let redirectPath = new URLSearchParams(location.search).get("redirect");
+      if (!redirectPath) {
+        redirectPath = data.role === "admin" ? "/admin" : "/chat";
+      }
       handleClose();
       navigate(redirectPath);
     } catch (err: any) {
