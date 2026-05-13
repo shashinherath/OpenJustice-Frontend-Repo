@@ -1,57 +1,34 @@
-﻿import React, { useState } from "react";
-
-type EmbeddingStatus = "Active" | "Failed";
-
-interface KnowledgeRecord {
-  documentId: string;
-  chunkCount: number;
-  embeddingModel: string;
-  status: EmbeddingStatus;
-}
-
-const KNOWLEDGE_RECORDS: KnowledgeRecord[] = [
-  {
-    documentId: "DOC-1001",
-    chunkCount: 128,
-    embeddingModel: "text-embedding-3-large",
-    status: "Active",
-  },
-  {
-    documentId: "DOC-1002",
-    chunkCount: 96,
-    embeddingModel: "text-embedding-3-large",
-    status: "Active",
-  },
-  {
-    documentId: "DOC-1003",
-    chunkCount: 54,
-    embeddingModel: "text-embedding-3-small",
-    status: "Failed",
-  },
-  {
-    documentId: "DOC-1004",
-    chunkCount: 210,
-    embeddingModel: "text-embedding-3-large",
-    status: "Active",
-  },
-];
+import React, { useEffect } from "react";
+import { useAdminKnowledgeStore } from "@/stores/adminKnowledgeStore";
 
 const KnowledgeBasePage: React.FC = () => {
-  const [knowledgeRows, setKnowledgeRows] =
-    useState<KnowledgeRecord[]>(KNOWLEDGE_RECORDS);
+  const { records, isLoading, error, fetchKnowledgeMetrics, reprocessDocument } = useAdminKnowledgeStore();
 
-  const activeKnowledge = knowledgeRows.filter(
+  useEffect(() => {
+    fetchKnowledgeMetrics();
+  }, [fetchKnowledgeMetrics]);
+
+  const activeKnowledge = records.filter(
     (row) => row.status === "Active",
   ).length;
-  const failedKnowledge = knowledgeRows.length - activeKnowledge;
+  const failedKnowledge = records.length - activeKnowledge;
 
-  const handleReprocessDocument = (documentId: string) => {
-    setKnowledgeRows((previous) =>
-      previous.map((row) =>
-        row.documentId === documentId ? { ...row, status: "Active" } : row,
-      ),
-    );
+  const handleReprocessDocument = async (documentId: string) => {
+    try {
+      await reprocessDocument(documentId);
+    } catch (err) {
+      // Error handling is managed by store/service or can be displayed via UI toast
+      console.error(err);
+    }
   };
+
+  if (isLoading) {
+    return <div className="p-8 text-white">Loading knowledge metrics...</div>;
+  }
+
+  if (error) {
+    return <div className="p-8 text-red-400">Error: {error}</div>;
+  }
 
   return (
     <div className="space-y-8 p-8">
@@ -73,7 +50,7 @@ const KnowledgeBasePage: React.FC = () => {
             Indexed Documents
           </p>
           <p className="mt-3 text-2xl font-black text-white">
-            {knowledgeRows.length}
+            {records.length}
           </p>
         </article>
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
@@ -100,7 +77,7 @@ const KnowledgeBasePage: React.FC = () => {
             Knowledge Base Status
           </h3>
           <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-            {knowledgeRows.length} entries
+            {records.length} entries
           </span>
         </div>
 
@@ -118,7 +95,7 @@ const KnowledgeBasePage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {knowledgeRows.map((row) => (
+              {records.map((row) => (
                 <tr key={row.documentId} className="border-b border-white/5">
                   <td className="px-3 py-3 text-slate-200">{row.documentId}</td>
                   <td className="px-3 py-3 text-slate-300">{row.chunkCount}</td>
