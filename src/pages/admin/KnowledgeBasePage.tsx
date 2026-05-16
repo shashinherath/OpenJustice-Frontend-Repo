@@ -2,7 +2,13 @@ import React, { useEffect } from "react";
 import { useAdminKnowledgeStore } from "@/stores/adminKnowledgeStore";
 
 const KnowledgeBasePage: React.FC = () => {
-  const { records, isLoading, error, fetchKnowledgeMetrics, reprocessDocument } = useAdminKnowledgeStore();
+  const {
+    records,
+    isLoading,
+    error,
+    fetchKnowledgeMetrics,
+    reprocessDocument,
+  } = useAdminKnowledgeStore();
 
   useEffect(() => {
     fetchKnowledgeMetrics();
@@ -85,7 +91,7 @@ const KnowledgeBasePage: React.FC = () => {
           <table className="min-w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-widest text-slate-500">
-                <th className="px-3 py-3 font-semibold">Document ID</th>
+                <th className="px-3 py-3 font-semibold">Document</th>
                 <th className="px-3 py-3 font-semibold">Number of chunks</th>
                 <th className="px-3 py-3 font-semibold">
                   Embedding model used
@@ -97,7 +103,9 @@ const KnowledgeBasePage: React.FC = () => {
             <tbody>
               {records.map((row) => (
                 <tr key={row.documentId} className="border-b border-white/5">
-                  <td className="px-3 py-3 text-slate-200">{row.documentId}</td>
+                  <td className="px-3 py-3 text-slate-200">
+                    {row.documentTitle || row.documentId}
+                  </td>
                   <td className="px-3 py-3 text-slate-300">{row.chunkCount}</td>
                   <td className="px-3 py-3 text-slate-300">
                     {row.embeddingModel}
