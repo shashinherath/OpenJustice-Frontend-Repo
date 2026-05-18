@@ -8,6 +8,7 @@ import { useVoiceStore } from "@/stores/voiceStore";
 import { useVoiceRecording } from "@/hooks/useVoiceRecording";
 import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
 import VoiceMessagePlayer from "@/components/ui/VoiceMessagePlayer";
+import MarkdownText from "@/components/common/MarkdownText";
 
 const AnswerPage: React.FC = () => {
   const { t } = useTranslation();
@@ -36,7 +37,10 @@ const AnswerPage: React.FC = () => {
   } = useVoiceRecording();
 
   const chat = sidebarChats.find((item: SidebarChatItem) => item.id === chatId);
-  const messages = (chatMessagesById[chatId] || []) as ChatMessage[];
+  const messages = useMemo<ChatMessage[]>(
+    () => chatMessagesById[chatId] || [],
+    [chatMessagesById, chatId],
+  );
 
   const createdAtLabel = useMemo(() => {
     const firstMessage = messages[0];
@@ -197,6 +201,11 @@ const AnswerPage: React.FC = () => {
                 audioUrl={message.audioUrl}
                 sender={message.sender}
               />
+            ) : message.sender === "ai" ? (
+              <MarkdownText
+                className="text-inherit"
+                content={message.content}
+              />
             ) : (
               <p className="whitespace-pre-wrap leading-6">{message.content}</p>
             )}
@@ -267,7 +276,11 @@ const AnswerPage: React.FC = () => {
                     ? "bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-600 cursor-not-allowed shadow-none"
                     : "text-white cursor-pointer hover:opacity-90"
                 }`}
-                style={!question.trim() ? {} : { backgroundColor: "var(--oj-accent-color)" }}
+                style={
+                  !question.trim()
+                    ? {}
+                    : { backgroundColor: "var(--oj-accent-color)" }
+                }
                 type="button"
                 onClick={handleSend}
                 disabled={!question.trim()}
