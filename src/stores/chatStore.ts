@@ -163,7 +163,21 @@ export const useChatStore = create<ChatStore>()(
                   : state.chatMessagesById[id] &&
                       state.chatMessagesById[id].length > mappedMessages.length
                     ? state.chatMessagesById[id]
-                    : mappedMessages,
+                    : mappedMessages.map((message, index) => {
+                        const existingMessage =
+                          state.chatMessagesById[id]?.[index];
+                        if (
+                          existingMessage?.audioUrl &&
+                          existingMessage.sender === message.sender
+                        ) {
+                          return {
+                            ...message,
+                            audioUrl: existingMessage.audioUrl,
+                          };
+                        }
+
+                        return message;
+                      }),
             },
             sidebarChats: state.sidebarChats.some((chat) => chat.id === id)
               ? state.sidebarChats.map((chat) =>
@@ -321,6 +335,51 @@ export const useChatStore = create<ChatStore>()(
           return;
         }
 
+        // Insert optimistic voice message + AI placeholder immediately
+        const tempUserId = `${chatId}-temp-voice-${Date.now()}`;
+        const tempAiId = `${chatId}-ai-voice-${Date.now()}`;
+        const optimisticUserMessage: ChatMessage = {
+          id: tempUserId,
+          sender: "user",
+          content: "Voice Message",
+          timestamp: new Date(),
+          messageType: "voice",
+          audioUrl: URL.createObjectURL(audioBlob),
+        } as ChatMessage;
+
+        const optimisticAiMessage: ChatMessage = {
+          id: tempAiId,
+          sender: "ai",
+          content: "",
+          timestamp: new Date(),
+          messageType: "voice",
+        } as ChatMessage;
+
+        set((state) => {
+          const existing = state.chatMessagesById[chatId] || [];
+          return {
+            chatMessagesById: {
+              ...state.chatMessagesById,
+              [chatId]: [
+                ...existing,
+                optimisticUserMessage,
+                optimisticAiMessage,
+              ],
+            },
+            sidebarChats: state.sidebarChats.map((chat) =>
+              chat.id === chatId
+                ? {
+                    ...chat,
+                    title:
+                      chat.title === "New Question"
+                        ? "Voice Message"
+                        : chat.title,
+                  }
+                : chat,
+            ),
+          };
+        });
+
         set({ isTyping: true, error: null });
 
         try {
@@ -334,25 +393,51 @@ export const useChatStore = create<ChatStore>()(
           // Let's reload the conversation to pull the newly transcribed text and AI reply
           await get().loadConversation(chatId);
 
-          // Get the updated messages
+          // Get the updated messages and overlay audio URLs where appropriate
           set((state) => {
             const messages = state.chatMessagesById[chatId] || [];
             if (messages.length >= 2) {
               const updatedMessages = [...messages];
 
-              // The last message is the AI response, the second to last is the user's voice note
-              const aiMsgIndex = updatedMessages.length - 1;
-              const userMsgIndex = updatedMessages.length - 2;
+              // Find indices of last ai and last user messages
+              const aiIndex = updatedMessages.findIndex(
+                (m) => m.id === tempAiId,
+              );
+              const userIndex = updatedMessages.findIndex(
+                (m) => m.id === tempUserId,
+              );
 
-              updatedMessages[userMsgIndex] = {
-                ...updatedMessages[userMsgIndex],
-                audioUrl: URL.createObjectURL(audioBlob),
-              };
+              // If server replaced messages, attempt to attach audio URLs to matching senders
+              if (userIndex >= 0) {
+                updatedMessages[userIndex] = {
+                  ...updatedMessages[userIndex],
+                  audioUrl: URL.createObjectURL(audioBlob),
+                };
+              } else {
+                // fallback: attach to second to last
+                const candidate = updatedMessages.length - 2;
+                if (candidate >= 0) {
+                  updatedMessages[candidate] = {
+                    ...updatedMessages[candidate],
+                    audioUrl: URL.createObjectURL(audioBlob),
+                  };
+                }
+              }
 
-              updatedMessages[aiMsgIndex] = {
-                ...updatedMessages[aiMsgIndex],
-                audioUrl: URL.createObjectURL(aiAudioBlob),
-              };
+              if (aiIndex >= 0) {
+                updatedMessages[aiIndex] = {
+                  ...updatedMessages[aiIndex],
+                  audioUrl: URL.createObjectURL(aiAudioBlob),
+                };
+              } else {
+                const candidate = updatedMessages.length - 1;
+                if (candidate >= 0) {
+                  updatedMessages[candidate] = {
+                    ...updatedMessages[candidate],
+                    audioUrl: URL.createObjectURL(aiAudioBlob),
+                  };
+                }
+              }
 
               return {
                 chatMessagesById: {
