@@ -65,6 +65,7 @@ const mapApiMessage = (message: ApiMessageResponse): ChatMessage => {
     content: message.content,
     timestamp: new Date(message.created_at),
     messageType: message.message_type,
+    audioUrl: message.audio_url || undefined,
   };
 };
 
