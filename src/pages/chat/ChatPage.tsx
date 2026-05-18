@@ -63,9 +63,9 @@ const ChatPage: React.FC = () => {
     }
 
     const chatId = await createNewChat(text);
-    await sendMessageToChat(chatId, text);
     setQuestion("");
     navigate(`/chat/${chatId}`);
+    void sendMessageToChat(chatId, text);
   };
 
   const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (

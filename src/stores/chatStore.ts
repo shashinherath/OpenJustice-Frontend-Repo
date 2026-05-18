@@ -152,15 +152,39 @@ export const useChatStore = create<ChatStore>()(
         try {
           const conversation = await chatService.getConversation(id);
           const mappedMessages = conversation.messages.map(mapApiMessage);
+          const mappedConversation = mapConversation(conversation);
           set((state) => ({
             activeConversationId: id,
             chatMessagesById: {
               ...state.chatMessagesById,
-              [id]: mappedMessages,
+              [id]:
+                mappedMessages.length === 0
+                  ? state.chatMessagesById[id] || []
+                  : state.chatMessagesById[id] &&
+                      state.chatMessagesById[id].length > mappedMessages.length
+                    ? state.chatMessagesById[id]
+                    : mappedMessages,
             },
-            sidebarChats: mergeSidebarChats(state.sidebarChats, [
-              mapConversation(conversation),
-            ]),
+            sidebarChats: state.sidebarChats.some((chat) => chat.id === id)
+              ? state.sidebarChats.map((chat) =>
+                  chat.id === id
+                    ? {
+                        ...chat,
+                        title: mappedConversation.title,
+                        isArchived: mappedConversation.isArchived ?? false,
+                        isPinned: mappedConversation.isPinned ?? false,
+                      }
+                    : chat,
+                )
+              : [
+                  {
+                    id,
+                    title: mappedConversation.title,
+                    isArchived: mappedConversation.isArchived ?? false,
+                    isPinned: mappedConversation.isPinned ?? false,
+                  },
+                  ...state.sidebarChats,
+                ],
           }));
         } catch (error: any) {
           set({ error: error?.message || "Failed to load conversation." });
