@@ -35,6 +35,21 @@ const ErrorMonitoringPage = React.lazy(
   () => import("@/pages/admin/ErrorMonitoringPage"),
 );
 const AnalyticsPage = React.lazy(() => import("@/pages/admin/AnalyticsPage"));
+const UsageAnalyticsPage = React.lazy(
+  () => import("@/pages/admin/analytics/UsageAnalyticsPage"),
+);
+const MultilingualAnalyticsPage = React.lazy(
+  () => import("@/pages/admin/analytics/MultilingualAnalyticsPage"),
+);
+const RetrievalEvaluationPage = React.lazy(
+  () => import("@/pages/admin/analytics/RetrievalEvaluationPage"),
+);
+const AIEvaluationMetricsPage = React.lazy(
+  () => import("@/pages/admin/analytics/AIEvaluationMetricsPage"),
+);
+const ResearchMetricsPage = React.lazy(
+  () => import("@/pages/admin/analytics/ResearchMetricsPage"),
+);
 const SettingsPage = React.lazy(() => import("@/pages/admin/SettingsPage"));
 const LanguageSettingsPage = React.lazy(
   () => import("@/pages/admin/settings/LanguageSettingsPage"),
@@ -75,6 +90,20 @@ export const APP_ROUTES: RouteConfig[] = [
   { path: "/admin/logs", component: AdminLogsPage },
   { path: "/admin/error-monitoring", component: ErrorMonitoringPage },
   { path: "/admin/analytics", component: AnalyticsPage },
+  { path: "/admin/analytics/usage", component: UsageAnalyticsPage },
+  {
+    path: "/admin/analytics/multilingual",
+    component: MultilingualAnalyticsPage,
+  },
+  {
+    path: "/admin/analytics/retrieval-evaluation",
+    component: RetrievalEvaluationPage,
+  },
+  {
+    path: "/admin/analytics/ai-evaluation",
+    component: AIEvaluationMetricsPage,
+  },
+  { path: "/admin/analytics/research-metrics", component: ResearchMetricsPage },
   { path: "/admin/settings", component: SettingsPage },
   { path: "/admin/settings/language", component: LanguageSettingsPage },
   { path: "/admin/settings/ai", component: AISettingsPage },

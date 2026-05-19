@@ -14,6 +14,7 @@ const AdminSidebar: React.FC = () => {
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
     {
       settings: location.pathname.startsWith("/admin/settings"),
+      analytics: location.pathname.startsWith("/admin/analytics"),
     },
   );
 
@@ -22,6 +23,13 @@ const AdminSidebar: React.FC = () => {
       setExpandedGroups((prev) => ({
         ...prev,
         settings: true,
+      }));
+    }
+
+    if (location.pathname.startsWith("/admin/analytics")) {
+      setExpandedGroups((prev) => ({
+        ...prev,
+        analytics: true,
       }));
     }
   }, [location.pathname]);

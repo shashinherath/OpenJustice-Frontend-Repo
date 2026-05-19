@@ -7,6 +7,11 @@ export interface AdminModule {
     | "logs"
     | "error-monitoring"
     | "analytics"
+    | "analytics-usage"
+    | "analytics-multilingual"
+    | "analytics-retrieval-eval"
+    | "analytics-ai-eval"
+    | "analytics-research"
     | "settings"
     | "settings-language"
     | "settings-ai"
@@ -105,6 +110,61 @@ export const ADMIN_MODULES: AdminModule[] = [
       "Review daily query activity and language distribution to understand platform usage trends.",
   },
   {
+    key: "analytics-usage",
+    label: "Usage Analytics",
+    navLabel: "Usage",
+    path: "/admin/analytics/usage",
+    icon: "bar_chart",
+    subtitle: "Query volume, active users, and traffic trends",
+    description:
+      "Examine query counts, peak usage windows, and user activity metrics over time.",
+    parentKey: "analytics",
+  },
+  {
+    key: "analytics-multilingual",
+    label: "Multilingual Analytics",
+    navLabel: "Multilingual",
+    path: "/admin/analytics/multilingual",
+    icon: "translate",
+    subtitle: "Language distribution and translation usage",
+    description:
+      "Track language-specific queries, translation volume, and per-language engagement.",
+    parentKey: "analytics",
+  },
+  {
+    key: "analytics-retrieval-eval",
+    label: "Retrieval Evaluation",
+    navLabel: "Retrieval Eval",
+    path: "/admin/analytics/retrieval-evaluation",
+    icon: "search",
+    subtitle: "RAG retrieval quality and recall/precision metrics",
+    description:
+      "Evaluate retrieval accuracy, recall-at-K, and similarity score distributions.",
+    parentKey: "analytics",
+  },
+  {
+    key: "analytics-ai-eval",
+    label: "AI Evaluation Metrics",
+    navLabel: "AI Eval",
+    path: "/admin/analytics/ai-evaluation",
+    icon: "psychology",
+    subtitle: "Model performance and response quality metrics",
+    description:
+      "Capture model accuracy, hallucination rates, token usage, and generation metrics.",
+    parentKey: "analytics",
+  },
+  {
+    key: "analytics-research",
+    label: "Research Metrics",
+    navLabel: "Research",
+    path: "/admin/analytics/research-metrics",
+    icon: "insights",
+    subtitle: "Custom research experiments and evaluation tracking",
+    description:
+      "Surface research experiment results, cohort comparisons, and metric trends.",
+    parentKey: "analytics",
+  },
+  {
     key: "settings",
     label: "System Settings",
     navLabel: "Settings",
@@ -182,7 +242,21 @@ export const ADMIN_MENU_ITEMS: Array<AdminModule | AdminMenuGroup> = [
   ADMIN_MODULES[3], // Knowledge Monitoring
   ADMIN_MODULES[4], // Logs
   ADMIN_MODULES[5], // Error Monitoring
-  ADMIN_MODULES[6], // Analytics
+  // Analytics group replaced by analytics_group below
+  {
+    key: "analytics_group",
+    label: "Analytics",
+    navLabel: "Analytics",
+    path: "/admin/analytics",
+    icon: "insights",
+    children: [
+      ADMIN_MODULES.find((m) => m.key === "analytics-usage")!,
+      ADMIN_MODULES.find((m) => m.key === "analytics-multilingual")!,
+      ADMIN_MODULES.find((m) => m.key === "analytics-retrieval-eval")!,
+      ADMIN_MODULES.find((m) => m.key === "analytics-ai-eval")!,
+      ADMIN_MODULES.find((m) => m.key === "analytics-research")!,
+    ],
+  },
   {
     key: "settings",
     label: "System Settings",
