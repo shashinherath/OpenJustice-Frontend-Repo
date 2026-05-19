@@ -69,6 +69,9 @@ const mapApiMessage = (message: ApiMessageResponse): ChatMessage => {
   };
 };
 
+const isBlobAudioUrl = (url?: string): boolean =>
+  typeof url === "string" && url.startsWith("blob:");
+
 const mapConversation = (
   conversation: ApiConversationResponse,
 ): Conversation => ({
@@ -169,7 +172,8 @@ export const useChatStore = create<ChatStore>()(
                           state.chatMessagesById[id]?.[index];
                         if (
                           existingMessage?.audioUrl &&
-                          existingMessage.sender === message.sender
+                          existingMessage.sender === message.sender &&
+                          !isBlobAudioUrl(existingMessage.audioUrl)
                         ) {
                           return {
                             ...message,
@@ -393,62 +397,6 @@ export const useChatStore = create<ChatStore>()(
           // The backend saves the user message and AI message during the voice processing.
           // Let's reload the conversation to pull the newly transcribed text and AI reply
           await get().loadConversation(chatId);
-
-          // Get the updated messages and overlay audio URLs where appropriate
-          set((state) => {
-            const messages = state.chatMessagesById[chatId] || [];
-            if (messages.length >= 2) {
-              const updatedMessages = [...messages];
-
-              // Find indices of last ai and last user messages
-              const aiIndex = updatedMessages.findIndex(
-                (m) => m.id === tempAiId,
-              );
-              const userIndex = updatedMessages.findIndex(
-                (m) => m.id === tempUserId,
-              );
-
-              // If server replaced messages, attempt to attach audio URLs to matching senders
-              if (userIndex >= 0) {
-                updatedMessages[userIndex] = {
-                  ...updatedMessages[userIndex],
-                  audioUrl: URL.createObjectURL(audioBlob),
-                };
-              } else {
-                // fallback: attach to second to last
-                const candidate = updatedMessages.length - 2;
-                if (candidate >= 0) {
-                  updatedMessages[candidate] = {
-                    ...updatedMessages[candidate],
-                    audioUrl: URL.createObjectURL(audioBlob),
-                  };
-                }
-              }
-
-              if (aiIndex >= 0) {
-                updatedMessages[aiIndex] = {
-                  ...updatedMessages[aiIndex],
-                  audioUrl: URL.createObjectURL(aiAudioBlob),
-                };
-              } else {
-                const candidate = updatedMessages.length - 1;
-                if (candidate >= 0) {
-                  updatedMessages[candidate] = {
-                    ...updatedMessages[candidate],
-                    audioUrl: URL.createObjectURL(aiAudioBlob),
-                  };
-                }
-              }
-
-              return {
-                chatMessagesById: {
-                  ...state.chatMessagesById,
-                  [chatId]: updatedMessages,
-                },
-              };
-            }
-            return state;
-          });
 
           // Play the received audio automatically
           const url = URL.createObjectURL(aiAudioBlob);
