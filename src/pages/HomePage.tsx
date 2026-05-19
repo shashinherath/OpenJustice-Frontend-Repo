@@ -159,7 +159,7 @@ const HomePage: React.FC = () => {
 
           {/* WhatsApp & Web Chat Showcase */}
           <section className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 mb-4">
-            <div className="rounded-3xl border border-green-200 bg-gradient-to-br from-green-50 to-emerald-100 p-8 text-left shadow-sm dark:border-green-900/30 dark:from-[#0d1f14] dark:to-[#112a1c] relative overflow-hidden group transition-all hover:border-green-400/50">
+            <div className="rounded-3xl border border-green-200 bg-linear-to-br from-green-50 to-emerald-100 p-8 text-left shadow-sm dark:border-green-900/30 dark:from-[#0d1f14] dark:to-[#112a1c] relative overflow-hidden group transition-all hover:border-green-400/50">
               <div className="absolute -right-6 -top-6 text-green-500/10 dark:text-green-400/5 transition-transform duration-500 group-hover:scale-110">
                 <span className="material-symbols-outlined text-[150px]">
                   chat
@@ -192,7 +192,7 @@ const HomePage: React.FC = () => {
               </div>
             </div>
 
-            <div className="rounded-3xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-100 p-8 text-left shadow-sm dark:border-blue-900/30 dark:from-[#0d1627] dark:to-[#111c33] relative overflow-hidden group transition-all hover:border-blue-400/50">
+            <div className="rounded-3xl border border-blue-200 bg-linear-to-br from-blue-50 to-indigo-100 p-8 text-left shadow-sm dark:border-blue-900/30 dark:from-[#0d1627] dark:to-[#111c33] relative overflow-hidden group transition-all hover:border-blue-400/50">
               <div className="absolute -right-6 -top-6 text-blue-500/10 dark:text-blue-400/5 transition-transform duration-500 group-hover:scale-110">
                 <span className="material-symbols-outlined text-[150px]">
                   forum
