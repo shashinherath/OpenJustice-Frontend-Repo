@@ -7,13 +7,28 @@ export interface AdminModule {
     | "logs"
     | "error-monitoring"
     | "analytics"
-    | "settings";
+    | "settings"
+    | "settings-language"
+    | "settings-ai"
+    | "settings-retrieval"
+    | "settings-security"
+    | "settings-integration";
   label: string;
   navLabel: string;
   path: string;
   icon: string;
   subtitle: string;
   description: string;
+  parentKey?: string;
+}
+
+export interface AdminMenuGroup {
+  key: string;
+  label: string;
+  navLabel: string;
+  path: string;
+  icon: string;
+  children?: AdminModule[];
 }
 
 export const ADMIN_MODULES: AdminModule[] = [
@@ -95,9 +110,60 @@ export const ADMIN_MODULES: AdminModule[] = [
     navLabel: "Settings",
     path: "/admin/settings",
     icon: "settings",
-    subtitle: "Basic configuration for language and translation behavior",
+    subtitle:
+      "Configuration for language, AI, retrieval, security, and integrations",
     description:
-      "Enable or disable languages, set the default language, and toggle translation pipeline behavior.",
+      "Manage system-wide settings including language support, AI parameters, RAG retrieval, security policies, and external integrations.",
+  },
+  {
+    key: "settings-language",
+    label: "Language Settings",
+    navLabel: "Language",
+    path: "/admin/settings/language",
+    icon: "language",
+    subtitle: "Multilingual support and translation configuration",
+    description:
+      "Enable or disable languages, set default language, and configure translation pipeline.",
+  },
+  {
+    key: "settings-ai",
+    label: "AI Model Settings",
+    navLabel: "AI Settings",
+    path: "/admin/settings/ai",
+    icon: "smart_toy",
+    subtitle: "LLM model selection and generation parameters",
+    description:
+      "Configure model selection, temperature, token limits, and generation behavior.",
+  },
+  {
+    key: "settings-retrieval",
+    label: "RAG Retrieval Settings",
+    navLabel: "Retrieval",
+    path: "/admin/settings/retrieval",
+    icon: "search",
+    subtitle: "Vector database and embedding configuration",
+    description:
+      "Configure top-K results, similarity threshold, embedding model, and chunking strategy.",
+  },
+  {
+    key: "settings-security",
+    label: "Security Settings",
+    navLabel: "Security",
+    path: "/admin/settings/security",
+    icon: "security",
+    subtitle: "Authentication, rate limiting, and access control",
+    description:
+      "Configure JWT expiry, rate limits, prompt validation, and account lockout policies.",
+  },
+  {
+    key: "settings-integration",
+    label: "Integration Settings",
+    navLabel: "Integrations",
+    path: "/admin/settings/integration",
+    icon: "integration_instructions",
+    subtitle: "External API and service configuration",
+    description:
+      "Manage OpenAI, Twilio, WhatsApp, and WebSocket integration settings.",
   },
 ];
 
@@ -107,3 +173,28 @@ export const ADMIN_MODULE_BY_PATH = ADMIN_MODULES.reduce<
   acc[module.path] = module;
   return acc;
 }, {});
+
+// Hierarchical menu structure for sidebar with collapsible groups
+export const ADMIN_MENU_ITEMS: Array<AdminModule | AdminMenuGroup> = [
+  ADMIN_MODULES[0], // Overview
+  ADMIN_MODULES[1], // Users
+  ADMIN_MODULES[2], // Data Sources
+  ADMIN_MODULES[3], // Knowledge Monitoring
+  ADMIN_MODULES[4], // Logs
+  ADMIN_MODULES[5], // Error Monitoring
+  ADMIN_MODULES[6], // Analytics
+  {
+    key: "settings",
+    label: "System Settings",
+    navLabel: "Settings",
+    path: "/admin/settings",
+    icon: "settings",
+    children: [
+      ADMIN_MODULES.find((module) => module.key === "settings-language")!,
+      ADMIN_MODULES.find((module) => module.key === "settings-ai")!,
+      ADMIN_MODULES.find((module) => module.key === "settings-retrieval")!,
+      ADMIN_MODULES.find((module) => module.key === "settings-security")!,
+      ADMIN_MODULES.find((module) => module.key === "settings-integration")!,
+    ],
+  },
+];

@@ -36,6 +36,21 @@ const ErrorMonitoringPage = React.lazy(
 );
 const AnalyticsPage = React.lazy(() => import("@/pages/admin/AnalyticsPage"));
 const SettingsPage = React.lazy(() => import("@/pages/admin/SettingsPage"));
+const LanguageSettingsPage = React.lazy(
+  () => import("@/pages/admin/settings/LanguageSettingsPage"),
+);
+const AISettingsPage = React.lazy(
+  () => import("@/pages/admin/settings/AISettingsPage"),
+);
+const RetrievalSettingsPage = React.lazy(
+  () => import("@/pages/admin/settings/RetrievalSettingsPage"),
+);
+const SecuritySettingsPage = React.lazy(
+  () => import("@/pages/admin/settings/SecuritySettingsPage"),
+);
+const IntegrationSettingsPage = React.lazy(
+  () => import("@/pages/admin/settings/IntegrationSettingsPage"),
+);
 const TopicBrowserPage = React.lazy(
   () => import("@/pages/topics/TopicBrowserPage"),
 );
@@ -61,6 +76,11 @@ export const APP_ROUTES: RouteConfig[] = [
   { path: "/admin/error-monitoring", component: ErrorMonitoringPage },
   { path: "/admin/analytics", component: AnalyticsPage },
   { path: "/admin/settings", component: SettingsPage },
+  { path: "/admin/settings/language", component: LanguageSettingsPage },
+  { path: "/admin/settings/ai", component: AISettingsPage },
+  { path: "/admin/settings/retrieval", component: RetrievalSettingsPage },
+  { path: "/admin/settings/security", component: SecuritySettingsPage },
+  { path: "/admin/settings/integration", component: IntegrationSettingsPage },
   { path: "/topics", component: TopicBrowserPage },
   { path: "/research", component: ResearchPage },
   { path: "/developers", component: DeveloperPage },
