@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import BrandLogo from "@/components/ui/BrandLogo";
@@ -17,6 +17,8 @@ const AdminSidebar: React.FC = () => {
       analytics: location.pathname.startsWith("/admin/analytics"),
     },
   );
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (location.pathname.startsWith("/admin/settings")) {
@@ -34,9 +36,28 @@ const AdminSidebar: React.FC = () => {
     }
   }, [location.pathname]);
 
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target as Node)
+      ) {
+        setProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
+
   const handleLogout = async () => {
     await logout();
     navigate("/");
+  };
+
+  const handleOpenProfile = () => {
+    setProfileMenuOpen(false);
+    openProfile();
   };
 
   const toggleGroup = (key: string) => {
@@ -174,14 +195,16 @@ const AdminSidebar: React.FC = () => {
         })}
       </nav>
       <div className="shrink-0 border-t border-white/10 bg-[#191919] p-4">
-        <div className="flex items-center gap-3">
+        <div className="relative" ref={profileMenuRef}>
           <button
             type="button"
-            onClick={openProfile}
-            className="flex flex-1 items-center gap-3 rounded-md px-2 py-2 text-left transition-colors duration-200 hover:bg-white/10 hover:text-white"
-            aria-label="Open profile settings"
+            onClick={() => setProfileMenuOpen((prev) => !prev)}
+            className="flex w-full items-center gap-3 rounded-md px-2 py-2 text-left transition-colors duration-200 hover:bg-white/10 hover:text-white"
+            aria-label="Open profile menu"
+            aria-haspopup="menu"
+            aria-expanded={profileMenuOpen}
           >
-            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded">
+            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/5">
               <span className="material-symbols-outlined text-white">
                 account_circle
               </span>
@@ -194,15 +217,46 @@ const AdminSidebar: React.FC = () => {
                 System Overseer
               </p>
             </div>
+            <span className="material-symbols-outlined text-[16px] text-slate-500">
+              more_vert
+            </span>
           </button>
-          <button
-            className="text-slate-400 hover:text-white"
-            type="button"
-            onClick={handleLogout}
-            aria-label="Logout"
-          >
-            <span className="material-symbols-outlined text-sm">logout</span>
-          </button>
+
+          {profileMenuOpen && (
+            <div className="absolute bottom-full left-0 mb-2 w-full overflow-hidden rounded-xl border border-white/10 bg-[#111111] shadow-2xl shadow-black/40">
+              <button
+                type="button"
+                onClick={handleOpenProfile}
+                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-slate-200 transition-colors hover:bg-white/5 hover:text-white"
+              >
+                <span className="material-symbols-outlined text-[18px] text-cyan-300">
+                  person
+                </span>
+                <div className="flex flex-1 flex-col items-start">
+                  <span className="font-medium">Profile</span>
+                  <span className="text-[10px] text-slate-500">
+                    Open account details popup
+                  </span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex w-full items-center gap-3 border-t border-white/10 px-4 py-3 text-left text-sm text-rose-200 transition-colors hover:bg-rose-500/10 hover:text-rose-100"
+              >
+                <span className="material-symbols-outlined text-[18px] text-rose-300">
+                  logout
+                </span>
+                <div className="flex flex-1 flex-col items-start">
+                  <span className="font-medium">Logout</span>
+                  <span className="text-[10px] text-slate-500">
+                    Sign out of the admin panel
+                  </span>
+                </div>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </aside>

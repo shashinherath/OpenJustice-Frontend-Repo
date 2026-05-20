@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import StatCard from "@/components/admin/StatCard";
 import ActivityItem from "@/components/admin/ActivityItem";
-import DataSourceStatusItem from "@/components/admin/DataSourceStatusItem";
 import { useAdminStore } from "@/stores/adminStore";
 
 const QUICK_ACTIONS = [
@@ -11,7 +10,96 @@ const QUICK_ACTIONS = [
   { icon: "help", label: "Support", highlight: true },
 ];
 
+// Mock dashboard card data - will be replaced with backend data
+const DEFAULT_STATS = [
+  {
+    id: 1,
+    title: "Total Users",
+    value: "1,248",
+    change: "+12%",
+    statusType: "positive" as const,
+  },
+  {
+    id: 2,
+    title: "Active Sessions",
+    value: "342",
+    change: "+5%",
+    statusType: "positive" as const,
+  },
+  {
+    id: 3,
+    title: "Total Queries",
+    value: "24,582",
+    change: "+18%",
+    statusType: "positive" as const,
+  },
+  {
+    id: 4,
+    title: "Documents Indexed",
+    value: "1,856",
+    change: "+3%",
+    statusType: "positive" as const,
+  },
+  {
+    id: 5,
+    title: "Total Chunks",
+    value: "48,942",
+    change: "+8%",
+    statusType: "positive" as const,
+  },
+  {
+    id: 6,
+    title: "AI Responses Today",
+    value: "3,621",
+    change: "+22%",
+    statusType: "positive" as const,
+  },
+  {
+    id: 7,
+    title: "Errors Today",
+    value: "12",
+    change: "-2%",
+    statusType: "neutral" as const,
+  },
+  {
+    id: 8,
+    title: "WhatsApp Requests",
+    value: "487",
+    change: "+9%",
+    statusType: "positive" as const,
+  },
+  {
+    id: 9,
+    title: "Voice Queries",
+    value: "156",
+    change: "+4%",
+    statusType: "positive" as const,
+  },
+  {
+    id: 10,
+    title: "Avg Response Time",
+    value: "842ms",
+    change: "-15%",
+    statusType: "positive" as const,
+  },
+  {
+    id: 11,
+    title: "Retrieval Accuracy",
+    value: "94.2%",
+    change: "+1.3%",
+    statusType: "positive" as const,
+  },
+  {
+    id: 12,
+    title: "System Health",
+    value: "98.6%",
+    change: "+0.5%",
+    statusType: "positive" as const,
+  },
+];
+
 const AdminDashboard: React.FC = () => {
+  const [showAllCards, setShowAllCards] = React.useState(false);
   const {
     overviewData: data,
     isLoading,
@@ -45,17 +133,55 @@ const AdminDashboard: React.FC = () => {
   }
 
   return (
-    <div className="p-8 space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {data.stats.map((stat) => (
-          <StatCard
-            key={stat.id}
-            title={stat.title}
-            value={stat.value}
-            change={stat.change}
-            statusType={stat.statusType}
-          />
-        ))}
+    <div className="p-8 space-y-6">
+      <div className="space-y-3">
+        {/* Primary Stats - 4 Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {(data.stats && data.stats.length >= 12 ? data.stats : DEFAULT_STATS)
+            .slice(0, 4)
+            .map((stat) => (
+              <StatCard
+                key={stat.id}
+                title={stat.title}
+                value={stat.value}
+                change={stat.change}
+                statusType={stat.statusType}
+              />
+            ))}
+        </div>
+
+        {/* Expandable Additional Stats - 8 Cards */}
+        {showAllCards && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {(data.stats && data.stats.length >= 12
+              ? data.stats
+              : DEFAULT_STATS
+            )
+              .slice(4, 12)
+              .map((stat) => (
+                <StatCard
+                  key={stat.id}
+                  title={stat.title}
+                  value={stat.value}
+                  change={stat.change}
+                  statusType={stat.statusType}
+                />
+              ))}
+          </div>
+        )}
+
+        {/* Toggle Button */}
+        <div className="flex justify-end pt-1">
+          <button
+            onClick={() => setShowAllCards(!showAllCards)}
+            className="inline-flex items-center gap-1.5 rounded border border-cyan-400/35 bg-cyan-500/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-cyan-100 transition-all hover:border-cyan-400/50 hover:bg-cyan-500/20"
+          >
+            <span className="material-symbols-outlined text-[16px] leading-none">
+              {showAllCards ? "expand_less" : "expand_more"}
+            </span>
+            {showAllCards ? "Show Less" : "View All Metrics"}
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -64,9 +190,9 @@ const AdminDashboard: React.FC = () => {
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-lg font-bold text-white flex items-center gap-3">
                 <span className="material-symbols-outlined text-cyan-300">
-                  trending_up
+                  bar_chart
                 </span>
-                Trust Metrics: Citation Accuracy over Time
+                Queries Per Day
               </h2>
               <div className="flex gap-2">
                 <button className="rounded border border-cyan-400/30 bg-cyan-500/15 px-3 py-1 text-[10px] font-bold text-cyan-100">
@@ -77,84 +203,77 @@ const AdminDashboard: React.FC = () => {
                 </button>
               </div>
             </div>
-            <div className="h-64 flex items-end justify-between gap-1 pt-4">
-              <div className="w-full bg-white/5 h-[80%] rounded-t-sm hover:bg-white/20 transition-all relative group">
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 text-[9px] font-bold text-white">
-                  98.1%
+            <div className="grid grid-cols-7 gap-2">
+              <div className="space-y-2 text-center">
+                <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
+                  <div
+                    className="w-full rounded-sm bg-cyan-400/80"
+                    style={{ height: "65%" }}
+                  />
                 </div>
+                <p className="text-[11px] text-slate-400">Mon</p>
+                <p className="text-[11px] font-semibold text-slate-300">462</p>
               </div>
-              <div className="w-full bg-white/5 h-[82%] rounded-t-sm hover:bg-white/20 transition-all relative group"></div>
-              <div className="w-full bg-white/5 h-[79%] rounded-t-sm hover:bg-white/20 transition-all relative group"></div>
-              <div className="w-full bg-white/5 h-[85%] rounded-t-sm hover:bg-white/20 transition-all relative group"></div>
-              <div className="w-full bg-white/10 h-[88%] rounded-t-sm hover:bg-white/20 transition-all relative group"></div>
-              <div className="w-full bg-white/10 h-[92%] rounded-t-sm hover:bg-white/20 transition-all relative group"></div>
-              <div className="w-full bg-white h-[99.2%] rounded-t-sm hover:bg-white/20 transition-all relative group">
-                <div className="absolute -top-6 left-1/2 -translate-x-1/2 opacity-100 text-[9px] font-bold text-white">
-                  99.2%
+              <div className="space-y-2 text-center">
+                <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
+                  <div
+                    className="w-full rounded-sm bg-cyan-400/80"
+                    style={{ height: "83%" }}
+                  />
                 </div>
+                <p className="text-[11px] text-slate-400">Tue</p>
+                <p className="text-[11px] font-semibold text-slate-300">512</p>
               </div>
-            </div>
-            <div className="mt-4 flex justify-between text-[9px] font-bold uppercase tracking-widest text-slate-400">
-              <span>01 May</span>
-              <span>02 May</span>
-              <span>03 May</span>
-              <span>04 May</span>
-              <span>05 May</span>
-              <span>06 May</span>
-              <span>Today</span>
-            </div>
-          </section>
-
-          <section className="rounded border border-cyan-400/15 bg-[#191919] p-6">
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-              <div>
-                <h2 className="text-lg font-bold text-white">Health Status</h2>
-                <p className="text-sm text-slate-400">
-                  Live system metrics for the AI and database services.
-                </p>
+              <div className="space-y-2 text-center">
+                <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
+                  <div
+                    className="w-full rounded-sm bg-cyan-400/80"
+                    style={{ height: "79%" }}
+                  />
+                </div>
+                <p className="text-[11px] text-slate-400">Wed</p>
+                <p className="text-[11px] font-semibold text-slate-300">488</p>
               </div>
-              <span className="rounded-full bg-white/5 px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-slate-300">
-                Updated now
-              </span>
-            </div>
-            <div className="mt-6 grid gap-4 sm:grid-cols-3">
-              {data.core_services.map((service) => (
-                <article
-                  key={service.id}
-                  className="rounded-2xl bg-slate-950/95 p-5 ring-1 ring-white/5"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-sm font-semibold text-white">
-                        {service.title}
-                      </p>
-                      <p className="mt-2 text-xs text-slate-500">
-                        Service availability and health check.
-                      </p>
-                    </div>
-                    <span
-                      className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${
-                        service.status === "Active"
-                          ? "bg-emerald-500/15 text-emerald-300"
-                          : "bg-rose-500/15 text-rose-300"
-                      }`}
-                    >
-                      {service.status}
-                    </span>
-                  </div>
-                  <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-800">
-                    <div
-                      className={`h-full rounded-full ${service.status === "Active" ? "bg-emerald-400" : "bg-rose-400"}`}
-                      style={{
-                        width: service.status === "Active" ? "100%" : "45%",
-                      }}
-                    />
-                  </div>
-                  <p className="mt-3 text-[11px] text-slate-500">
-                    Telemetry refreshed every 30 seconds.
-                  </p>
-                </article>
-              ))}
+              <div className="space-y-2 text-center">
+                <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
+                  <div
+                    className="w-full rounded-sm bg-cyan-400/80"
+                    style={{ height: "90%" }}
+                  />
+                </div>
+                <p className="text-[11px] text-slate-400">Thu</p>
+                <p className="text-[11px] font-semibold text-slate-300">556</p>
+              </div>
+              <div className="space-y-2 text-center">
+                <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
+                  <div
+                    className="w-full rounded-sm bg-cyan-400"
+                    style={{ height: "100%" }}
+                  />
+                </div>
+                <p className="text-[11px] text-slate-400">Fri</p>
+                <p className="text-[11px] font-semibold text-slate-300">603</p>
+              </div>
+              <div className="space-y-2 text-center">
+                <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
+                  <div
+                    className="w-full rounded-sm bg-cyan-400/80"
+                    style={{ height: "68%" }}
+                  />
+                </div>
+                <p className="text-[11px] text-slate-400">Sat</p>
+                <p className="text-[11px] font-semibold text-slate-300">421</p>
+              </div>
+              <div className="space-y-2 text-center">
+                <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
+                  <div
+                    className="w-full rounded-sm bg-amber-400"
+                    style={{ height: "64%" }}
+                  />
+                </div>
+                <p className="text-[11px] text-slate-400">Sun</p>
+                <p className="text-[11px] font-semibold text-slate-300">394</p>
+              </div>
             </div>
           </section>
 
@@ -186,19 +305,43 @@ const AdminDashboard: React.FC = () => {
         <div className="space-y-6">
           <section className="rounded border border-cyan-400/15 bg-[#191919] p-6">
             <h2 className="text-sm font-bold text-white mb-6 uppercase tracking-[0.15em]">
-              Data Source Status
+              Live Status Indicators
             </h2>
-            <div className="space-y-6">
-              {data.data_sources.map((source) => (
-                <DataSourceStatusItem
-                  key={source.id}
-                  title={source.title}
-                  statusLabel={source.statusLabel}
-                  statusColorClass={source.statusColorClass}
-                  progressPercent={source.progressPercent}
-                  progressColorClass={source.progressColorClass}
-                  footerText={source.footerText}
-                />
+            <div className="space-y-3">
+              {[
+                { name: "OpenAI API", icon: "api", status: "Active" },
+                { name: "PostgreSQL", icon: "database", status: "Active" },
+                { name: "pgvector", icon: "storage", status: "Active" },
+                { name: "WebSocket Server", icon: "cloud", status: "Active" },
+                { name: "WhatsApp API", icon: "chat", status: "Active" },
+                {
+                  name: "Translation Service",
+                  icon: "translate",
+                  status: "Active",
+                },
+              ].map((indicator) => (
+                <div
+                  key={indicator.name}
+                  className="flex items-center justify-between rounded border border-white/10 bg-black/30 p-3"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="material-symbols-outlined text-cyan-300 text-[18px]">
+                      {indicator.icon}
+                    </span>
+                    <span className="text-sm font-medium text-slate-200">
+                      {indicator.name}
+                    </span>
+                  </div>
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${
+                      indicator.status === "Active"
+                        ? "bg-emerald-500/15 text-emerald-300"
+                        : "bg-rose-500/15 text-rose-300"
+                    }`}
+                  >
+                    {indicator.status}
+                  </span>
+                </div>
               ))}
             </div>
           </section>
