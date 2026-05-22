@@ -240,9 +240,7 @@ export const ADMIN_MENU_ITEMS: Array<AdminModule | AdminMenuGroup> = [
   ADMIN_MODULES[1], // Users
   ADMIN_MODULES[2], // Data Sources
   ADMIN_MODULES[3], // Knowledge Monitoring
-  ADMIN_MODULES[4], // Logs
-  ADMIN_MODULES[5], // Error Monitoring
-  // Analytics group replaced by analytics_group below
+  // Place Analytics group above AI Logs for easier access
   {
     key: "analytics_group",
     label: "Analytics",
@@ -257,6 +255,8 @@ export const ADMIN_MENU_ITEMS: Array<AdminModule | AdminMenuGroup> = [
       ADMIN_MODULES.find((m) => m.key === "analytics-research")!,
     ],
   },
+  ADMIN_MODULES[4], // Logs
+  ADMIN_MODULES[5], // Error Monitoring
   {
     key: "settings",
     label: "System Settings",

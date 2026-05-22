@@ -34,7 +34,9 @@ const AdminLogsPage = React.lazy(() => import("@/pages/admin/AdminLogsPage"));
 const ErrorMonitoringPage = React.lazy(
   () => import("@/pages/admin/ErrorMonitoringPage"),
 );
-const AnalyticsPage = React.lazy(() => import("@/pages/admin/AnalyticsPage"));
+const AnalyticsPage = React.lazy(
+  () => import("@/pages/admin/AdminAnalyticsPage"),
+);
 const UsageAnalyticsPage = React.lazy(
   () => import("@/pages/admin/analytics/UsageAnalyticsPage"),
 );
