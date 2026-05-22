@@ -8,6 +8,7 @@ import { useVoiceStore } from "@/stores/voiceStore";
 import { useVoiceRecording } from "@/hooks/useVoiceRecording";
 import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
 import VoiceMessagePlayer from "@/components/ui/VoiceMessagePlayer";
+import MarkdownText from "@/components/common/MarkdownText";
 
 const AnswerPage: React.FC = () => {
   const { t } = useTranslation();
@@ -19,6 +20,7 @@ const AnswerPage: React.FC = () => {
   const {
     sidebarChats,
     chatMessagesById,
+    isTyping,
     sendMessageToChat,
     sendVoiceMessageToChat,
     loadConversation,
@@ -36,7 +38,10 @@ const AnswerPage: React.FC = () => {
   } = useVoiceRecording();
 
   const chat = sidebarChats.find((item: SidebarChatItem) => item.id === chatId);
-  const messages = (chatMessagesById[chatId] || []) as ChatMessage[];
+  const messages = useMemo<ChatMessage[]>(
+    () => chatMessagesById[chatId] || [],
+    [chatMessagesById, chatId],
+  );
 
   const createdAtLabel = useMemo(() => {
     const firstMessage = messages[0];
@@ -45,6 +50,8 @@ const AnswerPage: React.FC = () => {
     }
     return firstMessage.timestamp.toLocaleString();
   }, [messages, t]);
+
+  const showTypingIndicator = isTyping && messages.length === 0;
 
   useEffect(() => {
     if (chatId) {
@@ -171,11 +178,28 @@ const AnswerPage: React.FC = () => {
       </header>
 
       <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-4 overflow-y-auto px-4 py-6">
-        {messages.length === 0 && (
+        {showTypingIndicator ? (
+          <div className="mr-auto max-w-[88%] rounded-xl border border-slate-200 bg-white p-3 px-4 text-sm text-slate-700 shadow-sm dark:border-border-dark dark:bg-surface-dark dark:text-slate-200">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-[16px] text-slate-400 dark:text-slate-500">
+                smart_toy
+              </span>
+              <div
+                className="flex items-center gap-1.5"
+                aria-live="polite"
+                aria-label="OpenJustice AI is typing"
+              >
+                <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.25s]" />
+                <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.15s]" />
+                <span className="h-2 w-2 animate-bounce rounded-full bg-current" />
+              </div>
+            </div>
+          </div>
+        ) : messages.length === 0 ? (
           <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500 dark:border-border-dark dark:bg-surface-dark dark:text-slate-400">
             {t("askFirstQuestion")}
           </div>
-        )}
+        ) : null}
 
         {messages.map((message: ChatMessage) => (
           <div
@@ -197,6 +221,28 @@ const AnswerPage: React.FC = () => {
                 audioUrl={message.audioUrl}
                 sender={message.sender}
               />
+            ) : message.sender === "ai" ? (
+              message.content.trim() ? (
+                <MarkdownText
+                  className="text-inherit"
+                  content={message.content}
+                />
+              ) : (
+                <div className="flex items-center gap-2 py-1 text-slate-500 dark:text-slate-400">
+                  <span className="material-symbols-outlined text-[16px]">
+                    smart_toy
+                  </span>
+                  <div
+                    className="flex items-center gap-1.5"
+                    aria-live="polite"
+                    aria-label="OpenJustice AI is typing"
+                  >
+                    <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.25s]" />
+                    <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.15s]" />
+                    <span className="h-2 w-2 animate-bounce rounded-full bg-current" />
+                  </div>
+                </div>
+              )
             ) : (
               <p className="whitespace-pre-wrap leading-6">{message.content}</p>
             )}
@@ -267,7 +313,11 @@ const AnswerPage: React.FC = () => {
                     ? "bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-600 cursor-not-allowed shadow-none"
                     : "text-white cursor-pointer hover:opacity-90"
                 }`}
-                style={!question.trim() ? {} : { backgroundColor: "var(--oj-accent-color)" }}
+                style={
+                  !question.trim()
+                    ? {}
+                    : { backgroundColor: "var(--oj-accent-color)" }
+                }
                 type="button"
                 onClick={handleSend}
                 disabled={!question.trim()}

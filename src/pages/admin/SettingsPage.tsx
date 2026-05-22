@@ -1,101 +1,102 @@
-﻿import React, { useContext, useMemo, useState } from "react";
-import { LanguageContext } from "@/contexts/LanguageContext";
-import { LANGUAGE_OPTIONS, type AppLanguage } from "@/constants/languages";
-import LanguageSelect from "@/components/ui/LanguageSelect";
+﻿import React from "react";
+import { Link } from "react-router-dom";
 
-interface LanguageOption {
-  code: AppLanguage;
-  label: string;
-  enabled: boolean;
+interface SettingsCategory {
+  key: string;
+  title: string;
+  description: string;
+  icon: string;
+  path: string;
+  color: "cyan" | "green" | "blue" | "purple" | "amber";
 }
 
+const SETTINGS_CATEGORIES: SettingsCategory[] = [
+  {
+    key: "language",
+    title: "Language Settings",
+    description:
+      "Enable or disable languages, set default language, and configure translation pipeline.",
+    icon: "language",
+    path: "/admin/settings/language",
+    color: "cyan",
+  },
+  {
+    key: "ai",
+    title: "AI Model Settings",
+    description:
+      "Configure LLM model selection, temperature, token limits, and generation parameters.",
+    icon: "smart_toy",
+    path: "/admin/settings/ai",
+    color: "blue",
+  },
+  {
+    key: "retrieval",
+    title: "RAG Retrieval Settings",
+    description:
+      "Configure vector database retrieval, embedding model, and chunking strategy.",
+    icon: "search",
+    path: "/admin/settings/retrieval",
+    color: "purple",
+  },
+  {
+    key: "security",
+    title: "Security Settings",
+    description:
+      "Configure JWT expiry, rate limits, prompt validation, and access control.",
+    icon: "security",
+    path: "/admin/settings/security",
+    color: "amber",
+  },
+  {
+    key: "integration",
+    title: "Integration Settings",
+    description:
+      "Manage OpenAI, Twilio, WhatsApp, and WebSocket integration credentials.",
+    icon: "integration_instructions",
+    path: "/admin/settings/integration",
+    color: "green",
+  },
+];
+
+const getColorClasses = (
+  color: "cyan" | "green" | "blue" | "purple" | "amber",
+) => {
+  const colorMap = {
+    cyan: {
+      border: "border-cyan-400/20",
+      bg: "bg-cyan-500/5 hover:bg-cyan-500/10",
+      icon: "text-cyan-400",
+      text: "text-cyan-300",
+    },
+    green: {
+      border: "border-green-400/20",
+      bg: "bg-green-500/5 hover:bg-green-500/10",
+      icon: "text-green-400",
+      text: "text-green-300",
+    },
+    blue: {
+      border: "border-blue-400/20",
+      bg: "bg-blue-500/5 hover:bg-blue-500/10",
+      icon: "text-blue-400",
+      text: "text-blue-300",
+    },
+    purple: {
+      border: "border-purple-400/20",
+      bg: "bg-purple-500/5 hover:bg-purple-500/10",
+      icon: "text-purple-400",
+      text: "text-purple-300",
+    },
+    amber: {
+      border: "border-amber-400/20",
+      bg: "bg-amber-500/5 hover:bg-amber-500/10",
+      icon: "text-amber-400",
+      text: "text-amber-300",
+    },
+  };
+  return colorMap[color];
+};
+
 const SettingsPage: React.FC = () => {
-  const languageContext = useContext(LanguageContext);
-
-  const initialLanguages = useMemo<LanguageOption[]>(() => {
-    const enabledLanguages = languageContext?.availableLanguages ?? [
-      "en",
-      "si",
-      "ta",
-    ];
-    return LANGUAGE_OPTIONS.map((option) => ({
-      code: option.value,
-      label: option.label,
-      enabled: enabledLanguages.includes(option.value),
-    }));
-  }, [languageContext?.availableLanguages]);
-
-  const [languages, setLanguages] =
-    useState<LanguageOption[]>(initialLanguages);
-  const [defaultLanguage, setDefaultLanguage] = useState<AppLanguage>(
-    languageContext?.defaultLanguage ?? "en",
-  );
-  const [translationPipelineEnabled, setTranslationPipelineEnabled] =
-    useState<boolean>(languageContext?.translationPipelineEnabled ?? true);
-  const [saveNotice, setSaveNotice] = useState<string>("");
-
-  const normalizedLanguages = useMemo(
-    () =>
-      LANGUAGE_OPTIONS.map((option) => ({
-        code: option.value,
-        label: option.label,
-        enabled:
-          languages.find((language) => language.code === option.value)
-            ?.enabled ?? false,
-      })),
-    [languages],
-  );
-
-  const toggleLanguage = (code: LanguageOption["code"]) => {
-    setLanguages((previous) =>
-      previous.map((language) =>
-        language.code === code
-          ? { ...language, enabled: !language.enabled }
-          : language,
-      ),
-    );
-
-    setSaveNotice("");
-  };
-
-  const handleSaveSettings = () => {
-    const selectedDefault = languages.find(
-      (language) => language.code === defaultLanguage,
-    );
-
-    if (!selectedDefault?.enabled) {
-      setSaveNotice("Default language must be enabled before saving settings.");
-      return;
-    }
-
-    const enabledLanguages = languages
-      .filter((language) => language.enabled)
-      .map((language) => language.code);
-
-    if (enabledLanguages.length === 0) {
-      setSaveNotice("At least one language must remain enabled.");
-      return;
-    }
-
-    if (!languageContext?.updateLanguageSettings) {
-      setSaveNotice("Language settings service is unavailable.");
-      return;
-    }
-
-    void languageContext
-      .updateLanguageSettings({
-        enabledLanguages,
-        defaultLanguage,
-        translationPipelineEnabled,
-      })
-      .then(() => {
-        setSaveNotice("Settings saved successfully.");
-      })
-      .catch(() => {
-        setSaveNotice("Failed to save settings.");
-      });
-  };
-
   return (
     <div className="space-y-8 p-8">
       <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
@@ -104,88 +105,82 @@ const SettingsPage: React.FC = () => {
             System Settings
           </h2>
           <p className="mt-3 max-w-3xl text-sm text-slate-300">
-            Configure language availability, default language, and translation
-            pipeline behavior.
+            Configure language support, AI models, RAG retrieval, security
+            policies, and external integrations.
           </p>
         </div>
       </section>
 
-      <section className="space-y-6 rounded border border-slate-700/70 bg-[#191919] p-6">
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
-            Enable or Disable Languages
-          </h3>
-          <div className="mt-4 space-y-3">
-            {languages.map((language) => (
-              <label
-                key={language.code}
-                className="flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-3"
-              >
-                <span className="text-sm text-slate-200">
-                  {language.code.toUpperCase()} - {language.label}
-                </span>
-                <input
-                  type="checkbox"
-                  checked={language.enabled}
-                  onChange={() => toggleLanguage(language.code)}
-                  className="h-4 w-4 rounded border-white/20 bg-black/40"
-                />
-              </label>
-            ))}
+      <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {SETTINGS_CATEGORIES.map((category) => {
+          const colors = getColorClasses(category.color);
+          return (
+            <Link
+              key={category.key}
+              to={category.path}
+              className={`rounded border transition-all ${colors.border} ${colors.bg} bg-[#191919] p-6 hover:border-opacity-50`}
+            >
+              <div className="flex items-start gap-4">
+                <div className={`rounded-lg bg-[#0a0a0a] p-3 ${colors.icon}`}>
+                  <span className="material-symbols-outlined text-2xl">
+                    {category.icon}
+                  </span>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-white">
+                    {category.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-slate-400">
+                    {category.description}
+                  </p>
+                  <div className="mt-4 flex items-center gap-2">
+                    <span className={`text-xs font-bold uppercase tracking-widest ${colors.text}`}>
+                      Configure
+                    </span>
+                    <span className="material-symbols-outlined text-sm text-slate-400">
+                      arrow_forward
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          );
+        })}
+      </section>
+
+      <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
+        <h3 className="text-lg font-bold text-white">Settings Overview</h3>
+        <div className="mt-4 space-y-4">
+          <div className="rounded border border-white/10 bg-black/30 p-4">
+            <h4 className="font-semibold text-slate-200">Language Settings</h4>
+            <p className="mt-1 text-sm text-slate-400">
+              Manage supported languages and translation behavior
+            </p>
           </div>
-        </article>
-
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
-            Set Default Language
-          </h3>
-          <div className="mt-4 md:w-80">
-            <LanguageSelect
-              value={defaultLanguage}
-              onChange={(v) => {
-                setDefaultLanguage(v as AppLanguage);
-                setSaveNotice("");
-              }}
-              options={normalizedLanguages
-                .filter((l) => l.enabled || l.code === defaultLanguage)
-                .map((l) => ({
-                  value: l.code,
-                  label: `${l.code.toUpperCase()} - ${l.label}${l.enabled ? "" : " (disabled)"}`,
-                }))}
-              ariaLabel="Select default language"
-            />
+          <div className="rounded border border-white/10 bg-black/30 p-4">
+            <h4 className="font-semibold text-slate-200">AI & Model Settings</h4>
+            <p className="mt-1 text-sm text-slate-400">
+              Configure LLM model, temperature, and token parameters
+            </p>
           </div>
-        </article>
-
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
-            Toggle Translation Pipeline
-          </h3>
-          <label className="mt-4 flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-3 md:w-80">
-            <span className="text-sm text-slate-200">Translation Pipeline</span>
-            <input
-              type="checkbox"
-              checked={translationPipelineEnabled}
-              onChange={() => {
-                setTranslationPipelineEnabled((previous) => !previous);
-                setSaveNotice("");
-              }}
-              className="h-4 w-4 rounded border-white/20 bg-black/40"
-            />
-          </label>
-        </article>
-
-        <div className="flex flex-col gap-3 md:flex-row md:items-center">
-          <button
-            type="button"
-            onClick={handleSaveSettings}
-            className="rounded border border-white/10 bg-white/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-white/20"
-          >
-            Save settings
-          </button>
-          {saveNotice && (
-            <p className="text-xs font-semibold text-slate-300">{saveNotice}</p>
-          )}
+          <div className="rounded border border-white/10 bg-black/30 p-4">
+            <h4 className="font-semibold text-slate-200">RAG Settings</h4>
+            <p className="mt-1 text-sm text-slate-400">
+              Configure vector retrieval, embeddings, and chunking
+            </p>
+          </div>
+          <div className="rounded border border-white/10 bg-black/30 p-4">
+            <h4 className="font-semibold text-slate-200">Security Settings</h4>
+            <p className="mt-1 text-sm text-slate-400">
+              Manage authentication, rate limiting, and access control
+            </p>
+          </div>
+          <div className="rounded border border-white/10 bg-black/30 p-4">
+            <h4 className="font-semibold text-slate-200">Integration Settings</h4>
+            <p className="mt-1 text-sm text-slate-400">
+              Configure external APIs and service credentials
+            </p>
+          </div>
         </div>
       </section>
     </div>

@@ -1,23 +1,82 @@
-﻿import React from "react";
+﻿import React, { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import BrandLogo from "@/components/ui/BrandLogo";
-import { ADMIN_MODULES } from "@/constants/admin-flow";
+import { ADMIN_MENU_ITEMS, type AdminMenuGroup } from "@/constants/admin-flow";
 import { useAuthStore } from "@/stores/authStore";
 import { useSettingsModal } from "@/hooks/common/useSettingsModal";
 
 const AdminSidebar: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const logout = useAuthStore((state) => state.logout);
   const { openProfile } = useSettingsModal();
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {
+      settings: location.pathname.startsWith("/admin/settings"),
+      analytics: location.pathname.startsWith("/admin/analytics"),
+    },
+  );
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (location.pathname.startsWith("/admin/settings")) {
+      setExpandedGroups((prev) => ({
+        ...prev,
+        settings: true,
+      }));
+    }
+
+    if (location.pathname.startsWith("/admin/analytics")) {
+      setExpandedGroups((prev) => ({
+        ...prev,
+        analytics: true,
+      }));
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (
+        profileMenuRef.current &&
+        !profileMenuRef.current.contains(event.target as Node)
+      ) {
+        setProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
 
   const handleLogout = async () => {
     await logout();
     navigate("/");
   };
 
+  const handleOpenProfile = () => {
+    setProfileMenuOpen(false);
+    openProfile();
+  };
+
+  const toggleGroup = (key: string) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
+  };
+
+  const isGroupActive = (group: AdminMenuGroup) => {
+    return group.children?.some((child) => location.pathname === child.path);
+  };
+
+  const isItemActive = (path: string) => {
+    return location.pathname === path;
+  };
+
   return (
-    <aside className="w-70 flex flex-col border-r border-white/10 bg-[#191919]">
+    <aside className="w-70 flex h-full min-h-0 flex-col overflow-hidden border-r border-white/10 bg-[#191919]">
       <div className="border-b border-white/10 p-6">
         <div className="flex items-center gap-3">
           <BrandLogo
@@ -32,43 +91,120 @@ const AdminSidebar: React.FC = () => {
           </Link>
         </div>
       </div>
-      <nav className="flex-1 px-4 py-6 space-y-1">
+      <nav className="min-h-0 flex-1 overflow-y-auto px-4 py-6 space-y-1">
         <p className="mb-4 px-3 text-[10px] font-bold uppercase tracking-widest text-slate-500">
           Administration
         </p>
-        {ADMIN_MODULES.map((module) => (
-          <NavLink
-            key={module.key}
-            to={module.path}
-            end={module.path === "/admin"}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded transition-colors ${
-                isActive
-                  ? "bg-white/10 text-white"
-                  : "text-slate-300 hover:bg-white/5 hover:text-white"
-              }`
-            }
-          >
-            <span className="material-symbols-outlined text-[20px]">
-              {module.icon}
-            </span>
-            <span
-              className={`text-sm ${module.path === "/admin" ? "font-semibold" : "font-medium"}`}
+        {ADMIN_MENU_ITEMS.map((item) => {
+          if ("children" in item) {
+            // Render collapsible group
+            const group = item as AdminMenuGroup;
+            const isExpanded = expandedGroups[group.key];
+            const isActive = isItemActive(group.path) || isGroupActive(group);
+
+            return (
+              <div key={group.key}>
+                <div
+                  className={`flex items-center justify-between gap-2 rounded px-3 py-2.5 transition-colors ${
+                    isActive
+                      ? "bg-white/10 text-white"
+                      : "text-slate-300 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  <NavLink
+                    to={group.path}
+                    end={group.path === "/admin/settings"}
+                    className="flex min-w-0 flex-1 items-center gap-3"
+                  >
+                    <span className="material-symbols-outlined text-[20px]">
+                      {group.icon}
+                    </span>
+                    <span className="text-sm font-medium">
+                      {group.navLabel}
+                    </span>
+                  </NavLink>
+                  <button
+                    type="button"
+                    onClick={() => toggleGroup(group.key)}
+                    className="rounded p-1 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+                    aria-label={`${isExpanded ? "Collapse" : "Expand"} ${group.navLabel}`}
+                  >
+                    <span
+                      className={`material-symbols-outlined text-[18px] transition-transform ${
+                        isExpanded ? "rotate-180" : ""
+                      }`}
+                    >
+                      expand_more
+                    </span>
+                  </button>
+                </div>
+
+                {/* Collapsible children */}
+                {isExpanded && group.children && (
+                  <div className="ml-4 mt-1 space-y-1 border-l border-white/10 pl-3">
+                    {group.children.map((child) => (
+                      <NavLink
+                        key={child.key}
+                        to={child.path}
+                        className={({ isActive: navIsActive }) =>
+                          `flex items-center gap-3 px-3 py-2 rounded text-sm transition-colors ${
+                            navIsActive
+                              ? "bg-cyan-500/15 text-cyan-300"
+                              : "text-slate-400 hover:bg-white/5 hover:text-slate-200"
+                          }`
+                        }
+                      >
+                        <span className="material-symbols-outlined text-[16px]">
+                          {child.icon}
+                        </span>
+                        <span className="font-medium">{child.navLabel}</span>
+                      </NavLink>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          // Render regular module
+          return (
+            <NavLink
+              key={item.key}
+              to={item.path}
+              end={item.path === "/admin"}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded transition-colors ${
+                  isActive
+                    ? "bg-white/10 text-white"
+                    : "text-slate-300 hover:bg-white/5 hover:text-white"
+                }`
+              }
             >
-              {module.navLabel}
-            </span>
-          </NavLink>
-        ))}
+              <span className="material-symbols-outlined text-[20px]">
+                {item.icon}
+              </span>
+              <span
+                className={`text-sm ${
+                  item.path === "/admin" ? "font-semibold" : "font-medium"
+                }`}
+              >
+                {item.navLabel}
+              </span>
+            </NavLink>
+          );
+        })}
       </nav>
-      <div className="border-t border-white/10 bg-[#191919] p-4">
-        <div className="flex items-center gap-3">
+      <div className="shrink-0 border-t border-white/10 bg-[#191919] p-4">
+        <div className="relative" ref={profileMenuRef}>
           <button
             type="button"
-            onClick={openProfile}
-            className="flex flex-1 items-center gap-3 rounded-md px-2 py-2 text-left transition-colors duration-200 hover:bg-white/10 hover:text-white"
-            aria-label="Open profile settings"
+            onClick={() => setProfileMenuOpen((prev) => !prev)}
+            className="flex w-full items-center gap-3 rounded-md px-2 py-2 text-left transition-colors duration-200 hover:bg-white/10 hover:text-white"
+            aria-label="Open profile menu"
+            aria-haspopup="menu"
+            aria-expanded={profileMenuOpen}
           >
-            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded">
+            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/5">
               <span className="material-symbols-outlined text-white">
                 account_circle
               </span>
@@ -81,15 +217,46 @@ const AdminSidebar: React.FC = () => {
                 System Overseer
               </p>
             </div>
+            <span className="material-symbols-outlined text-[16px] text-slate-500">
+              more_vert
+            </span>
           </button>
-          <button
-            className="text-slate-400 hover:text-white"
-            type="button"
-            onClick={handleLogout}
-            aria-label="Logout"
-          >
-            <span className="material-symbols-outlined text-sm">logout</span>
-          </button>
+
+          {profileMenuOpen && (
+            <div className="absolute bottom-full left-0 mb-2 w-full overflow-hidden rounded-xl border border-white/10 bg-[#111111] shadow-2xl shadow-black/40">
+              <button
+                type="button"
+                onClick={handleOpenProfile}
+                className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-slate-200 transition-colors hover:bg-white/5 hover:text-white"
+              >
+                <span className="material-symbols-outlined text-[18px] text-cyan-300">
+                  person
+                </span>
+                <div className="flex flex-1 flex-col items-start">
+                  <span className="font-medium">Profile</span>
+                  <span className="text-[10px] text-slate-500">
+                    Open account details popup
+                  </span>
+                </div>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex w-full items-center gap-3 border-t border-white/10 px-4 py-3 text-left text-sm text-rose-200 transition-colors hover:bg-rose-500/10 hover:text-rose-100"
+              >
+                <span className="material-symbols-outlined text-[18px] text-rose-300">
+                  logout
+                </span>
+                <div className="flex flex-1 flex-col items-start">
+                  <span className="font-medium">Logout</span>
+                  <span className="text-[10px] text-slate-500">
+                    Sign out of the admin panel
+                  </span>
+                </div>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </aside>

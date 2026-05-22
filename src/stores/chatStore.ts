@@ -65,8 +65,12 @@ const mapApiMessage = (message: ApiMessageResponse): ChatMessage => {
     content: message.content,
     timestamp: new Date(message.created_at),
     messageType: message.message_type,
+    audioUrl: message.audio_url || undefined,
   };
 };
+
+const isBlobAudioUrl = (url?: string): boolean =>
+  typeof url === "string" && url.startsWith("blob:");
 
 const mapConversation = (
   conversation: ApiConversationResponse,
@@ -152,15 +156,54 @@ export const useChatStore = create<ChatStore>()(
         try {
           const conversation = await chatService.getConversation(id);
           const mappedMessages = conversation.messages.map(mapApiMessage);
+          const mappedConversation = mapConversation(conversation);
           set((state) => ({
             activeConversationId: id,
             chatMessagesById: {
               ...state.chatMessagesById,
-              [id]: mappedMessages,
+              [id]:
+                mappedMessages.length === 0
+                  ? state.chatMessagesById[id] || []
+                  : state.chatMessagesById[id] &&
+                      state.chatMessagesById[id].length > mappedMessages.length
+                    ? state.chatMessagesById[id]
+                    : mappedMessages.map((message, index) => {
+                        const existingMessage =
+                          state.chatMessagesById[id]?.[index];
+                        if (
+                          existingMessage?.audioUrl &&
+                          existingMessage.sender === message.sender &&
+                          !isBlobAudioUrl(existingMessage.audioUrl)
+                        ) {
+                          return {
+                            ...message,
+                            audioUrl: existingMessage.audioUrl,
+                          };
+                        }
+
+                        return message;
+                      }),
             },
-            sidebarChats: mergeSidebarChats(state.sidebarChats, [
-              mapConversation(conversation),
-            ]),
+            sidebarChats: state.sidebarChats.some((chat) => chat.id === id)
+              ? state.sidebarChats.map((chat) =>
+                  chat.id === id
+                    ? {
+                        ...chat,
+                        title: mappedConversation.title,
+                        isArchived: mappedConversation.isArchived ?? false,
+                        isPinned: mappedConversation.isPinned ?? false,
+                      }
+                    : chat,
+                )
+              : [
+                  {
+                    id,
+                    title: mappedConversation.title,
+                    isArchived: mappedConversation.isArchived ?? false,
+                    isPinned: mappedConversation.isPinned ?? false,
+                  },
+                  ...state.sidebarChats,
+                ],
           }));
         } catch (error: any) {
           set({ error: error?.message || "Failed to load conversation." });
@@ -297,52 +340,71 @@ export const useChatStore = create<ChatStore>()(
           return;
         }
 
+        // Insert optimistic voice message + AI placeholder immediately
+        const tempUserId = `${chatId}-temp-voice-${Date.now()}`;
+        const tempAiId = `${chatId}-ai-voice-${Date.now()}`;
+        const optimisticUserMessage: ChatMessage = {
+          id: tempUserId,
+          sender: "user",
+          content: "Voice Message",
+          timestamp: new Date(),
+          messageType: "voice",
+          audioUrl: URL.createObjectURL(audioBlob),
+        } as ChatMessage;
+
+        const optimisticAiMessage: ChatMessage = {
+          id: tempAiId,
+          sender: "ai",
+          content: "",
+          timestamp: new Date(),
+          messageType: "voice",
+        } as ChatMessage;
+
+        set((state) => {
+          const existing = state.chatMessagesById[chatId] || [];
+          return {
+            chatMessagesById: {
+              ...state.chatMessagesById,
+              [chatId]: [
+                ...existing,
+                optimisticUserMessage,
+                optimisticAiMessage,
+              ],
+            },
+            sidebarChats: state.sidebarChats.map((chat) =>
+              chat.id === chatId
+                ? {
+                    ...chat,
+                    title:
+                      chat.title === "New Question"
+                        ? "Voice Message"
+                        : chat.title,
+                  }
+                : chat,
+            ),
+          };
+        });
+
         set({ isTyping: true, error: null });
 
         try {
           // Send the voice message
-          const aiAudioBlob = await chatService.sendVoiceMessage(chatId, audioBlob);
-          
+          const aiAudioBlob = await chatService.sendVoiceMessage(
+            chatId,
+            audioBlob,
+          );
+
           // The backend saves the user message and AI message during the voice processing.
           // Let's reload the conversation to pull the newly transcribed text and AI reply
           await get().loadConversation(chatId);
-
-          // Get the updated messages
-          set((state) => {
-            const messages = state.chatMessagesById[chatId] || [];
-            if (messages.length >= 2) {
-              const updatedMessages = [...messages];
-              
-              // The last message is the AI response, the second to last is the user's voice note
-              const aiMsgIndex = updatedMessages.length - 1;
-              const userMsgIndex = updatedMessages.length - 2;
-              
-              updatedMessages[userMsgIndex] = {
-                ...updatedMessages[userMsgIndex],
-                audioUrl: URL.createObjectURL(audioBlob),
-              };
-              
-              updatedMessages[aiMsgIndex] = {
-                ...updatedMessages[aiMsgIndex],
-                audioUrl: URL.createObjectURL(aiAudioBlob),
-              };
-
-              return {
-                chatMessagesById: {
-                  ...state.chatMessagesById,
-                  [chatId]: updatedMessages,
-                },
-              };
-            }
-            return state;
-          });
 
           // Play the received audio automatically
           const url = URL.createObjectURL(aiAudioBlob);
           const audio = new Audio(url);
           audio.onended = () => URL.revokeObjectURL(url);
-          await audio.play().catch((err) => console.error("Failed to play AI audio:", err));
-
+          await audio
+            .play()
+            .catch((err) => console.error("Failed to play AI audio:", err));
         } catch (error: any) {
           set({ error: error?.message || "Failed to send voice message." });
           throw error;
@@ -429,14 +491,15 @@ export const useChatStore = create<ChatStore>()(
       pinChat: async (id) => {
         const current = get().sidebarChats.find((chat) => chat.id === id);
         try {
-          await chatService.pinConversation(id);
+          const nextPinned = !current?.isPinned;
+          await chatService.updateConversation(id, { is_pinned: nextPinned });
           set((state) => ({
             sidebarChats: state.sidebarChats.map((chat) =>
-              chat.id === id ? { ...chat, isPinned: !current?.isPinned } : chat,
+              chat.id === id ? { ...chat, isPinned: nextPinned } : chat,
             ),
           }));
         } catch (error: any) {
-          set({ error: error?.message || "Failed to pin chat." });
+          set({ error: error?.message || "Failed to update chat pin." });
         }
       },
     }),

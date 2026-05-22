@@ -133,10 +133,10 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                     ? "bg-slate-100 text-slate-900 border border-slate-200 dark:bg-surface-dark dark:border-border-dark dark:text-white"
                     : "text-slate-600 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-surface-dark"
                 }`}
-                onClick={async () => {
+                onClick={() => {
                   setActiveConversation(chat.id);
-                  await loadConversation(chat.id);
                   navigate(`/chat/${chat.id}`);
+                  void loadConversation(chat.id);
                 }}
               >
                 <span className="material-symbols-outlined text-[18px]">

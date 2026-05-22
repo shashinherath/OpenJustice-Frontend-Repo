@@ -21,6 +21,13 @@ export interface ServiceStatusItem {
   id: number;
   title: string;
   status: "Active" | "Failed";
+  icon: string;
+}
+
+export interface DailyQueryStat {
+  date: string;
+  count: number;
+  heightPercentage: string;
 }
 
 export interface DataSourceItem {
@@ -38,6 +45,7 @@ export interface AdminOverviewResponse {
   activities: ActivityItem[];
   core_services: ServiceStatusItem[];
   data_sources: DataSourceItem[];
+  queries_per_day: DailyQueryStat[];
 }
 
 export interface AdminUserItem {
@@ -51,6 +59,30 @@ export interface AdminUserListResponse {
   users: AdminUserItem[];
   total_active: number;
   total_blocked: number;
+}
+
+export type TraceStatus = "Completed" | "Pending" | "Failed" | "Reviewed";
+export type EventType = "llm_request" | "llm_response" | "retrieval_results" | "llm_error";
+
+export interface TraceLog {
+  id: string;
+  correlationId: string;
+  eventType: EventType;
+  model: string;
+  promptVersion: string;
+  language: "English" | "Sinhala" | "Tamil";
+  promptTokens: number;
+  completionTokens: number;
+  latencyMs: number;
+  retrievalCount: number;
+  citationCount: number;
+  status: TraceStatus;
+  timestamp: string;
+}
+
+export interface AdminLogListResponse {
+  logs: TraceLog[];
+  total: number;
 }
 
 export const adminService = {
@@ -67,5 +99,18 @@ export const adminService = {
   async updateUserStatus(userId: string, isActive: boolean): Promise<AdminUserItem> {
     const response = await apiClient.patch<AdminUserItem>(`/admin/users/${userId}/status`, { is_active: isActive });
     return response.data;
+  },
+
+  async getLogs(skip = 0, limit = 100): Promise<AdminLogListResponse> {
+    const response = await apiClient.get<AdminLogListResponse>(`/admin/logs?skip=${skip}&limit=${limit}`);
+    return response.data;
+  },
+
+  async updateLogStatus(logId: string, status: TraceStatus): Promise<void> {
+    await apiClient.patch(`/admin/logs/${logId}/status`, { status });
+  },
+
+  async deleteLog(logId: string): Promise<void> {
+    await apiClient.delete(`/admin/logs/${logId}`);
   }
 };

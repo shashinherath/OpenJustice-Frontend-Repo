@@ -15,8 +15,12 @@ const ChatPage: React.FC = () => {
   const languageContext = useContext(LanguageContext);
   const [question, setQuestion] = useState("");
   const [isVoicePreview, setIsVoicePreview] = useState(false);
-  const { createNewChat, sendMessageToChat, loadConversations, sendVoiceMessageToChat } =
-    useChatStore();
+  const {
+    createNewChat,
+    sendMessageToChat,
+    loadConversations,
+    sendVoiceMessageToChat,
+  } = useChatStore();
   const { recordingState, audioBlob, reset } = useVoiceStore();
   const {
     startRecording,
@@ -59,9 +63,9 @@ const ChatPage: React.FC = () => {
     }
 
     const chatId = await createNewChat(text);
-    await sendMessageToChat(chatId, text);
     setQuestion("");
     navigate(`/chat/${chatId}`);
+    void sendMessageToChat(chatId, text);
   };
 
   const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (
@@ -113,10 +117,11 @@ const ChatPage: React.FC = () => {
     }
 
     const chatId = await createNewChat("Voice Message");
-    await sendVoiceMessageToChat(chatId, audioBlob);
+    // Navigate immediately to the conversation, then upload/process voice in background
     reset();
     setIsVoicePreview(false);
     navigate(`/chat/${chatId}`);
+    void sendVoiceMessageToChat(chatId, audioBlob);
   };
 
   return (
@@ -129,18 +134,6 @@ const ChatPage: React.FC = () => {
               href="#"
             >
               Research
-            </a>
-            <a
-              className="text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
-              href="#"
-            >
-              Documents
-            </a>
-            <a
-              className="text-sm font-medium text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors"
-              href="#"
-            >
-              Archive
             </a>
           </nav>
         </div>
@@ -258,9 +251,8 @@ const ChatPage: React.FC = () => {
                 className={`flex h-14 w-14 items-center justify-center rounded-full font-bold transition-all shadow-lg shrink-0 mt-3 md:mt-0 ${
                   !question.trim()
                     ? "bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-600 cursor-not-allowed shadow-none"
-                    : "text-white cursor-pointer hover:opacity-90"
+                    : "bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white cursor-pointer"
                 }`}
-                style={!question.trim() ? {} : { backgroundColor: "var(--oj-accent-color)" }}
                 type="button"
                 onClick={handleSubmitQuestion}
                 disabled={!question.trim()}

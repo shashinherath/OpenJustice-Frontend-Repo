@@ -51,6 +51,7 @@ export interface ApiMessageResponse {
   sender: string;
   content: string;
   message_type: string;
+  audio_url?: string | null;
   created_at: string;
 }
 

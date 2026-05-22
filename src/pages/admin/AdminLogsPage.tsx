@@ -1,108 +1,13 @@
-﻿import React, { useMemo, useState } from "react";
-
-type TraceStatus = "Completed" | "Pending" | "Failed" | "Reviewed";
-type EventType =
-  | "llm_request"
-  | "llm_response"
-  | "retrieval_results"
-  | "llm_error";
-
-interface TraceLog {
-  id: string;
-  correlationId: string;
-  eventType: EventType;
-  model: string;
-  promptVersion: string;
-  language: "English" | "Sinhala" | "Tamil";
-  promptTokens: number;
-  completionTokens: number;
-  latencyMs: number;
-  retrievalCount: number;
-  citationCount: number;
-  status: TraceStatus;
-  timestamp: string;
-}
-
-const INITIAL_TRACE_LOGS: TraceLog[] = [
-  {
-    id: "AIL-90211",
-    correlationId: "corr-4e7a8f90",
-    eventType: "llm_response",
-    model: "gpt-4o",
-    promptVersion: "legal-rag-v2.3",
-    language: "English",
-    promptTokens: 812,
-    completionTokens: 261,
-    latencyMs: 1288,
-    retrievalCount: 5,
-    citationCount: 4,
-    status: "Completed",
-    timestamp: "2026-04-06 10:12",
-  },
-  {
-    id: "AIL-90209",
-    correlationId: "corr-3c91b2da",
-    eventType: "retrieval_results",
-    model: "gpt-4o",
-    promptVersion: "legal-rag-v2.3",
-    language: "Sinhala",
-    promptTokens: 694,
-    completionTokens: 0,
-    latencyMs: 942,
-    retrievalCount: 6,
-    citationCount: 0,
-    status: "Pending",
-    timestamp: "2026-04-06 10:09",
-  },
-  {
-    id: "AIL-90201",
-    correlationId: "corr-b2d66ea2",
-    eventType: "llm_error",
-    model: "gpt-4o",
-    promptVersion: "legal-rag-v2.2",
-    language: "Tamil",
-    promptTokens: 741,
-    completionTokens: 0,
-    latencyMs: 2310,
-    retrievalCount: 3,
-    citationCount: 0,
-    status: "Failed",
-    timestamp: "2026-04-06 09:58",
-  },
-  {
-    id: "AIL-90198",
-    correlationId: "corr-a93cf441",
-    eventType: "llm_response",
-    model: "gpt-4o-mini",
-    promptVersion: "legal-rag-v2.1",
-    language: "English",
-    promptTokens: 628,
-    completionTokens: 188,
-    latencyMs: 1114,
-    retrievalCount: 4,
-    citationCount: 3,
-    status: "Reviewed",
-    timestamp: "2026-04-06 09:54",
-  },
-  {
-    id: "AIL-90191",
-    correlationId: "corr-09a9de73",
-    eventType: "llm_request",
-    model: "gpt-4o",
-    promptVersion: "legal-rag-v2.3",
-    language: "English",
-    promptTokens: 533,
-    completionTokens: 0,
-    latencyMs: 0,
-    retrievalCount: 0,
-    citationCount: 0,
-    status: "Pending",
-    timestamp: "2026-04-06 09:49",
-  },
-];
+import React, { useMemo, useState, useEffect } from "react";
+import {
+  adminService,
+  type TraceLog,
+  type TraceStatus,
+  type EventType,
+} from "@/services/adminService";
 
 const AdminLogsPage: React.FC = () => {
-  const [logs, setLogs] = useState<TraceLog[]>(INITIAL_TRACE_LOGS);
+  const [logs, setLogs] = useState<TraceLog[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<TraceStatus | "All">("All");
   const [eventFilter, setEventFilter] = useState<EventType | "All">("All");
@@ -147,6 +52,19 @@ const AdminLogsPage: React.FC = () => {
     [logs],
   );
 
+  useEffect(() => {
+    fetchLogs();
+  }, []);
+
+  const fetchLogs = async () => {
+    try {
+      const res = await adminService.getLogs(0, 100);
+      setLogs(res.logs);
+    } catch (error) {
+      console.error("Failed to fetch logs", error);
+    }
+  };
+
   const handleCopyCorrelation = async (correlationId: string) => {
     try {
       await navigator.clipboard.writeText(correlationId);
@@ -155,26 +73,46 @@ const AdminLogsPage: React.FC = () => {
     }
   };
 
-  const markAsReviewed = (id: string) => {
-    setLogs((previous) =>
-      previous.map((log) =>
-        log.id === id ? { ...log, status: "Reviewed" } : log,
-      ),
-    );
+  const markAsReviewed = async (id: string) => {
+    try {
+      await adminService.updateLogStatus(id, "Reviewed");
+      setLogs((previous) =>
+        previous.map((log) =>
+          log.id === id ? { ...log, status: "Reviewed" } : log,
+        ),
+      );
+    } catch (error) {
+      console.error("Failed to mark log as reviewed", error);
+    }
   };
 
-  const retryFailed = () => {
-    setLogs((previous) =>
-      previous.map((log) =>
-        log.status === "Failed" ? { ...log, status: "Pending" } : log,
-      ),
-    );
+  const retryFailed = async () => {
+    try {
+      const failedLogs = logs.filter((log) => log.status === "Failed");
+      await Promise.all(
+        failedLogs.map((log) =>
+          adminService.updateLogStatus(log.id, "Pending"),
+        ),
+      );
+      setLogs((previous) =>
+        previous.map((log) =>
+          log.status === "Failed" ? { ...log, status: "Pending" } : log,
+        ),
+      );
+    } catch (error) {
+      console.error("Failed to retry failed logs", error);
+    }
   };
 
-  const deleteLog = (id: string) => {
-    setLogs((previous) => previous.filter((log) => log.id !== id));
-    if (selectedLogId === id) {
-      setSelectedLogId(null);
+  const deleteLog = async (id: string) => {
+    try {
+      await adminService.deleteLog(id);
+      setLogs((previous) => previous.filter((log) => log.id !== id));
+      if (selectedLogId === id) {
+        setSelectedLogId(null);
+      }
+    } catch (error) {
+      console.error("Failed to delete log", error);
     }
   };
 
