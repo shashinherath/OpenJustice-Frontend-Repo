@@ -204,76 +204,18 @@ const AdminDashboard: React.FC = () => {
               </div>
             </div>
             <div className="grid grid-cols-7 gap-2">
-              <div className="space-y-2 text-center">
-                <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
-                  <div
-                    className="w-full rounded-sm bg-cyan-400/80"
-                    style={{ height: "65%" }}
-                  />
+              {data.queries_per_day?.map((day, idx) => (
+                <div key={idx} className="space-y-2 text-center">
+                  <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
+                    <div
+                      className={`w-full rounded-sm transition-all hover:opacity-100 ${idx === 4 ? 'bg-cyan-400' : idx === 6 ? 'bg-amber-400' : 'bg-cyan-400/80'}`}
+                      style={{ height: day.heightPercentage }}
+                    />
+                  </div>
+                  <p className="text-[11px] text-slate-400">{day.date}</p>
+                  <p className="text-[11px] font-semibold text-slate-300">{day.count}</p>
                 </div>
-                <p className="text-[11px] text-slate-400">Mon</p>
-                <p className="text-[11px] font-semibold text-slate-300">462</p>
-              </div>
-              <div className="space-y-2 text-center">
-                <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
-                  <div
-                    className="w-full rounded-sm bg-cyan-400/80"
-                    style={{ height: "83%" }}
-                  />
-                </div>
-                <p className="text-[11px] text-slate-400">Tue</p>
-                <p className="text-[11px] font-semibold text-slate-300">512</p>
-              </div>
-              <div className="space-y-2 text-center">
-                <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
-                  <div
-                    className="w-full rounded-sm bg-cyan-400/80"
-                    style={{ height: "79%" }}
-                  />
-                </div>
-                <p className="text-[11px] text-slate-400">Wed</p>
-                <p className="text-[11px] font-semibold text-slate-300">488</p>
-              </div>
-              <div className="space-y-2 text-center">
-                <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
-                  <div
-                    className="w-full rounded-sm bg-cyan-400/80"
-                    style={{ height: "90%" }}
-                  />
-                </div>
-                <p className="text-[11px] text-slate-400">Thu</p>
-                <p className="text-[11px] font-semibold text-slate-300">556</p>
-              </div>
-              <div className="space-y-2 text-center">
-                <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
-                  <div
-                    className="w-full rounded-sm bg-cyan-400"
-                    style={{ height: "100%" }}
-                  />
-                </div>
-                <p className="text-[11px] text-slate-400">Fri</p>
-                <p className="text-[11px] font-semibold text-slate-300">603</p>
-              </div>
-              <div className="space-y-2 text-center">
-                <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
-                  <div
-                    className="w-full rounded-sm bg-cyan-400/80"
-                    style={{ height: "68%" }}
-                  />
-                </div>
-                <p className="text-[11px] text-slate-400">Sat</p>
-                <p className="text-[11px] font-semibold text-slate-300">421</p>
-              </div>
-              <div className="space-y-2 text-center">
-                <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
-                  <div
-                    className="w-full rounded-sm bg-amber-400"
-                    style={{ height: "64%" }}
-                  />
-                </div>
-                <p className="text-[11px] text-slate-400">Sun</p>
-                <p className="text-[11px] font-semibold text-slate-300">394</p>
-              </div>
+              ))}
             </div>
           </section>
 
@@ -308,20 +250,9 @@ const AdminDashboard: React.FC = () => {
               Live Status Indicators
             </h2>
             <div className="space-y-3">
-              {[
-                { name: "OpenAI API", icon: "api", status: "Active" },
-                { name: "PostgreSQL", icon: "database", status: "Active" },
-                { name: "pgvector", icon: "storage", status: "Active" },
-                { name: "WebSocket Server", icon: "cloud", status: "Active" },
-                { name: "WhatsApp API", icon: "chat", status: "Active" },
-                {
-                  name: "Translation Service",
-                  icon: "translate",
-                  status: "Active",
-                },
-              ].map((indicator) => (
+              {data.core_services?.map((indicator) => (
                 <div
-                  key={indicator.name}
+                  key={indicator.title}
                   className="flex items-center justify-between rounded border border-white/10 bg-black/30 p-3"
                 >
                   <div className="flex items-center gap-3">
@@ -329,7 +260,7 @@ const AdminDashboard: React.FC = () => {
                       {indicator.icon}
                     </span>
                     <span className="text-sm font-medium text-slate-200">
-                      {indicator.name}
+                      {indicator.title}
                     </span>
                   </div>
                   <span

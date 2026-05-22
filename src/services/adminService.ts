@@ -21,6 +21,13 @@ export interface ServiceStatusItem {
   id: number;
   title: string;
   status: "Active" | "Failed";
+  icon: string;
+}
+
+export interface DailyQueryStat {
+  date: string;
+  count: number;
+  heightPercentage: string;
 }
 
 export interface DataSourceItem {
@@ -38,6 +45,7 @@ export interface AdminOverviewResponse {
   activities: ActivityItem[];
   core_services: ServiceStatusItem[];
   data_sources: DataSourceItem[];
+  queries_per_day: DailyQueryStat[];
 }
 
 export interface AdminUserItem {
