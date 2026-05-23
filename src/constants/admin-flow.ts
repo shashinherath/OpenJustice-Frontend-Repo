@@ -8,6 +8,7 @@ export interface AdminModule {
     | "error-monitoring"
     | "analytics"
     | "analytics-usage"
+    | "analytics-cost"
     | "analytics-multilingual"
     | "analytics-retrieval-eval"
     | "analytics-ai-eval"
@@ -118,6 +119,17 @@ export const ADMIN_MODULES: AdminModule[] = [
     subtitle: "Query volume, active users, and traffic trends",
     description:
       "Examine query counts, peak usage windows, and user activity metrics over time.",
+    parentKey: "analytics",
+  },
+  {
+    key: "analytics-cost",
+    label: "Cost Analytics",
+    navLabel: "Cost",
+    path: "/admin/analytics/cost",
+    icon: "payments",
+    subtitle: "OpenAI and Twilio spend across tokens, minutes, and messages",
+    description:
+      "Track OpenAI LLM, embedding, transcription, TTS, and Twilio messaging spend across the platform.",
     parentKey: "analytics",
   },
   {
@@ -249,6 +261,7 @@ export const ADMIN_MENU_ITEMS: Array<AdminModule | AdminMenuGroup> = [
     icon: "insights",
     children: [
       ADMIN_MODULES.find((m) => m.key === "analytics-usage")!,
+      ADMIN_MODULES.find((m) => m.key === "analytics-cost")!,
       ADMIN_MODULES.find((m) => m.key === "analytics-multilingual")!,
       ADMIN_MODULES.find((m) => m.key === "analytics-retrieval-eval")!,
       ADMIN_MODULES.find((m) => m.key === "analytics-ai-eval")!,

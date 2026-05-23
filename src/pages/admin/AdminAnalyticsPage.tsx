@@ -7,7 +7,7 @@ interface AnalyticsCategory {
   description: string;
   icon: string;
   path: string;
-  color: "cyan" | "green" | "blue" | "purple" | "amber";
+  color: "cyan" | "green" | "blue" | "purple" | "amber" | "rose";
 }
 
 const ANALYTICS_CATEGORIES: AnalyticsCategory[] = [
@@ -18,6 +18,15 @@ const ANALYTICS_CATEGORIES: AnalyticsCategory[] = [
     icon: "bar_chart",
     path: "/admin/analytics/usage",
     color: "cyan",
+  },
+  {
+    key: "cost",
+    title: "Cost Analytics",
+    description:
+      "OpenAI and Twilio spend, token usage, and forecasted platform cost.",
+    icon: "payments",
+    path: "/admin/analytics/cost",
+    color: "rose",
   },
   {
     key: "multilingual",
@@ -85,6 +94,12 @@ const getColorClasses = (color: AnalyticsCategory["color"]) => {
       icon: "text-amber-400",
       text: "text-amber-300",
     },
+    rose: {
+      border: "border-rose-400/20",
+      bg: "bg-rose-500/5 hover:bg-rose-500/10",
+      icon: "text-rose-400",
+      text: "text-rose-300",
+    },
   };
   return colorMap[color];
 };
@@ -150,6 +165,12 @@ const AdminAnalyticsPage: React.FC = () => {
             <h4 className="font-semibold text-slate-200">Query Volume</h4>
             <p className="mt-1 text-sm text-slate-400">
               Daily and weekly query counts across the platform.
+            </p>
+          </div>
+          <div className="rounded border border-white/10 bg-black/30 p-4">
+            <h4 className="font-semibold text-slate-200">Cost Efficiency</h4>
+            <p className="mt-1 text-sm text-slate-400">
+              OpenAI LLM, embeddings, Whisper, TTS, and Twilio message spend.
             </p>
           </div>
           <div className="rounded border border-white/10 bg-black/30 p-4">

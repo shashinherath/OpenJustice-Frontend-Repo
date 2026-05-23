@@ -40,6 +40,9 @@ const AnalyticsPage = React.lazy(
 const UsageAnalyticsPage = React.lazy(
   () => import("@/pages/admin/analytics/UsageAnalyticsPage"),
 );
+const CostAnalyticsPage = React.lazy(
+  () => import("@/pages/admin/analytics/CostAnalyticsPage"),
+);
 const MultilingualAnalyticsPage = React.lazy(
   () => import("@/pages/admin/analytics/MultilingualAnalyticsPage"),
 );
@@ -93,6 +96,7 @@ export const APP_ROUTES: RouteConfig[] = [
   { path: "/admin/error-monitoring", component: ErrorMonitoringPage },
   { path: "/admin/analytics", component: AnalyticsPage },
   { path: "/admin/analytics/usage", component: UsageAnalyticsPage },
+  { path: "/admin/analytics/cost", component: CostAnalyticsPage },
   {
     path: "/admin/analytics/multilingual",
     component: MultilingualAnalyticsPage,
