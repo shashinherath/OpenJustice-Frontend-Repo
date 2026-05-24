@@ -287,9 +287,9 @@ const AnswerPage: React.FC = () => {
             />
           ) : (
             <>
-              <div className="relative flex-1 flex items-center bg-white dark:bg-surface-dark rounded-full border border-slate-200 dark:border-border-dark shadow-md px-4 py-2.5 focus-within:ring-2 focus-within:ring-slate-200 dark:focus-within:ring-slate-700 transition-all">
+              <div className="relative flex w-full flex-1 items-center rounded-full border border-white/60 bg-white/70 px-4 py-1.5 shadow-[0_20px_60px_rgba(15,23,42,0.12)] backdrop-blur-2xl transition-all focus-within:ring-2 focus-within:ring-sky-200 dark:border-white/10 dark:bg-white/5 dark:focus-within:ring-slate-700">
                 <input
-                  className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-slate-900 dark:text-white text-sm px-2 placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                  className="min-w-0 flex-1 border-none bg-transparent px-2 text-base text-slate-900 outline-none focus:ring-0 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
                   placeholder={t("queryPlaceholder")}
                   type="text"
                   value={question}
@@ -297,33 +297,26 @@ const AnswerPage: React.FC = () => {
                   onKeyDown={handleKeyDown}
                 />
                 <button
-                  className="flex items-center justify-center size-8 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0"
+                  className="flex size-10 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
                   title={t("voiceInput")}
                   type="button"
                   onClick={handleMicClick}
                 >
-                  <span className="material-symbols-outlined text-[18px]">
-                    mic
-                  </span>
+                  <span className="material-symbols-outlined">mic</span>
                 </button>
               </div>
               <button
-                className={`flex h-11 w-11 items-center justify-center rounded-full font-bold transition-all shadow-lg shrink-0 ${
+                className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-white/40 font-bold shadow-[0_18px_45px_rgba(15,23,42,0.18)] transition-all md:mt-0 ${
                   !question.trim()
-                    ? "bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-600 cursor-not-allowed shadow-none"
-                    : "text-white cursor-pointer hover:opacity-90"
+                    ? "cursor-not-allowed bg-slate-200 text-slate-400 shadow-none dark:bg-slate-800 dark:text-slate-600"
+                    : "cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"
                 }`}
-                style={
-                  !question.trim()
-                    ? {}
-                    : { backgroundColor: "var(--oj-accent-color)" }
-                }
                 type="button"
                 onClick={handleSend}
                 disabled={!question.trim()}
               >
-                <span className="material-symbols-outlined text-[24px]">
-                  arrow_upward
+                <span className="material-symbols-outlined text-[28px]">
+                  arrow_forward
                 </span>
               </button>
             </>

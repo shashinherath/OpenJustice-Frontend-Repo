@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSettingsModal } from "@/hooks/common/useSettingsModal";
 import { useChatStore } from "@/stores/chatStore";
@@ -13,6 +13,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [activeChatMenu, setActiveChatMenu] = useState<string | null>(null);
+  const [historySearch, setHistorySearch] = useState("");
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,14 +31,25 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
     loadConversation,
   } = useChatStore();
 
-  const activeChats = sidebarChats
-    .filter((chat) => !chat.isArchived)
-    .sort((a, b) => {
-      if (a.isPinned === b.isPinned) {
-        return 0;
-      }
-      return a.isPinned ? -1 : 1;
-    });
+  const activeChats = useMemo(() => {
+    const normalizedSearch = historySearch.trim().toLowerCase();
+
+    return sidebarChats
+      .filter((chat) => !chat.isArchived)
+      .filter((chat) => {
+        if (!normalizedSearch) {
+          return true;
+        }
+
+        return chat.title.toLowerCase().includes(normalizedSearch);
+      })
+      .sort((a, b) => {
+        if (a.isPinned === b.isPinned) {
+          return 0;
+        }
+        return a.isPinned ? -1 : 1;
+      });
+  }, [historySearch, sidebarChats]);
   const selectedChatId = location.pathname.startsWith("/chat/")
     ? location.pathname.split("/")[2]
     : null;
@@ -120,134 +132,167 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
             <span className="text-sm font-medium">New Question</span>
           </button>
 
-          <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2">
-            Query History
+          <div className="mb-3 px-3">
+            <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+              Query History
+            </label>
+            <div className="relative flex w-full min-w-0 items-center rounded-lg border border-slate-200 bg-white/80 px-3 py-2 shadow-sm transition-colors focus-within:border-slate-300 dark:border-border-dark dark:bg-surface-dark dark:focus-within:border-slate-600">
+              <span className="material-symbols-outlined pointer-events-none text-[18px] text-slate-400 dark:text-slate-500">
+                search
+              </span>
+              <input
+                className="ml-2 min-w-0 flex-1 border-none bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:ring-0 dark:text-white dark:placeholder:text-slate-500"
+                placeholder="Search query history"
+                type="text"
+                value={historySearch}
+                onChange={(event) => setHistorySearch(event.target.value)}
+                aria-label="Search query history"
+              />
+              {historySearch && (
+                <button
+                  className="ml-2 rounded p-1 text-slate-400 transition-colors hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+                  type="button"
+                  aria-label="Clear query history search"
+                  onClick={() => setHistorySearch("")}
+                >
+                  <span className="material-symbols-outlined text-[16px]">
+                    close
+                  </span>
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col gap-1">
-            {activeChats.map((chat) => (
-              <div
-                key={chat.id}
-                className={`group relative flex items-center gap-3 rounded-lg px-3 py-2 cursor-pointer transition-colors ${
-                  selectedChatId === chat.id
-                    ? "bg-slate-100 text-slate-900 border border-slate-200 dark:bg-surface-dark dark:border-border-dark dark:text-white"
-                    : "text-slate-600 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-surface-dark"
-                }`}
-                onClick={() => {
-                  setActiveConversation(chat.id);
-                  navigate(`/chat/${chat.id}`);
-                  void loadConversation(chat.id);
-                }}
-              >
-                <span className="material-symbols-outlined text-[18px]">
-                  history
-                </span>
-                <p
-                  className={`truncate pr-5 ${selectedChatId === chat.id ? "text-sm font-medium" : "text-sm font-normal"}`}
-                >
-                  {chat.title}
-                </p>
-                {chat.isPinned && (
-                  <span
-                    className="material-symbols-outlined text-[12px] text-amber-500"
-                    title="Pinned"
-                  >
-                    keep
-                  </span>
-                )}
-
-                <button
-                  className="ml-auto rounded p-1 text-slate-400 opacity-0 transition-all hover:bg-slate-200 hover:text-slate-700 group-hover:opacity-100 dark:hover:bg-border-dark dark:hover:text-slate-200"
-                  type="button"
-                  aria-label="Chat item actions"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setActiveChatMenu((prev) =>
-                      prev === chat.id ? null : chat.id,
-                    );
+            {activeChats.length > 0 ? (
+              activeChats.map((chat) => (
+                <div
+                  key={chat.id}
+                  className={`group relative flex items-center gap-3 rounded-lg px-3 py-2 cursor-pointer transition-colors ${
+                    selectedChatId === chat.id
+                      ? "bg-slate-100 text-slate-900 border border-slate-200 dark:bg-surface-dark dark:border-border-dark dark:text-white"
+                      : "text-slate-600 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-surface-dark"
+                  }`}
+                  onClick={() => {
+                    setActiveConversation(chat.id);
+                    navigate(`/chat/${chat.id}`);
+                    void loadConversation(chat.id);
                   }}
                 >
-                  <span className="material-symbols-outlined text-[16px]">
-                    more_horiz
+                  <span className="material-symbols-outlined text-[18px]">
+                    history
                   </span>
-                </button>
-
-                {activeChatMenu === chat.id && (
-                  <div
-                    className="absolute right-1 top-10 z-30 w-40 rounded-lg border border-slate-200 bg-white py-1 shadow-xl dark:border-border-dark dark:bg-surface-dark"
-                    onClick={(event) => event.stopPropagation()}
+                  <p
+                    className={`truncate pr-5 ${selectedChatId === chat.id ? "text-sm font-medium" : "text-sm font-normal"}`}
                   >
-                    <button
-                      className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
-                      type="button"
-                      onClick={() => {
-                        void archiveChat(chat.id);
-                        setActiveChatMenu(null);
-                      }}
+                    {chat.title}
+                  </p>
+                  {chat.isPinned && (
+                    <span
+                      className="material-symbols-outlined text-[12px] text-amber-500"
+                      title="Pinned"
                     >
-                      <span className="material-symbols-outlined text-[14px]">
-                        archive
-                      </span>
-                      Archive
-                    </button>
-                    <button
-                      className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
-                      type="button"
+                      keep
+                    </span>
+                  )}
+
+                  <button
+                    className="ml-auto rounded p-1 text-slate-400 opacity-0 transition-all hover:bg-slate-200 hover:text-slate-700 group-hover:opacity-100 dark:hover:bg-border-dark dark:hover:text-slate-200"
+                    type="button"
+                    aria-label="Chat item actions"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setActiveChatMenu((prev) =>
+                        prev === chat.id ? null : chat.id,
+                      );
+                    }}
+                  >
+                    <span className="material-symbols-outlined text-[16px]">
+                      more_horiz
+                    </span>
+                  </button>
+
+                  {activeChatMenu === chat.id && (
+                    <div
+                      className="absolute right-1 top-10 z-30 w-40 rounded-lg border border-slate-200 bg-white py-1 shadow-xl dark:border-border-dark dark:bg-surface-dark"
+                      onClick={(event) => event.stopPropagation()}
                     >
-                      <span className="material-symbols-outlined text-[14px]">
-                        share
-                      </span>
-                      Share
-                    </button>
-                    <button
-                      className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
-                      type="button"
-                      onClick={() => {
-                        const nextTitle = window.prompt(
-                          "Rename chat",
-                          chat.title,
-                        );
-                        if (nextTitle && nextTitle.trim()) {
-                          void renameChat(chat.id, nextTitle.trim());
-                        }
-                        setActiveChatMenu(null);
-                      }}
-                    >
-                      <span className="material-symbols-outlined text-[14px]">
-                        drive_file_rename_outline
-                      </span>
-                      Rename
-                    </button>
-                    <button
-                      className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
-                      type="button"
-                      onClick={() => {
-                        void pinChat(chat.id);
-                        setActiveChatMenu(null);
-                      }}
-                    >
-                      <span className="material-symbols-outlined text-[14px]">
-                        {chat.isPinned ? "keep_off" : "keep"}
-                      </span>
-                      {chat.isPinned ? "Unpin" : "Pin"}
-                    </button>
-                    <button
-                      className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-red-500 transition-colors hover:bg-red-500/10"
-                      type="button"
-                      onClick={() => {
-                        void deleteChat(chat.id);
-                        setActiveChatMenu(null);
-                      }}
-                    >
-                      <span className="material-symbols-outlined text-[14px]">
-                        delete
-                      </span>
-                      Delete
-                    </button>
-                  </div>
-                )}
+                      <button
+                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
+                        type="button"
+                        onClick={() => {
+                          void archiveChat(chat.id);
+                          setActiveChatMenu(null);
+                        }}
+                      >
+                        <span className="material-symbols-outlined text-[14px]">
+                          archive
+                        </span>
+                        Archive
+                      </button>
+                      <button
+                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
+                        type="button"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">
+                          share
+                        </span>
+                        Share
+                      </button>
+                      <button
+                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
+                        type="button"
+                        onClick={() => {
+                          const nextTitle = window.prompt(
+                            "Rename chat",
+                            chat.title,
+                          );
+                          if (nextTitle && nextTitle.trim()) {
+                            void renameChat(chat.id, nextTitle.trim());
+                          }
+                          setActiveChatMenu(null);
+                        }}
+                      >
+                        <span className="material-symbols-outlined text-[14px]">
+                          drive_file_rename_outline
+                        </span>
+                        Rename
+                      </button>
+                      <button
+                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
+                        type="button"
+                        onClick={() => {
+                          void pinChat(chat.id);
+                          setActiveChatMenu(null);
+                        }}
+                      >
+                        <span className="material-symbols-outlined text-[14px]">
+                          {chat.isPinned ? "keep_off" : "keep"}
+                        </span>
+                        {chat.isPinned ? "Unpin" : "Pin"}
+                      </button>
+                      <button
+                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-red-500 transition-colors hover:bg-red-500/10"
+                        type="button"
+                        onClick={() => {
+                          void deleteChat(chat.id);
+                          setActiveChatMenu(null);
+                        }}
+                      >
+                        <span className="material-symbols-outlined text-[14px]">
+                          delete
+                        </span>
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="rounded-lg border border-dashed border-slate-200 bg-white/50 px-3 py-4 text-sm text-slate-500 dark:border-border-dark dark:bg-surface-dark/40 dark:text-slate-400">
+                No matching chats.
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>
