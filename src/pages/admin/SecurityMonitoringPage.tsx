@@ -11,226 +11,169 @@ interface SecuritySignal {
   tone: SecurityTone;
 }
 
-interface SecurityEvent {
-  actor: string;
-  detail: string;
-  timestamp: string;
-  severity: Severity;
-}
-
-interface SecuritySection {
+interface MonitoringArea {
+  key: string;
   title: string;
   icon: string;
-  description: string;
-  summaryLabel: string;
-  summaryValue: string;
-  summaryNote: string;
-  accent: SecurityTone;
-  events: SecurityEvent[];
+  status: "Healthy" | "Watch" | "Needs Action";
+  summary: string;
+  metricLabel: string;
+  metricValue: string;
+}
+
+interface SecurityEvent {
+  area: string;
+  source: string;
+  detail: string;
+  severity: Severity;
+  timestamp: string;
 }
 
 const SIGNALS: SecuritySignal[] = [
   {
     label: "Prompt Injection Attempts",
     value: "128",
-    note: "Blocked by prompt validation and content heuristics in the last 24 hours.",
+    note: "Detected in last 24h",
     tone: "rose",
   },
   {
     label: "Failed Logins",
     value: "57",
-    note: "Authentication failures with clustered bursts from three source IP ranges.",
+    note: "Across web and mobile",
     tone: "amber",
   },
   {
     label: "Active Sessions",
     value: "2,430",
-    note: "Live user sessions with session refresh and revocation tracking enabled.",
+    note: "Tracked for anomalies",
     tone: "cyan",
   },
   {
     label: "Rate Limit Events",
     value: "114",
-    note: "Requests throttled before reaching downstream AI and API services.",
+    note: "Throttled safely",
     tone: "emerald",
   },
   {
     label: "JWT Activity",
     value: "6 anomalies",
-    note: "Invalid, expired, or replayed token events detected during validation.",
+    note: "Invalid/expired/replay",
     tone: "violet",
   },
 ];
 
-const SECURITY_SECTIONS: SecuritySection[] = [
+const MONITORING_AREAS: MonitoringArea[] = [
   {
+    key: "prompt-injection",
     title: "Prompt Injection",
     icon: "psychology",
-    description:
-      "Monitor adversarial prompts, policy bypass attempts, and model-directed manipulation before the request reaches the LLM.",
-    summaryLabel: "Injection blocks",
-    summaryValue: "128",
-    summaryNote: "97.8% blocked before generation, 2.2% escalated for review.",
-    accent: "rose",
-    events: [
-      {
-        actor: "Web chat client",
-        detail:
-          "Detected jailbreak phrasing combined with instruction override tokens.",
-        timestamp: "2026-05-24 09:42",
-        severity: "High",
-      },
-      {
-        actor: "WhatsApp channel",
-        detail:
-          "Obfuscated prompt tried to force policy disclosure and hidden chain-of-thought requests.",
-        timestamp: "2026-05-24 08:57",
-        severity: "Medium",
-      },
-      {
-        actor: "Research workspace",
-        detail:
-          "Repeated prompt injection pattern matched the legal escalation blocklist.",
-        timestamp: "2026-05-24 08:11",
-        severity: "High",
-      },
-    ],
+    status: "Needs Action",
+    summary:
+      "Adversarial prompts are being blocked, but high-severity attempts increased this morning.",
+    metricLabel: "Blocks (24h)",
+    metricValue: "128",
   },
   {
+    key: "failed-logins",
     title: "Failed Logins",
     icon: "vpn_key",
-    description:
-      "Track authentication failures, password spraying, lockouts, and repeated access attempts across the admin surface.",
-    summaryLabel: "Lockouts triggered",
-    summaryValue: "8",
-    summaryNote:
-      "Most events were contained within a short burst window and auto-throttled.",
-    accent: "amber",
-    events: [
-      {
-        actor: "Admin portal",
-        detail:
-          "Five consecutive failures from one account caused a temporary lockout.",
-        timestamp: "2026-05-24 10:03",
-        severity: "Medium",
-      },
-      {
-        actor: "Mobile login",
-        detail:
-          "Multiple invalid password attempts were correlated to a suspicious IP cluster.",
-        timestamp: "2026-05-24 09:38",
-        severity: "High",
-      },
-      {
-        actor: "Partner account",
-        detail:
-          "Expired credentials generated a failure spike after session renewal.",
-        timestamp: "2026-05-24 08:20",
-        severity: "Low",
-      },
-    ],
+    status: "Watch",
+    summary:
+      "Lockout policy is containing most failed login bursts; monitor suspicious IP clusters.",
+    metricLabel: "Lockouts (24h)",
+    metricValue: "8",
   },
   {
+    key: "session-monitoring",
     title: "Session Monitoring",
     icon: "devices",
-    description:
-      "Observe active sessions, device churn, geo anomalies, and token revocations from one operational view.",
-    summaryLabel: "Suspicious sessions",
-    summaryValue: "4",
-    summaryNote:
-      "Flagged when device fingerprint or location drift exceeded policy thresholds.",
-    accent: "cyan",
-    events: [
-      {
-        actor: "Desktop session",
-        detail:
-          "New device fingerprint appeared without a matching trusted browser profile.",
-        timestamp: "2026-05-24 10:11",
-        severity: "Medium",
-      },
-      {
-        actor: "Field investigator",
-        detail:
-          "Session moved from Colombo to a new region within the same refresh cycle.",
-        timestamp: "2026-05-24 09:50",
-        severity: "High",
-      },
-      {
-        actor: "Supervisor workspace",
-        detail:
-          "Token revocation completed after logout propagation across web and mobile clients.",
-        timestamp: "2026-05-24 09:04",
-        severity: "Low",
-      },
-    ],
+    status: "Healthy",
+    summary:
+      "Most sessions are stable with a small number of geo and device-fingerprint anomalies.",
+    metricLabel: "Suspicious sessions",
+    metricValue: "4",
   },
   {
+    key: "rate-limits",
     title: "Rate Limits",
     icon: "speed",
-    description:
-      "Monitor request throttling and burst pressure so API, retrieval, and model usage stay inside safe envelopes.",
-    summaryLabel: "Throttled requests",
-    summaryValue: "114",
-    summaryNote:
-      "Most pressure came from one multilingual batch and was absorbed before upstream failure.",
-    accent: "emerald",
-    events: [
-      {
-        actor: "AI chat endpoint",
-        detail:
-          "Burst traffic exceeded the per-minute policy and was returned with retry guidance.",
-        timestamp: "2026-05-24 10:18",
-        severity: "Medium",
-      },
-      {
-        actor: "Admin export job",
-        detail:
-          "Large export workflow tripped the hourly quota and shifted to deferred processing.",
-        timestamp: "2026-05-24 09:29",
-        severity: "Low",
-      },
-      {
-        actor: "Translation pipeline",
-        detail:
-          "Sustained burst matched the rate curve that usually precedes abuse or automation.",
-        timestamp: "2026-05-24 08:46",
-        severity: "High",
-      },
-    ],
+    status: "Healthy",
+    summary:
+      "Throttling is active and protecting upstream services during batch and burst traffic.",
+    metricLabel: "Throttled requests",
+    metricValue: "114",
   },
   {
+    key: "jwt-activity",
     title: "JWT Activity",
     icon: "token",
-    description:
-      "Inspect token issuance, refresh, expiry, and invalid token detection for authentication integrity.",
-    summaryLabel: "Invalid tokens",
-    summaryValue: "6",
-    summaryNote:
-      "Tokens were rejected for expiry, replay, or signature mismatch during validation.",
-    accent: "violet",
-    events: [
-      {
-        actor: "Refresh endpoint",
-        detail:
-          "A rotated token was reused after revocation and failed signature validation.",
-        timestamp: "2026-05-24 10:06",
-        severity: "High",
-      },
-      {
-        actor: "Chat gateway",
-        detail:
-          "Expired access token was detected before request forwarding to the conversation service.",
-        timestamp: "2026-05-24 09:33",
-        severity: "Medium",
-      },
-      {
-        actor: "Admin console",
-        detail:
-          "Session token refresh completed and old token was added to the deny list.",
-        timestamp: "2026-05-24 08:28",
-        severity: "Low",
-      },
-    ],
+    status: "Watch",
+    summary:
+      "Token validation catches expiry and replay attempts; continue monitoring refresh endpoint anomalies.",
+    metricLabel: "Invalid tokens",
+    metricValue: "6",
+  },
+];
+
+const PRIORITY_ALERTS: Array<{
+  title: string;
+  detail: string;
+  severity: Severity;
+}> = [
+  {
+    title: "Jailbreak prompt burst detected",
+    detail: "Prompt injection attempts are above baseline between 08:30-10:00.",
+    severity: "High",
+  },
+  {
+    title: "Suspicious login cluster",
+    detail:
+      "Multiple failed admin logins from a narrow IP range triggered lockout controls.",
+    severity: "Medium",
+  },
+  {
+    title: "JWT replay attempt blocked",
+    detail: "Reused rotated token rejected by signature validation.",
+    severity: "High",
+  },
+];
+
+const RECENT_EVENTS: SecurityEvent[] = [
+  {
+    area: "Prompt Injection",
+    source: "Web chat client",
+    detail:
+      "Jailbreak phrasing with instruction override tokens blocked pre-generation.",
+    severity: "High",
+    timestamp: "2026-05-24 09:42",
+  },
+  {
+    area: "Failed Logins",
+    source: "Admin portal",
+    detail: "Five consecutive failures caused automatic temporary lockout.",
+    severity: "Medium",
+    timestamp: "2026-05-24 10:03",
+  },
+  {
+    area: "Session Monitoring",
+    source: "Field investigator",
+    detail: "Location drift detected inside same token refresh cycle.",
+    severity: "High",
+    timestamp: "2026-05-24 09:50",
+  },
+  {
+    area: "Rate Limits",
+    source: "AI chat endpoint",
+    detail: "Burst traffic exceeded per-minute policy and was throttled.",
+    severity: "Medium",
+    timestamp: "2026-05-24 10:18",
+  },
+  {
+    area: "JWT Activity",
+    source: "Refresh endpoint",
+    detail: "Rotated token reuse failed signature validation.",
+    severity: "High",
+    timestamp: "2026-05-24 10:06",
   },
 ];
 
@@ -241,18 +184,6 @@ const getToneClasses = (tone: SecurityTone) => {
     amber: "text-amber-300",
     rose: "text-rose-300",
     violet: "text-violet-300",
-  };
-
-  return toneMap[tone];
-};
-
-const getAccentBorder = (tone: SecurityTone) => {
-  const toneMap: Record<SecurityTone, string> = {
-    emerald: "border-emerald-400/20",
-    cyan: "border-cyan-400/20",
-    amber: "border-amber-400/20",
-    rose: "border-rose-400/20",
-    violet: "border-violet-400/20",
   };
 
   return toneMap[tone];
@@ -274,6 +205,18 @@ const getSeverityClasses = (severity: Severity) => {
   return "bg-emerald-500/15 text-emerald-300";
 };
 
+const getStatusClasses = (status: MonitoringArea["status"]) => {
+  if (status === "Healthy") {
+    return "bg-emerald-500/15 text-emerald-300";
+  }
+
+  if (status === "Watch") {
+    return "bg-amber-500/15 text-amber-300";
+  }
+
+  return "bg-rose-500/15 text-rose-300";
+};
+
 const SecurityMonitoringPage: React.FC = () => {
   return (
     <div className="space-y-8 p-8">
@@ -287,10 +230,9 @@ const SecurityMonitoringPage: React.FC = () => {
               Security Monitoring
             </h2>
             <p className="mt-3 max-w-3xl text-sm text-slate-300">
-              Monitor prompt injection attempts, failed logins, session
-              anomalies, rate limit pressure, and JWT activity from one
-              consolidated page aligned with the platform&apos;s legal and
-              multilingual risk profile.
+              Security events are organized into one user-friendly view so your
+              team can scan risk quickly and open detailed workflows only when
+              needed.
             </p>
           </div>
           <Link
@@ -322,100 +264,181 @@ const SecurityMonitoringPage: React.FC = () => {
         ))}
       </section>
 
-      <section className="space-y-4 rounded border border-slate-700/70 bg-[#191919] p-6">
-        <div className="flex items-center justify-between gap-4">
+      <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
+        <div className="mb-4 flex items-center justify-between gap-4">
           <div>
             <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
-              Unified Security Feed
+              Priority Alerts
             </h3>
             <p className="mt-2 text-sm text-slate-400">
-              Each subsection stays on the same page to keep operational review
-              fast and reduce context switching.
+              Focus on these first during incident triage.
             </p>
           </div>
           <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-            Live operational snapshot
+            Top 3 active signals
           </span>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          {SECURITY_SECTIONS.map((section) => (
+        <div className="space-y-3">
+          {PRIORITY_ALERTS.map((alert) => (
             <article
-              key={section.title}
-              className={`rounded border ${getAccentBorder(section.accent)} bg-black/30 p-5`}
+              key={alert.title}
+              className="rounded border border-white/10 bg-black/30 p-4"
             >
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`material-symbols-outlined text-[20px] ${getToneClasses(section.accent)}`}
-                    >
-                      {section.icon}
-                    </span>
-                    <h4 className="text-base font-bold text-white">
-                      {section.title}
-                    </h4>
-                  </div>
-                  <p className="mt-2 max-w-xl text-sm text-slate-400">
-                    {section.description}
-                  </p>
+                  <h4 className="text-sm font-semibold text-white">
+                    {alert.title}
+                  </h4>
+                  <p className="mt-1 text-xs text-slate-400">{alert.detail}</p>
                 </div>
-                <div className="rounded border border-white/10 bg-white/5 px-3 py-2 text-right">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                    {section.summaryLabel}
-                  </p>
-                  <p
-                    className={`mt-1 text-xl font-black ${getToneClasses(section.accent)}`}
-                  >
-                    {section.summaryValue}
-                  </p>
-                </div>
-              </div>
-
-              <p className="mt-4 text-xs text-slate-400">
-                {section.summaryNote}
-              </p>
-
-              <div className="mt-5 overflow-x-auto">
-                <table className="min-w-full border-collapse text-sm">
-                  <thead>
-                    <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-widest text-slate-500">
-                      <th className="px-3 py-3 font-semibold">Source</th>
-                      <th className="px-3 py-3 font-semibold">Event</th>
-                      <th className="px-3 py-3 font-semibold">Severity</th>
-                      <th className="px-3 py-3 font-semibold">Time</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {section.events.map((event) => (
-                      <tr
-                        key={`${section.title}-${event.timestamp}-${event.actor}`}
-                        className="border-b border-white/5"
-                      >
-                        <td className="px-3 py-3 text-slate-300">
-                          {event.actor}
-                        </td>
-                        <td className="px-3 py-3 text-slate-400">
-                          {event.detail}
-                        </td>
-                        <td className="px-3 py-3">
-                          <span
-                            className={`rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${getSeverityClasses(event.severity)}`}
-                          >
-                            {event.severity}
-                          </span>
-                        </td>
-                        <td className="px-3 py-3 text-slate-400">
-                          {event.timestamp}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <span
+                  className={`inline-flex w-fit rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${getSeverityClasses(alert.severity)}`}
+                >
+                  {alert.severity}
+                </span>
               </div>
             </article>
           ))}
         </div>
+      </section>
+
+      <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+              Monitoring Areas
+            </h3>
+            <p className="mt-2 text-sm text-slate-400">
+              Five focused areas with a clear status and one key metric each.
+            </p>
+          </div>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+            Single-page operations
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {MONITORING_AREAS.map((area) => (
+            <article
+              key={area.key}
+              className="rounded border border-white/10 bg-black/30 p-4"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-[19px] text-slate-300">
+                      {area.icon}
+                    </span>
+                    <h4 className="text-sm font-semibold text-white">
+                      {area.title}
+                    </h4>
+                  </div>
+                  <p className="mt-2 text-xs text-slate-400">{area.summary}</p>
+                </div>
+                <span
+                  className={`inline-flex h-fit rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${getStatusClasses(area.status)}`}
+                >
+                  {area.status}
+                </span>
+              </div>
+
+              <div className="mt-4 flex items-center justify-between rounded border border-white/10 bg-white/5 px-3 py-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                  {area.metricLabel}
+                </span>
+                <span className="text-base font-black text-white">
+                  {area.metricValue}
+                </span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+              Recent Security Events
+            </h3>
+            <p className="mt-2 text-sm text-slate-400">
+              Unified event list for quick triage before opening detailed logs.
+            </p>
+          </div>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+            {RECENT_EVENTS.length} entries
+          </span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="min-w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-widest text-slate-500">
+                <th className="px-3 py-3 font-semibold">Area</th>
+                <th className="px-3 py-3 font-semibold">Source</th>
+                <th className="px-3 py-3 font-semibold">Event</th>
+                <th className="px-3 py-3 font-semibold">Severity</th>
+                <th className="px-3 py-3 font-semibold">Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {RECENT_EVENTS.map((event) => (
+                <tr
+                  key={`${event.area}-${event.timestamp}-${event.source}`}
+                  className="border-b border-white/5"
+                >
+                  <td className="px-3 py-3 text-slate-200">{event.area}</td>
+                  <td className="px-3 py-3 text-slate-300">{event.source}</td>
+                  <td className="px-3 py-3 text-slate-400">{event.detail}</td>
+                  <td className="px-3 py-3">
+                    <span
+                      className={`rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${getSeverityClasses(event.severity)}`}
+                    >
+                      {event.severity}
+                    </span>
+                  </td>
+                  <td className="px-3 py-3 text-slate-400">
+                    {event.timestamp}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <Link
+          to="/admin/settings/security"
+          className="rounded border border-rose-400/20 bg-[#191919] p-5 transition-colors hover:border-rose-400/40 hover:bg-rose-500/5"
+        >
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-rose-200/70">
+            Policy controls
+          </p>
+          <h4 className="mt-2 text-base font-bold text-white">
+            Open security settings
+          </h4>
+          <p className="mt-2 text-sm text-slate-400">
+            Adjust rate limits, lockout rules, prompt validation, and JWT
+            policy.
+          </p>
+        </Link>
+
+        <Link
+          to="/admin/logs"
+          className="rounded border border-rose-400/20 bg-[#191919] p-5 transition-colors hover:border-rose-400/40 hover:bg-rose-500/5"
+        >
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-rose-200/70">
+            Deep diagnostics
+          </p>
+          <h4 className="mt-2 text-base font-bold text-white">
+            Open AI logs and traceability
+          </h4>
+          <p className="mt-2 text-sm text-slate-400">
+            Investigate full request traces and correlation IDs for incidents.
+          </p>
+        </Link>
       </section>
     </div>
   );
