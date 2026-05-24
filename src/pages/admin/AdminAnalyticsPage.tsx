@@ -63,8 +63,9 @@ const ANALYTICS_CATEGORIES: AnalyticsCategory[] = [
   },
   {
     key: "research",
-    title: "Research Metrics",
-    description: "Experiment results, cohort comparisons, and trends.",
+    title: "Research",
+    description:
+      "RAGAS, faithfulness, precision/recall, BLEU/ROUGE, and dataset tracking.",
     icon: "insights",
     path: "/admin/analytics/research-metrics",
     color: "amber",

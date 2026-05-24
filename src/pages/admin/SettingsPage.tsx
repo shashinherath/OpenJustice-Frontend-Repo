@@ -7,7 +7,7 @@ interface SettingsCategory {
   description: string;
   icon: string;
   path: string;
-  color: "cyan" | "green" | "blue" | "purple" | "amber";
+  color: "cyan" | "green" | "blue" | "purple" | "amber" | "rose";
 }
 
 const SETTINGS_CATEGORIES: SettingsCategory[] = [
@@ -48,6 +48,15 @@ const SETTINGS_CATEGORIES: SettingsCategory[] = [
     color: "amber",
   },
   {
+    key: "privacy",
+    title: "Privacy Settings",
+    description:
+      "Control transcript retention, PII masking, anonymization, and export policy.",
+    icon: "policy",
+    path: "/admin/settings/privacy",
+    color: "rose",
+  },
+  {
     key: "integration",
     title: "Integration Settings",
     description:
@@ -59,7 +68,7 @@ const SETTINGS_CATEGORIES: SettingsCategory[] = [
 ];
 
 const getColorClasses = (
-  color: "cyan" | "green" | "blue" | "purple" | "amber",
+  color: "cyan" | "green" | "blue" | "purple" | "amber" | "rose",
 ) => {
   const colorMap = {
     cyan: {
@@ -91,6 +100,12 @@ const getColorClasses = (
       bg: "bg-amber-500/5 hover:bg-amber-500/10",
       icon: "text-amber-400",
       text: "text-amber-300",
+    },
+    rose: {
+      border: "border-rose-400/20",
+      bg: "bg-rose-500/5 hover:bg-rose-500/10",
+      icon: "text-rose-400",
+      text: "text-rose-300",
     },
   };
   return colorMap[color];
@@ -134,7 +149,9 @@ const SettingsPage: React.FC = () => {
                     {category.description}
                   </p>
                   <div className="mt-4 flex items-center gap-2">
-                    <span className={`text-xs font-bold uppercase tracking-widest ${colors.text}`}>
+                    <span
+                      className={`text-xs font-bold uppercase tracking-widest ${colors.text}`}
+                    >
                       Configure
                     </span>
                     <span className="material-symbols-outlined text-sm text-slate-400">
@@ -158,7 +175,9 @@ const SettingsPage: React.FC = () => {
             </p>
           </div>
           <div className="rounded border border-white/10 bg-black/30 p-4">
-            <h4 className="font-semibold text-slate-200">AI & Model Settings</h4>
+            <h4 className="font-semibold text-slate-200">
+              AI & Model Settings
+            </h4>
             <p className="mt-1 text-sm text-slate-400">
               Configure LLM model, temperature, and token parameters
             </p>
@@ -176,7 +195,16 @@ const SettingsPage: React.FC = () => {
             </p>
           </div>
           <div className="rounded border border-white/10 bg-black/30 p-4">
-            <h4 className="font-semibold text-slate-200">Integration Settings</h4>
+            <h4 className="font-semibold text-slate-200">Privacy Settings</h4>
+            <p className="mt-1 text-sm text-slate-400">
+              Control retention windows, masking rules, anonymization, and data
+              export restrictions
+            </p>
+          </div>
+          <div className="rounded border border-white/10 bg-black/30 p-4">
+            <h4 className="font-semibold text-slate-200">
+              Integration Settings
+            </h4>
             <p className="mt-1 text-sm text-slate-400">
               Configure external APIs and service credentials
             </p>

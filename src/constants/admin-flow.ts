@@ -21,6 +21,7 @@ export interface AdminModule {
     | "settings-ai"
     | "settings-retrieval"
     | "settings-security"
+    | "settings-privacy"
     | "settings-integration";
   label: string;
   navLabel: string;
@@ -201,13 +202,14 @@ export const ADMIN_MODULES: AdminModule[] = [
   },
   {
     key: "analytics-research",
-    label: "Research Metrics",
+    label: "Research",
     navLabel: "Research",
     path: "/admin/analytics/research-metrics",
     icon: "insights",
-    subtitle: "Custom research experiments and evaluation tracking",
+    subtitle:
+      "Academic evaluations, benchmark quality, and experiment tracking",
     description:
-      "Surface research experiment results, cohort comparisons, and metric trends.",
+      "Track RAGAS, faithfulness, context precision and recall, BLEU/ROUGE, and evaluation dataset readiness for research workflows.",
     parentKey: "analytics",
   },
   {
@@ -260,6 +262,16 @@ export const ADMIN_MODULES: AdminModule[] = [
     subtitle: "Authentication, rate limiting, and access control",
     description:
       "Configure JWT expiry, rate limits, prompt validation, and account lockout policies.",
+  },
+  {
+    key: "settings-privacy",
+    label: "Privacy Settings",
+    navLabel: "Privacy",
+    path: "/admin/settings/privacy",
+    icon: "policy",
+    subtitle: "Data retention, anonymization, and transcript handling",
+    description:
+      "Configure auto-delete transcripts, retention periods, PII masking, query anonymization, and export restrictions for privacy-aware legal AI operations.",
   },
   {
     key: "settings-integration",
@@ -318,6 +330,7 @@ export const ADMIN_MENU_ITEMS: Array<AdminModule | AdminMenuGroup> = [
       ADMIN_MODULES.find((module) => module.key === "settings-ai")!,
       ADMIN_MODULES.find((module) => module.key === "settings-retrieval")!,
       ADMIN_MODULES.find((module) => module.key === "settings-security")!,
+      ADMIN_MODULES.find((module) => module.key === "settings-privacy")!,
       ADMIN_MODULES.find((module) => module.key === "settings-integration")!,
     ],
   },

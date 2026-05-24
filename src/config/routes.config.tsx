@@ -77,6 +77,9 @@ const RetrievalSettingsPage = React.lazy(
 const SecuritySettingsPage = React.lazy(
   () => import("@/pages/admin/settings/SecuritySettingsPage"),
 );
+const PrivacySettingsPage = React.lazy(
+  () => import("@/pages/admin/settings/PrivacySettingsPage"),
+);
 const IntegrationSettingsPage = React.lazy(
   () => import("@/pages/admin/settings/IntegrationSettingsPage"),
 );
@@ -130,6 +133,7 @@ export const APP_ROUTES: RouteConfig[] = [
   { path: "/admin/settings/ai", component: AISettingsPage },
   { path: "/admin/settings/retrieval", component: RetrievalSettingsPage },
   { path: "/admin/settings/security", component: SecuritySettingsPage },
+  { path: "/admin/settings/privacy", component: PrivacySettingsPage },
   { path: "/admin/settings/integration", component: IntegrationSettingsPage },
   { path: "/topics", component: TopicBrowserPage },
   { path: "/research", component: ResearchPage },
