@@ -4,9 +4,12 @@ export interface AdminModule {
     | "users"
     | "data-sources"
     | "knowledge-monitoring"
+    | "retrieval-monitoring"
+    | "security-monitoring"
     | "logs"
     | "error-monitoring"
     | "analytics"
+    | "analytics-platforms"
     | "analytics-usage"
     | "analytics-cost"
     | "analytics-multilingual"
@@ -79,6 +82,26 @@ export const ADMIN_MODULES: AdminModule[] = [
       "Inspect indexed chunks, embedding models, and document-level processing status.",
   },
   {
+    key: "retrieval-monitoring",
+    label: "Retrieval Monitoring",
+    navLabel: "Retrieval Monitoring",
+    path: "/admin/retrieval-monitoring",
+    icon: "manage_search",
+    subtitle: "Ranking quality, latency, and citation validity",
+    description:
+      "Monitor live retrieval performance, result quality, and citation integrity across RAG queries.",
+  },
+  {
+    key: "security-monitoring",
+    label: "Security Monitoring",
+    navLabel: "Security",
+    path: "/admin/security-monitoring",
+    icon: "shield_lock",
+    subtitle: "Prompt safety, session integrity, and authentication events",
+    description:
+      "Monitor prompt injection attempts, failed logins, session anomalies, rate limit pressure, and JWT activity from one operational surface.",
+  },
+  {
     key: "logs",
     label: "AI Logs & Traceability",
     navLabel: "AI Logs",
@@ -109,6 +132,17 @@ export const ADMIN_MODULES: AdminModule[] = [
     subtitle: "Basic usage insights across query volume and language usage",
     description:
       "Review daily query activity and language distribution to understand platform usage trends.",
+  },
+  {
+    key: "analytics-platforms",
+    label: "Platform Analytics",
+    navLabel: "Platforms",
+    path: "/admin/analytics/platforms",
+    icon: "devices",
+    subtitle: "Web, WhatsApp, and voice channel distribution metrics",
+    description:
+      "Track platform usage distribution, response performance, and voice pipeline health across web and WhatsApp channels.",
+    parentKey: "analytics",
   },
   {
     key: "analytics-usage",
@@ -252,6 +286,8 @@ export const ADMIN_MENU_ITEMS: Array<AdminModule | AdminMenuGroup> = [
   ADMIN_MODULES[1], // Users
   ADMIN_MODULES[2], // Data Sources
   ADMIN_MODULES[3], // Knowledge Monitoring
+  ADMIN_MODULES.find((module) => module.key === "retrieval-monitoring")!,
+  ADMIN_MODULES.find((module) => module.key === "security-monitoring")!,
   // Place Analytics group above AI Logs for easier access
   {
     key: "analytics_group",
@@ -260,6 +296,7 @@ export const ADMIN_MENU_ITEMS: Array<AdminModule | AdminMenuGroup> = [
     path: "/admin/analytics",
     icon: "insights",
     children: [
+      ADMIN_MODULES.find((m) => m.key === "analytics-platforms")!,
       ADMIN_MODULES.find((m) => m.key === "analytics-usage")!,
       ADMIN_MODULES.find((m) => m.key === "analytics-cost")!,
       ADMIN_MODULES.find((m) => m.key === "analytics-multilingual")!,
@@ -268,8 +305,8 @@ export const ADMIN_MENU_ITEMS: Array<AdminModule | AdminMenuGroup> = [
       ADMIN_MODULES.find((m) => m.key === "analytics-research")!,
     ],
   },
-  ADMIN_MODULES[4], // Logs
-  ADMIN_MODULES[5], // Error Monitoring
+  ADMIN_MODULES.find((module) => module.key === "logs")!,
+  ADMIN_MODULES.find((module) => module.key === "error-monitoring")!,
   {
     key: "settings",
     label: "System Settings",

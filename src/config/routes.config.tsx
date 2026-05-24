@@ -30,12 +30,21 @@ const AdminDataSourcesPage = React.lazy(
 const KnowledgeBasePage = React.lazy(
   () => import("@/pages/admin/KnowledgeBasePage"),
 );
+const RetrievalMonitoringPage = React.lazy(
+  () => import("@/pages/admin/RetrievalMonitoringPage"),
+);
+const SecurityMonitoringPage = React.lazy(
+  () => import("@/pages/admin/SecurityMonitoringPage"),
+);
 const AdminLogsPage = React.lazy(() => import("@/pages/admin/AdminLogsPage"));
 const ErrorMonitoringPage = React.lazy(
   () => import("@/pages/admin/ErrorMonitoringPage"),
 );
 const AnalyticsPage = React.lazy(
   () => import("@/pages/admin/AdminAnalyticsPage"),
+);
+const PlatformAnalyticsPage = React.lazy(
+  () => import("@/pages/admin/analytics/PlatformAnalyticsPage"),
 );
 const UsageAnalyticsPage = React.lazy(
   () => import("@/pages/admin/analytics/UsageAnalyticsPage"),
@@ -91,10 +100,16 @@ export const APP_ROUTES: RouteConfig[] = [
   { path: "/admin", component: AdminDashboard },
   { path: "/admin/users", component: UserManagementPage },
   { path: "/admin/knowledge-monitoring", component: KnowledgeBasePage },
+  {
+    path: "/admin/retrieval-monitoring",
+    component: RetrievalMonitoringPage,
+  },
+  { path: "/admin/security-monitoring", component: SecurityMonitoringPage },
   { path: "/admin/data-sources", component: AdminDataSourcesPage },
   { path: "/admin/logs", component: AdminLogsPage },
   { path: "/admin/error-monitoring", component: ErrorMonitoringPage },
   { path: "/admin/analytics", component: AnalyticsPage },
+  { path: "/admin/analytics/platforms", component: PlatformAnalyticsPage },
   { path: "/admin/analytics/usage", component: UsageAnalyticsPage },
   { path: "/admin/analytics/cost", component: CostAnalyticsPage },
   {

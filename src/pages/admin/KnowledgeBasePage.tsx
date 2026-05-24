@@ -41,7 +41,7 @@ const KnowledgeBasePage: React.FC = () => {
       <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
         <div>
           <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">
-            RAG / Knowledge Monitoring
+            Knowledge Monitoring
           </h2>
           <p className="mt-3 max-w-3xl text-sm text-slate-300">
             View indexed chunks and embedding status for document processing

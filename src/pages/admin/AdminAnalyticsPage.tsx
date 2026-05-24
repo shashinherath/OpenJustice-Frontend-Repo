@@ -12,6 +12,15 @@ interface AnalyticsCategory {
 
 const ANALYTICS_CATEGORIES: AnalyticsCategory[] = [
   {
+    key: "platforms",
+    title: "Platform Analytics",
+    description:
+      "Web, WhatsApp, and voice usage distribution with response performance.",
+    icon: "devices",
+    path: "/admin/analytics/platforms",
+    color: "blue",
+  },
+  {
     key: "usage",
     title: "Usage Analytics",
     description: "Query volume, active users, and traffic trends.",
@@ -165,6 +174,15 @@ const AdminAnalyticsPage: React.FC = () => {
             <h4 className="font-semibold text-slate-200">Query Volume</h4>
             <p className="mt-1 text-sm text-slate-400">
               Daily and weekly query counts across the platform.
+            </p>
+          </div>
+          <div className="rounded border border-white/10 bg-black/30 p-4">
+            <h4 className="font-semibold text-slate-200">
+              Platform Distribution
+            </h4>
+            <p className="mt-1 text-sm text-slate-400">
+              Web vs WhatsApp platform share with message and voice breakdown
+              plus response time by platform.
             </p>
           </div>
           <div className="rounded border border-white/10 bg-black/30 p-4">
