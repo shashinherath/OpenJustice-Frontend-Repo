@@ -138,7 +138,7 @@ const AnswerPage: React.FC = () => {
 
   if (!chat) {
     return (
-      <div className="flex h-full flex-col items-center justify-center px-6 text-center">
+      <div className="flex h-full flex-1 flex-col items-center justify-center px-6 text-center">
         <h2 className="mb-2 text-2xl font-bold text-slate-900 dark:text-white">
           {t("chatNotFound")}
         </h2>
@@ -158,8 +158,8 @@ const AnswerPage: React.FC = () => {
   }
 
   return (
-    <>
-      <header className="flex items-center justify-between border-b border-slate-200 bg-white px-8 py-4 dark:border-border-dark dark:bg-brand-bg shrink-0">
+    <div className="flex min-h-0 flex-1 flex-col">
+      <header className="shrink-0 flex items-center justify-between border-b border-slate-200 bg-white px-8 py-4 dark:border-border-dark dark:bg-brand-bg">
         <div className="min-w-0">
           <h1 className="truncate text-lg font-bold text-slate-900 dark:text-white">
             {chat.title}
@@ -177,94 +177,98 @@ const AnswerPage: React.FC = () => {
         </button>
       </header>
 
-      <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-4 overflow-y-auto px-4 py-6">
-        {showTypingIndicator ? (
-          <div className="mr-auto max-w-[88%] rounded-xl border border-slate-200 bg-white p-3 px-4 text-sm text-slate-700 shadow-sm dark:border-border-dark dark:bg-surface-dark dark:text-slate-200">
-            <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-[16px] text-slate-400 dark:text-slate-500">
-                smart_toy
-              </span>
-              <div
-                className="flex items-center gap-1.5"
-                aria-live="polite"
-                aria-label="OpenJustice AI is typing"
-              >
-                <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.25s]" />
-                <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.15s]" />
-                <span className="h-2 w-2 animate-bounce rounded-full bg-current" />
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 py-6">
+          {showTypingIndicator ? (
+            <div className="mr-auto max-w-[88%] rounded-xl border border-slate-200 bg-white p-3 px-4 text-sm text-slate-700 shadow-sm dark:border-border-dark dark:bg-surface-dark dark:text-slate-200">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-[16px] text-slate-400 dark:text-slate-500">
+                  smart_toy
+                </span>
+                <div
+                  className="flex items-center gap-1.5"
+                  aria-live="polite"
+                  aria-label="OpenJustice AI is typing"
+                >
+                  <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.25s]" />
+                  <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.15s]" />
+                  <span className="h-2 w-2 animate-bounce rounded-full bg-current" />
+                </div>
               </div>
             </div>
-          </div>
-        ) : messages.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500 dark:border-border-dark dark:bg-surface-dark dark:text-slate-400">
-            {t("askFirstQuestion")}
-          </div>
-        ) : null}
+          ) : messages.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500 dark:border-border-dark dark:bg-surface-dark dark:text-slate-400">
+              {t("askFirstQuestion")}
+            </div>
+          ) : null}
 
-        {messages.map((message: ChatMessage) => (
-          <div
-            key={message.id}
-            className={`max-w-[88%] rounded-xl text-sm ${
-              message.sender === "user" ? "ml-auto" : "mr-auto"
-            } ${
-              message.audioUrl
-                ? ""
-                : `shadow-sm p-3 px-4 ${
-                    message.sender === "user"
-                      ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                      : "border border-slate-200 bg-white text-slate-700 dark:border-border-dark dark:bg-surface-dark dark:text-slate-200"
-                  }`
-            }`}
-          >
-            {message.audioUrl ? (
-              <VoiceMessagePlayer
-                audioUrl={message.audioUrl}
-                sender={message.sender}
-              />
-            ) : message.sender === "ai" ? (
-              message.content.trim() ? (
-                <MarkdownText
-                  className="text-inherit"
-                  content={message.content}
+          {messages.map((message: ChatMessage) => (
+            <div
+              key={message.id}
+              className={`max-w-[88%] rounded-xl text-sm ${
+                message.sender === "user" ? "ml-auto" : "mr-auto"
+              } ${
+                message.audioUrl
+                  ? ""
+                  : `shadow-sm p-3 px-4 ${
+                      message.sender === "user"
+                        ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                        : "border border-slate-200 bg-white text-slate-700 dark:border-border-dark dark:bg-surface-dark dark:text-slate-200"
+                    }`
+              }`}
+            >
+              {message.audioUrl ? (
+                <VoiceMessagePlayer
+                  audioUrl={message.audioUrl}
+                  sender={message.sender}
                 />
-              ) : (
-                <div className="flex items-center gap-2 py-1 text-slate-500 dark:text-slate-400">
-                  <span className="material-symbols-outlined text-[16px]">
-                    smart_toy
-                  </span>
-                  <div
-                    className="flex items-center gap-1.5"
-                    aria-live="polite"
-                    aria-label="OpenJustice AI is typing"
-                  >
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.25s]" />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.15s]" />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-current" />
+              ) : message.sender === "ai" ? (
+                message.content.trim() ? (
+                  <MarkdownText
+                    className="text-inherit"
+                    content={message.content}
+                  />
+                ) : (
+                  <div className="flex items-center gap-2 py-1 text-slate-500 dark:text-slate-400">
+                    <span className="material-symbols-outlined text-[16px]">
+                      smart_toy
+                    </span>
+                    <div
+                      className="flex items-center gap-1.5"
+                      aria-live="polite"
+                      aria-label="OpenJustice AI is typing"
+                    >
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.25s]" />
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.15s]" />
+                      <span className="h-2 w-2 animate-bounce rounded-full bg-current" />
+                    </div>
                   </div>
-                </div>
-              )
-            ) : (
-              <p className="whitespace-pre-wrap leading-6">{message.content}</p>
-            )}
-            {!message.audioUrl && (
-              <p
-                className={`mt-2 text-[10px] font-semibold uppercase tracking-wide ${
-                  message.sender === "user"
-                    ? "text-slate-300 dark:text-slate-600"
-                    : "text-slate-400"
-                }`}
-              >
-                {message.sender === "user" ? t("you") : t("openJusticeAi")}
-              </p>
-            )}
-          </div>
-        ))}
+                )
+              ) : (
+                <p className="whitespace-pre-wrap leading-6">
+                  {message.content}
+                </p>
+              )}
+              {!message.audioUrl && (
+                <p
+                  className={`mt-2 text-[10px] font-semibold uppercase tracking-wide ${
+                    message.sender === "user"
+                      ? "text-slate-300 dark:text-slate-600"
+                      : "text-slate-400"
+                  }`}
+                >
+                  {message.sender === "user" ? t("you") : t("openJusticeAi")}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
-      <footer className="border-t border-slate-200 bg-white px-4 py-4 dark:border-border-dark dark:bg-brand-bg shrink-0">
+      <footer className="shrink-0 border-t border-slate-200 bg-white px-4 py-4 dark:border-border-dark dark:bg-brand-bg">
         <div className="mx-auto flex w-full max-w-4xl items-center gap-3">
           <button
-            className="flex items-center justify-center size-10 text-slate-400 transition-colors shrink-0 disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-500"
+            className="flex size-10 shrink-0 items-center justify-center text-slate-400 transition-colors disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-500"
             title={t("attachDocument")}
             type="button"
             disabled
@@ -323,7 +327,7 @@ const AnswerPage: React.FC = () => {
           )}
         </div>
       </footer>
-    </>
+    </div>
   );
 };
 
