@@ -72,6 +72,25 @@ const mapApiMessage = (message: ApiMessageResponse): ChatMessage => {
 const isBlobAudioUrl = (url?: string): boolean =>
   typeof url === "string" && url.startsWith("blob:");
 
+const mergeAudioUrl = (
+  existingMessage: ChatMessage | undefined,
+  nextMessage: ChatMessage,
+): ChatMessage => {
+  if (
+    existingMessage?.audioUrl &&
+    existingMessage.sender === nextMessage.sender &&
+    nextMessage.messageType === "voice" &&
+    !nextMessage.audioUrl
+  ) {
+    return {
+      ...nextMessage,
+      audioUrl: existingMessage.audioUrl,
+    };
+  }
+
+  return nextMessage;
+};
+
 const mapConversation = (
   conversation: ApiConversationResponse,
 ): Conversation => ({
@@ -167,22 +186,12 @@ export const useChatStore = create<ChatStore>()(
                   : state.chatMessagesById[id] &&
                       state.chatMessagesById[id].length > mappedMessages.length
                     ? state.chatMessagesById[id]
-                    : mappedMessages.map((message, index) => {
-                        const existingMessage =
-                          state.chatMessagesById[id]?.[index];
-                        if (
-                          existingMessage?.audioUrl &&
-                          existingMessage.sender === message.sender &&
-                          !isBlobAudioUrl(existingMessage.audioUrl)
-                        ) {
-                          return {
-                            ...message,
-                            audioUrl: existingMessage.audioUrl,
-                          };
-                        }
-
-                        return message;
-                      }),
+                    : mappedMessages.map((message, index) =>
+                        mergeAudioUrl(
+                          state.chatMessagesById[id]?.[index],
+                          message,
+                        ),
+                      ),
             },
             sidebarChats: state.sidebarChats.some((chat) => chat.id === id)
               ? state.sidebarChats.map((chat) =>

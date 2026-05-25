@@ -1,7 +1,7 @@
-﻿import React from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 
-interface SettingsCategory {
+interface AnalyticsCategory {
   key: string;
   title: string;
   description: string;
@@ -10,67 +10,70 @@ interface SettingsCategory {
   color: "cyan" | "green" | "blue" | "purple" | "amber" | "rose";
 }
 
-const SETTINGS_CATEGORIES: SettingsCategory[] = [
+const ANALYTICS_CATEGORIES: AnalyticsCategory[] = [
   {
-    key: "language",
-    title: "Language Settings",
+    key: "platforms",
+    title: "Platform Analytics",
     description:
-      "Enable or disable languages, set default language, and configure translation pipeline.",
-    icon: "language",
-    path: "/admin/settings/language",
-    color: "cyan",
-  },
-  {
-    key: "ai",
-    title: "AI Model Settings",
-    description:
-      "Configure LLM model selection, temperature, token limits, and generation parameters.",
-    icon: "smart_toy",
-    path: "/admin/settings/ai",
+      "Web, WhatsApp, and voice usage distribution with response performance.",
+    icon: "devices",
+    path: "/admin/analytics/platforms",
     color: "blue",
   },
   {
-    key: "retrieval",
-    title: "RAG Retrieval Settings",
-    description:
-      "Configure vector database retrieval, embedding model, and chunking strategy.",
-    icon: "search",
-    path: "/admin/settings/retrieval",
-    color: "purple",
+    key: "usage",
+    title: "Usage Analytics",
+    description: "Query volume, active users, and traffic trends.",
+    icon: "bar_chart",
+    path: "/admin/analytics/usage",
+    color: "cyan",
   },
   {
-    key: "security",
-    title: "Security Settings",
+    key: "cost",
+    title: "Cost Analytics",
     description:
-      "Configure JWT expiry, rate limits, prompt validation, and access control.",
-    icon: "security",
-    path: "/admin/settings/security",
-    color: "amber",
-  },
-  {
-    key: "privacy",
-    title: "Privacy Settings",
-    description:
-      "Control transcript retention, PII masking, anonymization, and export policy.",
-    icon: "policy",
-    path: "/admin/settings/privacy",
+      "OpenAI and Twilio spend, token usage, and forecasted platform cost.",
+    icon: "payments",
+    path: "/admin/analytics/cost",
     color: "rose",
   },
   {
-    key: "integration",
-    title: "Integration Settings",
-    description:
-      "Manage OpenAI, Twilio, WhatsApp, and WebSocket integration credentials.",
-    icon: "integration_instructions",
-    path: "/admin/settings/integration",
+    key: "multilingual",
+    title: "Multilingual Analytics",
+    description: "Language distribution and translation usage.",
+    icon: "translate",
+    path: "/admin/analytics/multilingual",
     color: "green",
+  },
+  {
+    key: "retrieval",
+    title: "Retrieval Evaluation",
+    description: "RAG retrieval quality and recall/precision metrics.",
+    icon: "search",
+    path: "/admin/analytics/retrieval-evaluation",
+    color: "purple",
+  },
+  {
+    key: "ai",
+    title: "AI Evaluation Metrics",
+    description: "Model performance, hallucination rates, and token usage.",
+    icon: "psychology",
+    path: "/admin/analytics/ai-evaluation",
+    color: "blue",
+  },
+  {
+    key: "research",
+    title: "Research",
+    description:
+      "RAGAS, faithfulness, precision/recall, BLEU/ROUGE, and dataset tracking.",
+    icon: "insights",
+    path: "/admin/analytics/research-metrics",
+    color: "amber",
   },
 ];
 
-const getColorClasses = (
-  color: "cyan" | "green" | "blue" | "purple" | "amber" | "rose",
-) => {
-  const colorMap = {
+const getColorClasses = (color: AnalyticsCategory["color"]) => {
+  const colorMap: Record<string, any> = {
     cyan: {
       border: "border-cyan-400/20",
       bg: "bg-cyan-500/5 hover:bg-cyan-500/10",
@@ -111,23 +114,23 @@ const getColorClasses = (
   return colorMap[color];
 };
 
-const SettingsPage: React.FC = () => {
+const AdminAnalyticsPage: React.FC = () => {
   return (
     <div className="space-y-8 p-8">
       <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
         <div>
           <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">
-            System Settings
+            Simple Analytics
           </h2>
           <p className="mt-3 max-w-3xl text-sm text-slate-300">
-            Configure language support, AI models, RAG retrieval, security
-            policies, and external integrations.
+            Review daily query activity and language distribution to understand
+            platform usage trends.
           </p>
         </div>
       </section>
 
       <section className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        {SETTINGS_CATEGORIES.map((category) => {
+        {ANALYTICS_CATEGORIES.map((category) => {
           const colors = getColorClasses(category.color);
           return (
             <Link
@@ -152,7 +155,7 @@ const SettingsPage: React.FC = () => {
                     <span
                       className={`text-xs font-bold uppercase tracking-widest ${colors.text}`}
                     >
-                      Configure
+                      View
                     </span>
                     <span className="material-symbols-outlined text-sm text-slate-400">
                       arrow_forward
@@ -166,47 +169,49 @@ const SettingsPage: React.FC = () => {
       </section>
 
       <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
-        <h3 className="text-lg font-bold text-white">Settings Overview</h3>
+        <h3 className="text-lg font-bold text-white">Analytics Overview</h3>
         <div className="mt-4 space-y-4">
           <div className="rounded border border-white/10 bg-black/30 p-4">
-            <h4 className="font-semibold text-slate-200">Language Settings</h4>
+            <h4 className="font-semibold text-slate-200">Query Volume</h4>
             <p className="mt-1 text-sm text-slate-400">
-              Manage supported languages and translation behavior
+              Daily and weekly query counts across the platform.
             </p>
           </div>
           <div className="rounded border border-white/10 bg-black/30 p-4">
             <h4 className="font-semibold text-slate-200">
-              AI & Model Settings
+              Platform Distribution
             </h4>
             <p className="mt-1 text-sm text-slate-400">
-              Configure LLM model, temperature, and token parameters
+              Web vs WhatsApp platform share with message and voice breakdown
+              plus response time by platform.
             </p>
           </div>
           <div className="rounded border border-white/10 bg-black/30 p-4">
-            <h4 className="font-semibold text-slate-200">RAG Settings</h4>
+            <h4 className="font-semibold text-slate-200">Cost Efficiency</h4>
             <p className="mt-1 text-sm text-slate-400">
-              Configure vector retrieval, embeddings, and chunking
-            </p>
-          </div>
-          <div className="rounded border border-white/10 bg-black/30 p-4">
-            <h4 className="font-semibold text-slate-200">Security Settings</h4>
-            <p className="mt-1 text-sm text-slate-400">
-              Manage authentication, rate limiting, and access control
-            </p>
-          </div>
-          <div className="rounded border border-white/10 bg-black/30 p-4">
-            <h4 className="font-semibold text-slate-200">Privacy Settings</h4>
-            <p className="mt-1 text-sm text-slate-400">
-              Control retention windows, masking rules, anonymization, and data
-              export restrictions
+              OpenAI LLM, embeddings, Whisper, TTS, and Twilio message spend.
             </p>
           </div>
           <div className="rounded border border-white/10 bg-black/30 p-4">
             <h4 className="font-semibold text-slate-200">
-              Integration Settings
+              Language Distribution
             </h4>
             <p className="mt-1 text-sm text-slate-400">
-              Configure external APIs and service credentials
+              Breakdown of queries by language and translation patterns.
+            </p>
+          </div>
+          <div className="rounded border border-white/10 bg-black/30 p-4">
+            <h4 className="font-semibold text-slate-200">
+              Retrieval & RAG Quality
+            </h4>
+            <p className="mt-1 text-sm text-slate-400">
+              Recall, precision, and retrieval performance summaries.
+            </p>
+          </div>
+          <div className="rounded border border-white/10 bg-black/30 p-4">
+            <h4 className="font-semibold text-slate-200">AI Evaluation</h4>
+            <p className="mt-1 text-sm text-slate-400">
+              Model accuracy, hallucination metrics, and token consumption.
             </p>
           </div>
         </div>
@@ -215,4 +220,4 @@ const SettingsPage: React.FC = () => {
   );
 };
 
-export default SettingsPage;
+export default AdminAnalyticsPage;

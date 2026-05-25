@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSettingsModal } from "@/hooks/common/useSettingsModal";
 import { useChatStore } from "@/stores/chatStore";
@@ -13,6 +13,8 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [activeChatMenu, setActiveChatMenu] = useState<string | null>(null);
+  const [historySearch, setHistorySearch] = useState("");
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,14 +32,25 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
     loadConversation,
   } = useChatStore();
 
-  const activeChats = sidebarChats
-    .filter((chat) => !chat.isArchived)
-    .sort((a, b) => {
-      if (a.isPinned === b.isPinned) {
-        return 0;
-      }
-      return a.isPinned ? -1 : 1;
-    });
+  const activeChats = useMemo(() => {
+    const normalizedSearch = historySearch.trim().toLowerCase();
+
+    return sidebarChats
+      .filter((chat) => !chat.isArchived)
+      .filter((chat) => {
+        if (!normalizedSearch) {
+          return true;
+        }
+
+        return chat.title.toLowerCase().includes(normalizedSearch);
+      })
+      .sort((a, b) => {
+        if (a.isPinned === b.isPinned) {
+          return 0;
+        }
+        return a.isPinned ? -1 : 1;
+      });
+  }, [historySearch, sidebarChats]);
   const selectedChatId = location.pathname.startsWith("/chat/")
     ? location.pathname.split("/")[2]
     : null;
@@ -83,29 +96,73 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
   };
 
   return (
-    <aside className="w-64 border-r border-slate-200 dark:border-border-dark flex flex-col justify-between bg-white dark:bg-brand-bg relative shrink-0">
-      <div className="flex flex-col gap-6 p-4">
+    <aside
+      className={`relative flex shrink-0 flex-col justify-between border-r border-slate-200 bg-white transition-all duration-200 dark:border-border-dark dark:bg-brand-bg ${
+        isCollapsed ? "w-20" : "w-64"
+      }`}
+    >
+      <div
+        className={`flex flex-col ${isCollapsed ? "gap-4 p-2" : "gap-6 p-4"}`}
+      >
         {showBrand && (
-          <Link
-            className="flex gap-3 items-center"
-            to="/"
-            aria-label="Go to home page"
+          <div
+            className={`flex items-center ${isCollapsed ? "justify-center gap-2" : "justify-between gap-3"}`}
           >
-            <BrandLogo
-              containerClassName="bg-primary dark:bg-slate-200 rounded-lg size-10 flex items-center justify-center overflow-hidden"
-              iconClassName="text-white dark:text-[#191919] scale-125"
-            />
-            <div className="flex flex-col">
-              <h1 className="text-base font-bold leading-none text-slate-900 dark:text-white">
-                OpenJustice
-              </h1>
-            </div>
-          </Link>
+            {isCollapsed ? (
+              <button
+                className="group relative flex size-10 items-center justify-center cursor-pointer"
+                type="button"
+                onClick={() => setIsCollapsed(false)}
+                aria-label="Expand sidebar"
+              >
+                <div className="transition-opacity group-hover:opacity-0">
+                  <BrandLogo
+                    containerClassName="bg-primary dark:bg-slate-200 rounded-lg size-10 flex items-center justify-center overflow-hidden"
+                    iconClassName="text-white dark:text-[#191919] scale-125"
+                  />
+                </div>
+                <span className="material-symbols-outlined absolute inset-0 flex items-center justify-center text-[28px] text-slate-900 opacity-0 transition-opacity group-hover:opacity-100 dark:text-white">
+                  dock_to_right
+                </span>
+              </button>
+            ) : (
+              <Link
+                className="flex items-center gap-3"
+                to="/"
+                aria-label="Go to home page"
+              >
+                <BrandLogo
+                  containerClassName="bg-primary dark:bg-slate-200 rounded-lg size-10 flex items-center justify-center overflow-hidden"
+                  iconClassName="text-white dark:text-[#191919] scale-125"
+                />
+                <div className="flex flex-col">
+                  <h1 className="text-base font-bold leading-none text-slate-900 dark:text-white">
+                    OpenJustice
+                  </h1>
+                </div>
+              </Link>
+            )}
+
+            {!isCollapsed && (
+              <button
+                className="flex size-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900 dark:border-border-dark dark:bg-surface-dark dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white cursor-pointer"
+                type="button"
+                onClick={() => setIsCollapsed((prev) => !prev)}
+                aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              >
+                <span className="material-symbols-outlined text-[18px] text-slate-400 dark:text-slate-500">
+                  dock_to_right
+                </span>
+              </button>
+            )}
+          </div>
         )}
 
         <div className="flex flex-col gap-1">
           <button
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white transition-colors mb-4"
+            className={`mb-4 flex items-center rounded-lg bg-slate-900 py-2.5 text-white transition-colors hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white cursor-pointer ${
+              isCollapsed ? "justify-center px-2" : "gap-3 px-3"
+            }`}
             type="button"
             onClick={() => {
               navigate("/chat");
@@ -117,137 +174,180 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
             >
               add
             </span>
-            <span className="text-sm font-medium">New Question</span>
+            {!isCollapsed && (
+              <span className="text-sm font-medium">New Question</span>
+            )}
           </button>
 
-          <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider px-3 mb-2">
-            Query History
-          </div>
-
-          <div className="flex flex-col gap-1">
-            {activeChats.map((chat) => (
-              <div
-                key={chat.id}
-                className={`group relative flex items-center gap-3 rounded-lg px-3 py-2 cursor-pointer transition-colors ${
-                  selectedChatId === chat.id
-                    ? "bg-slate-100 text-slate-900 border border-slate-200 dark:bg-surface-dark dark:border-border-dark dark:text-white"
-                    : "text-slate-600 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-surface-dark"
-                }`}
-                onClick={() => {
-                  setActiveConversation(chat.id);
-                  navigate(`/chat/${chat.id}`);
-                  void loadConversation(chat.id);
-                }}
-              >
-                <span className="material-symbols-outlined text-[18px]">
-                  history
+          {!isCollapsed && (
+            <div className="mb-3 px-3">
+              <label className="mb-2 block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                Query History
+              </label>
+              <div className="relative flex h-10 w-full min-w-0 items-center rounded-full border border-slate-200 bg-white/80 px-3 shadow-sm transition-colors focus-within:border-slate-300 dark:border-border-dark dark:bg-surface-dark dark:focus-within:border-slate-600">
+                <span className="material-symbols-outlined pointer-events-none shrink-0 text-[18px] text-slate-400 dark:text-slate-500">
+                  search
                 </span>
-                <p
-                  className={`truncate pr-5 ${selectedChatId === chat.id ? "text-sm font-medium" : "text-sm font-normal"}`}
-                >
-                  {chat.title}
-                </p>
-                {chat.isPinned && (
-                  <span
-                    className="material-symbols-outlined text-[12px] text-amber-500"
-                    title="Pinned"
+                <input
+                  className="ml-2 h-full min-w-0 flex-1 border-none bg-transparent p-0 text-sm leading-none text-slate-900 outline-none placeholder:text-slate-400 focus:ring-0 dark:text-white dark:placeholder:text-slate-500"
+                  placeholder="Search query history"
+                  type="text"
+                  value={historySearch}
+                  onChange={(event) => setHistorySearch(event.target.value)}
+                  aria-label="Search query history"
+                />
+                {historySearch && (
+                  <button
+                    className="ml-2 shrink-0 rounded p-1 text-slate-400 transition-colors hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
+                    type="button"
+                    aria-label="Clear query history search"
+                    onClick={() => setHistorySearch("")}
                   >
-                    keep
-                  </span>
-                )}
-
-                <button
-                  className="ml-auto rounded p-1 text-slate-400 opacity-0 transition-all hover:bg-slate-200 hover:text-slate-700 group-hover:opacity-100 dark:hover:bg-border-dark dark:hover:text-slate-200"
-                  type="button"
-                  aria-label="Chat item actions"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    setActiveChatMenu((prev) =>
-                      prev === chat.id ? null : chat.id,
-                    );
-                  }}
-                >
-                  <span className="material-symbols-outlined text-[16px]">
-                    more_horiz
-                  </span>
-                </button>
-
-                {activeChatMenu === chat.id && (
-                  <div
-                    className="absolute right-1 top-10 z-30 w-40 rounded-lg border border-slate-200 bg-white py-1 shadow-xl dark:border-border-dark dark:bg-surface-dark"
-                    onClick={(event) => event.stopPropagation()}
-                  >
-                    <button
-                      className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
-                      type="button"
-                      onClick={() => {
-                        void archiveChat(chat.id);
-                        setActiveChatMenu(null);
-                      }}
-                    >
-                      <span className="material-symbols-outlined text-[14px]">
-                        archive
-                      </span>
-                      Archive
-                    </button>
-                    <button
-                      className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
-                      type="button"
-                    >
-                      <span className="material-symbols-outlined text-[14px]">
-                        share
-                      </span>
-                      Share
-                    </button>
-                    <button
-                      className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
-                      type="button"
-                      onClick={() => {
-                        const nextTitle = window.prompt(
-                          "Rename chat",
-                          chat.title,
-                        );
-                        if (nextTitle && nextTitle.trim()) {
-                          void renameChat(chat.id, nextTitle.trim());
-                        }
-                        setActiveChatMenu(null);
-                      }}
-                    >
-                      <span className="material-symbols-outlined text-[14px]">
-                        drive_file_rename_outline
-                      </span>
-                      Rename
-                    </button>
-                    <button
-                      className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
-                      type="button"
-                      onClick={() => {
-                        void pinChat(chat.id);
-                        setActiveChatMenu(null);
-                      }}
-                    >
-                      <span className="material-symbols-outlined text-[14px]">
-                        {chat.isPinned ? "keep_off" : "keep"}
-                      </span>
-                      {chat.isPinned ? "Unpin" : "Pin"}
-                    </button>
-                    <button
-                      className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-red-500 transition-colors hover:bg-red-500/10"
-                      type="button"
-                      onClick={() => {
-                        void deleteChat(chat.id);
-                        setActiveChatMenu(null);
-                      }}
-                    >
-                      <span className="material-symbols-outlined text-[14px]">
-                        delete
-                      </span>
-                      Delete
-                    </button>
-                  </div>
+                    <span className="material-symbols-outlined text-[16px]">
+                      close
+                    </span>
+                  </button>
                 )}
               </div>
-            ))}
+            </div>
+          )}
+
+          <div className="flex flex-col gap-1">
+            {activeChats.length > 0 ? (
+              activeChats.map((chat) => (
+                <div
+                  key={chat.id}
+                  className={`group relative flex cursor-pointer items-center rounded-lg py-2 transition-colors ${
+                    isCollapsed ? "justify-center px-2" : "gap-3 px-3"
+                  } ${
+                    selectedChatId === chat.id
+                      ? "bg-slate-100 text-slate-900 border border-slate-200 dark:bg-surface-dark dark:border-border-dark dark:text-white"
+                      : "text-slate-600 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-surface-dark"
+                  }`}
+                  onClick={() => {
+                    setActiveConversation(chat.id);
+                    navigate(`/chat/${chat.id}`);
+                    void loadConversation(chat.id);
+                  }}
+                >
+                  <span className="material-symbols-outlined text-[18px]">
+                    history
+                  </span>
+                  {!isCollapsed && (
+                    <p
+                      className={`truncate pr-5 ${selectedChatId === chat.id ? "text-sm font-medium" : "text-sm font-normal"}`}
+                    >
+                      {chat.title}
+                    </p>
+                  )}
+                  {!isCollapsed && chat.isPinned && (
+                    <span
+                      className="material-symbols-outlined text-[12px] text-amber-500"
+                      title="Pinned"
+                    >
+                      keep
+                    </span>
+                  )}
+
+                  {!isCollapsed && (
+                    <button
+                      className="ml-auto rounded p-1 text-slate-400 opacity-0 transition-all hover:bg-slate-200 hover:text-slate-700 group-hover:opacity-100 dark:hover:bg-border-dark dark:hover:text-slate-200 cursor-pointer"
+                      type="button"
+                      aria-label="Chat item actions"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setActiveChatMenu((prev) =>
+                          prev === chat.id ? null : chat.id,
+                        );
+                      }}
+                    >
+                      <span className="material-symbols-outlined text-[16px]">
+                        more_horiz
+                      </span>
+                    </button>
+                  )}
+
+                  {!isCollapsed && activeChatMenu === chat.id && (
+                    <div
+                      className="absolute right-1 top-10 z-30 w-40 rounded-lg border border-slate-200 bg-white py-1 shadow-xl dark:border-border-dark dark:bg-surface-dark"
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      <button
+                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark cursor-pointer"
+                        type="button"
+                        onClick={() => {
+                          void archiveChat(chat.id);
+                          setActiveChatMenu(null);
+                        }}
+                      >
+                        <span className="material-symbols-outlined text-[14px]">
+                          archive
+                        </span>
+                        Archive
+                      </button>
+                      <button
+                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark cursor-pointer"
+                        type="button"
+                      >
+                        <span className="material-symbols-outlined text-[14px]">
+                          share
+                        </span>
+                        Share
+                      </button>
+                      <button
+                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark cursor-pointer"
+                        type="button"
+                        onClick={() => {
+                          const nextTitle = window.prompt(
+                            "Rename chat",
+                            chat.title,
+                          );
+                          if (nextTitle && nextTitle.trim()) {
+                            void renameChat(chat.id, nextTitle.trim());
+                          }
+                          setActiveChatMenu(null);
+                        }}
+                      >
+                        <span className="material-symbols-outlined text-[14px]">
+                          drive_file_rename_outline
+                        </span>
+                        Rename
+                      </button>
+                      <button
+                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark cursor-pointer"
+                        type="button"
+                        onClick={() => {
+                          void pinChat(chat.id);
+                          setActiveChatMenu(null);
+                        }}
+                      >
+                        <span className="material-symbols-outlined text-[14px]">
+                          {chat.isPinned ? "keep_off" : "keep"}
+                        </span>
+                        {chat.isPinned ? "Unpin" : "Pin"}
+                      </button>
+                      <button
+                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-red-500 transition-colors hover:bg-red-500/10 cursor-pointer"
+                        type="button"
+                        onClick={() => {
+                          void deleteChat(chat.id);
+                          setActiveChatMenu(null);
+                        }}
+                      >
+                        <span className="material-symbols-outlined text-[14px]">
+                          delete
+                        </span>
+                        Delete
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="rounded-lg border border-dashed border-slate-200 bg-white/50 px-3 py-4 text-sm text-slate-500 dark:border-border-dark dark:bg-surface-dark/40 dark:text-slate-400">
+                No matching chats.
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -255,7 +355,11 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
       <div className="p-4 border-t border-slate-200 dark:border-border-dark">
         <div className="relative profile-menu" ref={profileMenuRef}>
           <button
-            className="flex items-center gap-3 w-full px-2 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-surface-dark transition-colors group text-slate-900 dark:text-white text-left focus:outline-none"
+            className={`flex w-full items-center rounded-lg px-2 py-2 text-left transition-colors group focus:outline-none cursor-pointer ${
+              isCollapsed
+                ? "justify-center"
+                : "gap-3 hover:bg-slate-50 dark:hover:bg-surface-dark text-slate-900 dark:text-white"
+            }`}
             onClick={() => setMenuOpen(!menuOpen)}
           >
             <div className="size-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden border border-slate-300 dark:border-slate-600 shrink-0">
@@ -271,17 +375,21 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                 </span>
               )}
             </div>
-            <div className="flex flex-col items-start overflow-hidden">
-              <span className="text-sm font-semibold truncate">
-                {user?.name || "User"}
+            {!isCollapsed && (
+              <div className="flex flex-col items-start overflow-hidden">
+                <span className="truncate text-sm font-semibold">
+                  {user?.name || "User"}
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-tight text-slate-500">
+                  {user?.role || "User"}
+                </span>
+              </div>
+            )}
+            {!isCollapsed && (
+              <span className="material-symbols-outlined ml-auto text-[16px] text-slate-400 dark:text-slate-500">
+                more_vert
               </span>
-              <span className="text-[10px] text-slate-500 uppercase font-bold tracking-tight">
-                {user?.role || "User"}
-              </span>
-            </div>
-            <span className="material-symbols-outlined text-[16px] ml-auto text-slate-400 dark:text-slate-500">
-              more_vert
-            </span>
+            )}
           </button>
 
           {menuOpen && (
@@ -296,7 +404,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
               </div>
 
               <button
-                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors"
+                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors cursor-pointer"
                 type="button"
                 onClick={() => {
                   openProfile();
@@ -310,7 +418,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
               </button>
 
               <button
-                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors"
+                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors cursor-pointer"
                 type="button"
                 onClick={() => {
                   openSettings();
@@ -409,7 +517,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
               <div className="my-1 border-t border-slate-100 dark:border-border-dark" />
 
               <button
-                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
+                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark cursor-pointer"
                 type="button"
                 onClick={handleLogout}
               >

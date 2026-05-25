@@ -97,51 +97,50 @@ const AdminSidebar: React.FC = () => {
         </p>
         {ADMIN_MENU_ITEMS.map((item) => {
           if ("children" in item) {
-            // Render collapsible group
             const group = item as AdminMenuGroup;
             const isExpanded = expandedGroups[group.key];
             const isActive = isItemActive(group.path) || isGroupActive(group);
 
             return (
               <div key={group.key}>
-                <div
-                  className={`flex items-center justify-between gap-2 rounded px-3 py-2.5 transition-colors ${
-                    isActive
-                      ? "bg-white/10 text-white"
-                      : "text-slate-300 hover:bg-white/5 hover:text-white"
-                  }`}
+                <NavLink
+                  to={group.path}
+                  end={group.path === "/admin/settings"}
+                  onClick={() => toggleGroup(group.key)}
+                  aria-expanded={isExpanded}
+                  aria-controls={`${group.key}-children`}
+                  className={({ isActive: navIsActive }) =>
+                    `flex items-center justify-between gap-2 rounded px-3 py-2.5 transition-colors ${
+                      navIsActive || isActive
+                        ? "bg-white/10 text-white"
+                        : "text-slate-300 hover:bg-white/5 hover:text-white"
+                    }`
+                  }
                 >
-                  <NavLink
-                    to={group.path}
-                    end={group.path === "/admin/settings"}
-                    className="flex min-w-0 flex-1 items-center gap-3"
-                  >
+                  <div className="flex min-w-0 flex-1 items-center gap-3">
                     <span className="material-symbols-outlined text-[20px]">
                       {group.icon}
                     </span>
                     <span className="text-sm font-medium">
                       {group.navLabel}
                     </span>
-                  </NavLink>
-                  <button
-                    type="button"
-                    onClick={() => toggleGroup(group.key)}
-                    className="rounded p-1 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
-                    aria-label={`${isExpanded ? "Collapse" : "Expand"} ${group.navLabel}`}
-                  >
-                    <span
-                      className={`material-symbols-outlined text-[18px] transition-transform ${
-                        isExpanded ? "rotate-180" : ""
-                      }`}
-                    >
-                      expand_more
-                    </span>
-                  </button>
-                </div>
+                  </div>
 
-                {/* Collapsible children */}
+                  <span
+                    className={`material-symbols-outlined text-[18px] transition-transform ${
+                      isExpanded ? "rotate-180" : ""
+                    }`}
+                    aria-hidden="true"
+                  >
+                    expand_more
+                  </span>
+                </NavLink>
+
                 {isExpanded && group.children && (
-                  <div className="ml-4 mt-1 space-y-1 border-l border-white/10 pl-3">
+                  <div
+                    id={`${group.key}-children`}
+                    className="ml-4 mt-1 space-y-1 border-l border-white/10 pl-3"
+                  >
                     {group.children.map((child) => (
                       <NavLink
                         key={child.key}
@@ -166,7 +165,6 @@ const AdminSidebar: React.FC = () => {
             );
           }
 
-          // Render regular module
           return (
             <NavLink
               key={item.key}
@@ -184,9 +182,7 @@ const AdminSidebar: React.FC = () => {
                 {item.icon}
               </span>
               <span
-                className={`text-sm ${
-                  item.path === "/admin" ? "font-semibold" : "font-medium"
-                }`}
+                className={`text-sm ${item.path === "/admin" ? "font-semibold" : "font-medium"}`}
               >
                 {item.navLabel}
               </span>

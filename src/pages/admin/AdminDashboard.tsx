@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 import StatCard from "@/components/admin/StatCard";
 import ActivityItem from "@/components/admin/ActivityItem";
 import { useAdminStore } from "@/stores/adminStore";
@@ -208,14 +209,125 @@ const AdminDashboard: React.FC = () => {
                 <div key={idx} className="space-y-2 text-center">
                   <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
                     <div
-                      className={`w-full rounded-sm transition-all hover:opacity-100 ${idx === 4 ? 'bg-cyan-400' : idx === 6 ? 'bg-amber-400' : 'bg-cyan-400/80'}`}
+                      className={`w-full rounded-sm transition-all hover:opacity-100 ${idx === 4 ? "bg-cyan-400" : idx === 6 ? "bg-amber-400" : "bg-cyan-400/80"}`}
                       style={{ height: day.heightPercentage }}
                     />
                   </div>
                   <p className="text-[11px] text-slate-400">{day.date}</p>
-                  <p className="text-[11px] font-semibold text-slate-300">{day.count}</p>
+                  <p className="text-[11px] font-semibold text-slate-300">
+                    {day.count}
+                  </p>
                 </div>
               ))}
+            </div>
+          </section>
+
+          <section className="rounded border border-cyan-400/15 bg-[#191919] p-6">
+            <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
+                  Monitoring Layers
+                </p>
+                <h2 className="mt-2 text-lg font-bold text-white">
+                  Separate ingestion health from retrieval quality
+                </h2>
+                <p className="mt-2 max-w-3xl text-sm text-slate-400">
+                  Knowledge monitoring tracks chunks and embeddings. Retrieval
+                  monitoring tracks ranking quality, latency, and citation
+                  validity.
+                </p>
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                RAG observability
+              </span>
+            </div>
+
+            <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <Link
+                to="/admin/knowledge-monitoring"
+                className="group rounded border border-white/10 bg-black/30 p-5 transition-all hover:border-cyan-400/30 hover:bg-cyan-500/5"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                      Ingestion Health
+                    </p>
+                    <h3 className="mt-2 text-lg font-bold text-white">
+                      Knowledge Monitoring
+                    </h3>
+                    <p className="mt-2 text-sm text-slate-400">
+                      Track indexed documents, chunk counts, and embedding
+                      status.
+                    </p>
+                  </div>
+                  <span className="material-symbols-outlined text-cyan-300 transition-transform group-hover:translate-x-0.5">
+                    database
+                  </span>
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-400">
+                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                    Indexed docs
+                  </div>
+                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                    Chunk coverage
+                  </div>
+                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                    Embedding state
+                  </div>
+                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                    Processing status
+                  </div>
+                </div>
+                <div className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-cyan-200/80">
+                  Open knowledge monitoring
+                  <span className="material-symbols-outlined text-[16px]">
+                    arrow_forward
+                  </span>
+                </div>
+              </Link>
+
+              <Link
+                to="/admin/retrieval-monitoring"
+                className="group rounded border border-white/10 bg-black/30 p-5 transition-all hover:border-cyan-400/30 hover:bg-cyan-500/5"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                      Retrieval Quality
+                    </p>
+                    <h3 className="mt-2 text-lg font-bold text-white">
+                      Retrieval Monitoring
+                    </h3>
+                    <p className="mt-2 text-sm text-slate-400">
+                      Inspect similarity, top-K accuracy, latency, and citation
+                      validity.
+                    </p>
+                  </div>
+                  <span className="material-symbols-outlined text-cyan-300 transition-transform group-hover:translate-x-0.5">
+                    manage_search
+                  </span>
+                </div>
+                <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-400">
+                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                    Avg similarity
+                  </div>
+                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                    Top-K accuracy
+                  </div>
+                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                    Retrieval latency
+                  </div>
+                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                    Citation validity
+                  </div>
+                </div>
+                <div className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-cyan-200/80">
+                  Open retrieval monitoring
+                  <span className="material-symbols-outlined text-[16px]">
+                    arrow_forward
+                  </span>
+                </div>
+              </Link>
             </div>
           </section>
 

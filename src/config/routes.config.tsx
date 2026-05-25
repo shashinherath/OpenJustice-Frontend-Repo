@@ -30,13 +30,27 @@ const AdminDataSourcesPage = React.lazy(
 const KnowledgeBasePage = React.lazy(
   () => import("@/pages/admin/KnowledgeBasePage"),
 );
+const RetrievalMonitoringPage = React.lazy(
+  () => import("@/pages/admin/RetrievalMonitoringPage"),
+);
+const SecurityMonitoringPage = React.lazy(
+  () => import("@/pages/admin/SecurityMonitoringPage"),
+);
 const AdminLogsPage = React.lazy(() => import("@/pages/admin/AdminLogsPage"));
 const ErrorMonitoringPage = React.lazy(
   () => import("@/pages/admin/ErrorMonitoringPage"),
 );
-const AnalyticsPage = React.lazy(() => import("@/pages/admin/AnalyticsPage"));
+const AnalyticsPage = React.lazy(
+  () => import("@/pages/admin/AdminAnalyticsPage"),
+);
+const PlatformAnalyticsPage = React.lazy(
+  () => import("@/pages/admin/analytics/PlatformAnalyticsPage"),
+);
 const UsageAnalyticsPage = React.lazy(
   () => import("@/pages/admin/analytics/UsageAnalyticsPage"),
+);
+const CostAnalyticsPage = React.lazy(
+  () => import("@/pages/admin/analytics/CostAnalyticsPage"),
 );
 const MultilingualAnalyticsPage = React.lazy(
   () => import("@/pages/admin/analytics/MultilingualAnalyticsPage"),
@@ -63,6 +77,9 @@ const RetrievalSettingsPage = React.lazy(
 const SecuritySettingsPage = React.lazy(
   () => import("@/pages/admin/settings/SecuritySettingsPage"),
 );
+const PrivacySettingsPage = React.lazy(
+  () => import("@/pages/admin/settings/PrivacySettingsPage"),
+);
 const IntegrationSettingsPage = React.lazy(
   () => import("@/pages/admin/settings/IntegrationSettingsPage"),
 );
@@ -86,11 +103,18 @@ export const APP_ROUTES: RouteConfig[] = [
   { path: "/admin", component: AdminDashboard },
   { path: "/admin/users", component: UserManagementPage },
   { path: "/admin/knowledge-monitoring", component: KnowledgeBasePage },
+  {
+    path: "/admin/retrieval-monitoring",
+    component: RetrievalMonitoringPage,
+  },
+  { path: "/admin/security-monitoring", component: SecurityMonitoringPage },
   { path: "/admin/data-sources", component: AdminDataSourcesPage },
   { path: "/admin/logs", component: AdminLogsPage },
   { path: "/admin/error-monitoring", component: ErrorMonitoringPage },
   { path: "/admin/analytics", component: AnalyticsPage },
+  { path: "/admin/analytics/platforms", component: PlatformAnalyticsPage },
   { path: "/admin/analytics/usage", component: UsageAnalyticsPage },
+  { path: "/admin/analytics/cost", component: CostAnalyticsPage },
   {
     path: "/admin/analytics/multilingual",
     component: MultilingualAnalyticsPage,
@@ -109,6 +133,7 @@ export const APP_ROUTES: RouteConfig[] = [
   { path: "/admin/settings/ai", component: AISettingsPage },
   { path: "/admin/settings/retrieval", component: RetrievalSettingsPage },
   { path: "/admin/settings/security", component: SecuritySettingsPage },
+  { path: "/admin/settings/privacy", component: PrivacySettingsPage },
   { path: "/admin/settings/integration", component: IntegrationSettingsPage },
   { path: "/topics", component: TopicBrowserPage },
   { path: "/research", component: ResearchPage },

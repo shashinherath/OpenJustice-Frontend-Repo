@@ -5,6 +5,123 @@ import { useAuthStore } from "@/stores/authStore";
 import FeatureCard from "@/components/ui/FeatureCard";
 import LoginModal from "@/components/ui/LoginModal";
 
+type HeroMotion = {
+  x: number;
+  y: number;
+  active: boolean;
+};
+
+const heroParticles = [
+  {
+    left: "8%",
+    top: "18%",
+    size: 18,
+    depthX: 28,
+    depthY: 16,
+    depthZ: 120,
+    className: "bg-sky-400/60 dark:bg-sky-300/35",
+  },
+  {
+    left: "16%",
+    top: "72%",
+    size: 12,
+    depthX: 18,
+    depthY: 22,
+    depthZ: -70,
+    className: "bg-blue-300/70 dark:bg-blue-200/40",
+  },
+  {
+    left: "30%",
+    top: "14%",
+    size: 10,
+    depthX: 12,
+    depthY: 10,
+    depthZ: 160,
+    className: "bg-white/80 dark:bg-slate-100/60",
+  },
+  {
+    left: "42%",
+    top: "28%",
+    size: 22,
+    depthX: 20,
+    depthY: 14,
+    depthZ: 48,
+    className: "bg-cyan-300/45 dark:bg-cyan-200/25",
+  },
+  {
+    left: "52%",
+    top: "64%",
+    size: 14,
+    depthX: 16,
+    depthY: 24,
+    depthZ: -130,
+    className: "bg-slate-400/60 dark:bg-slate-200/30",
+  },
+  {
+    left: "64%",
+    top: "20%",
+    size: 28,
+    depthX: -20,
+    depthY: 18,
+    depthZ: 22,
+    className: "bg-blue-500/20 dark:bg-blue-300/10",
+  },
+  {
+    left: "72%",
+    top: "46%",
+    size: 11,
+    depthX: -14,
+    depthY: 12,
+    depthZ: 200,
+    className: "bg-white/70 dark:bg-white/45",
+  },
+  {
+    left: "81%",
+    top: "18%",
+    size: 16,
+    depthX: -24,
+    depthY: 14,
+    depthZ: 90,
+    className: "bg-sky-300/55 dark:bg-sky-200/30",
+  },
+  {
+    left: "86%",
+    top: "68%",
+    size: 20,
+    depthX: -18,
+    depthY: 20,
+    depthZ: -90,
+    className: "bg-blue-400/45 dark:bg-blue-300/25",
+  },
+  {
+    left: "22%",
+    top: "46%",
+    size: 8,
+    depthX: 10,
+    depthY: 16,
+    depthZ: 260,
+    className: "bg-white/70 dark:bg-slate-200/45",
+  },
+  {
+    left: "58%",
+    top: "82%",
+    size: 9,
+    depthX: 14,
+    depthY: -18,
+    depthZ: -180,
+    className: "bg-sky-200/70 dark:bg-sky-100/40",
+  },
+  {
+    left: "38%",
+    top: "78%",
+    size: 14,
+    depthX: 22,
+    depthY: -16,
+    depthZ: 72,
+    className: "bg-cyan-200/55 dark:bg-cyan-100/30",
+  },
+];
+
 const HomePage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -13,6 +130,11 @@ const HomePage: React.FC = () => {
   const loadProfile = useAuthStore((state) => state.loadProfile);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [heroMotion, setHeroMotion] = useState<HeroMotion>({
+    x: 0,
+    y: 0,
+    active: false,
+  });
 
   // Load user profile from backend if authenticated
   useEffect(() => {
@@ -31,12 +153,6 @@ const HomePage: React.FC = () => {
     }
   }, [isAuthenticated, userRole, searchParams, navigate]);
 
-  useEffect(() => {
-    if (!isAuthenticated && searchParams.get("login") === "1") {
-      setIsLoginOpen(true);
-    }
-  }, [searchParams, isAuthenticated]);
-
   const handleCloseLogin = () => {
     setIsLoginOpen(false);
     if (searchParams.has("login") || searchParams.has("redirect")) {
@@ -54,6 +170,30 @@ const HomePage: React.FC = () => {
       setIsLoginOpen(true);
     }
   };
+
+  const handleHeroPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+
+    if (rect.width === 0 || rect.height === 0) {
+      return;
+    }
+
+    const normalizedX = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+    const normalizedY = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+
+    setHeroMotion({
+      x: Math.max(-1, Math.min(1, normalizedX)),
+      y: Math.max(-1, Math.min(1, normalizedY)),
+      active: true,
+    });
+  };
+
+  const handleHeroPointerLeave = () => {
+    setHeroMotion({ x: 0, y: 0, active: false });
+  };
+
+  const isLoginModalOpen =
+    isLoginOpen || (!isAuthenticated && searchParams.get("login") === "1");
 
   // Feature card data built with translations
   const features = [
@@ -94,12 +234,63 @@ const HomePage: React.FC = () => {
 
   return (
     <>
-      <div className="flex-1 flex flex-col items-center px-4 md:px-10 lg:px-40 py-16 md:py-24">
-        <div className="w-full max-w-5xl flex flex-col items-center text-center gap-16">
+      <div
+        className="relative isolate flex-1 overflow-hidden px-4 py-16 md:px-10 md:py-24 lg:px-40"
+        style={{ perspective: "1800px" }}
+        onPointerMove={handleHeroPointerMove}
+        onPointerLeave={handleHeroPointerLeave}
+      >
+        <div
+          className="pointer-events-none absolute inset-0 overflow-hidden"
+          style={{ transformStyle: "preserve-3d" }}
+        >
+          <div
+            className="absolute left-1/2 top-24 h-176 w-176 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(59,130,246,0.18)_0%,rgba(14,165,233,0.10)_30%,rgba(255,255,255,0)_72%)] blur-3xl transition-transform duration-200 ease-out dark:bg-[radial-gradient(circle,rgba(96,165,250,0.14)_0%,rgba(34,211,238,0.08)_30%,rgba(255,255,255,0)_72%)] md:h-216 md:w-216"
+            style={{
+              transform: `translate3d(calc(-50% + ${heroMotion.x * 48}px), ${heroMotion.y * 24}px, 120px) rotateX(${heroMotion.y * -2}deg) rotateY(${heroMotion.x * 3}deg)`,
+            }}
+          />
+          <div
+            className="absolute -left-32 top-0 h-72 w-72 rounded-full bg-sky-400/15 blur-3xl transition-transform duration-200 ease-out dark:bg-sky-300/10"
+            style={{
+              transform: `translate3d(${heroMotion.x * -26}px, ${heroMotion.y * -16}px, 60px)`,
+            }}
+          />
+          <div
+            className="absolute -right-28 top-1/3 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl transition-transform duration-200 ease-out dark:bg-blue-400/10"
+            style={{
+              transform: `translate3d(${heroMotion.x * 20}px, ${heroMotion.y * 22}px, -40px)`,
+            }}
+          />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.03)_0,transparent_1px)] bg-size-[28px_28px] opacity-45 dark:bg-[radial-gradient(circle_at_center,rgba(226,232,240,0.10)_0,transparent_1px)]" />
+          {heroParticles.map((particle, index) => (
+            <span
+              key={`${particle.left}-${particle.top}-${index}`}
+              className={`absolute rounded-full shadow-[0_0_30px_rgba(59,130,246,0.18)] transition-transform duration-200 ease-out will-change-transform ${particle.className}`}
+              style={{
+                left: particle.left,
+                top: particle.top,
+                width: `${particle.size}px`,
+                height: `${particle.size}px`,
+                transform: `translate3d(calc(-50% + ${heroMotion.x * particle.depthX}px), calc(-50% + ${heroMotion.y * particle.depthY}px), ${particle.depthZ}px)`,
+                opacity: heroMotion.active ? 1 : 0.8,
+              }}
+            />
+          ))}
+          <div
+            className="absolute left-1/2 top-1/2 h-168 w-2xl -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/30 opacity-30 transition-transform duration-200 ease-out dark:border-white/10 md:h-208 md:w-208"
+            style={{
+              transform: `translate3d(calc(-50% + ${heroMotion.x * 12}px), calc(-50% + ${heroMotion.y * 12}px), -100px)`,
+            }}
+          />
+        </div>
+
+        <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col items-center text-center gap-16">
           {/* Hero Section */}
-          <div className="flex flex-col items-center gap-8 max-w-4xl">
+          <section className="relative flex flex-col items-center gap-8 max-w-4xl py-4 md:py-10">
+            <div className="absolute left-1/2 top-1/2 h-56 w-56 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white/35 blur-3xl dark:bg-slate-950/20" />
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-widest">
+            <div className="inline-flex items-center gap-2 rounded-full border border-blue-100 bg-blue-50/90 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-blue-700 backdrop-blur dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-300">
               {t("homeBadge")}
             </div>
 
@@ -125,7 +316,7 @@ const HomePage: React.FC = () => {
                   {t("disclaimerText")}
                 </p>
                 <Link
-                  className="mt-2 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-amber-700 hover:text-amber-900 dark:text-amber-300 dark:hover:text-amber-200 transition-colors"
+                  className="mt-2 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-amber-700 hover:text-amber-900 dark:text-amber-300 dark:hover:text-amber-200 transition-colors cursor-pointer"
                   to="/privacy-policy"
                   target="_blank"
                 >
@@ -142,20 +333,20 @@ const HomePage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleGetStarted}
-                className="flex w-full sm:w-auto min-w-50 h-14 items-center justify-center gap-2 rounded-xl bg-primary dark:bg-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.98] text-white text-lg font-bold shadow-xl transition-all"
+                className="flex w-full sm:w-auto min-w-50 h-14 items-center justify-center gap-2 rounded-xl bg-primary dark:bg-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.98] text-white text-lg font-bold shadow-xl transition-all cursor-pointer"
               >
                 <span className="material-symbols-outlined">chat_bubble</span>
                 <span>{t("askQuestion")}</span>
               </button>
               <Link
                 to="/topics"
-                className="flex w-full sm:w-auto min-w-50 h-14 items-center justify-center gap-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-lg font-bold transition-all shadow-sm"
+                className="flex w-full sm:w-auto min-w-50 h-14 items-center justify-center gap-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-lg font-bold transition-all shadow-sm cursor-pointer"
               >
                 <span className="material-symbols-outlined">grid_view</span>
                 <span>{t("browseTopics")}</span>
               </Link>
             </div>
-          </div>
+          </section>
 
           {/* WhatsApp & Web Chat Showcase */}
           <section className="w-full grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 mb-4">
@@ -182,7 +373,7 @@ const HomePage: React.FC = () => {
                 </p>
                 <button
                   onClick={handleGetStarted}
-                  className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-green-700 active:scale-95"
+                  className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-green-700 active:scale-95 cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[18px]">
                     qr_code_scanner
@@ -215,7 +406,7 @@ const HomePage: React.FC = () => {
                 </p>
                 <button
                   onClick={handleGetStarted}
-                  className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-blue-700 active:scale-95"
+                  className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-blue-700 active:scale-95 cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[18px]">
                     chat_bubble
@@ -250,7 +441,7 @@ const HomePage: React.FC = () => {
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
               <Link
-                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
+                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800 cursor-pointer"
                 to="/about-us"
               >
                 <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-300">
@@ -267,7 +458,7 @@ const HomePage: React.FC = () => {
               </Link>
 
               <Link
-                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
+                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800 cursor-pointer"
                 to="/contact"
               >
                 <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-300">
@@ -284,7 +475,7 @@ const HomePage: React.FC = () => {
               </Link>
 
               <Link
-                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
+                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800 cursor-pointer"
                 to="/terms-of-service"
               >
                 <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-300">
@@ -301,7 +492,7 @@ const HomePage: React.FC = () => {
               </Link>
 
               <Link
-                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
+                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800 cursor-pointer"
                 to="/research"
               >
                 <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-900/20 dark:text-violet-300">
@@ -318,7 +509,7 @@ const HomePage: React.FC = () => {
               </Link>
 
               <Link
-                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
+                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800 cursor-pointer"
                 to="/developers"
               >
                 <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-300">
@@ -338,7 +529,7 @@ const HomePage: React.FC = () => {
         </div>
       </div>
 
-      <LoginModal isOpen={isLoginOpen} onClose={handleCloseLogin} />
+      <LoginModal isOpen={isLoginModalOpen} onClose={handleCloseLogin} />
     </>
   );
 };

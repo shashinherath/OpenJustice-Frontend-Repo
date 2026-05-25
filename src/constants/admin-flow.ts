@@ -4,10 +4,14 @@ export interface AdminModule {
     | "users"
     | "data-sources"
     | "knowledge-monitoring"
+    | "retrieval-monitoring"
+    | "security-monitoring"
     | "logs"
     | "error-monitoring"
     | "analytics"
+    | "analytics-platforms"
     | "analytics-usage"
+    | "analytics-cost"
     | "analytics-multilingual"
     | "analytics-retrieval-eval"
     | "analytics-ai-eval"
@@ -17,6 +21,7 @@ export interface AdminModule {
     | "settings-ai"
     | "settings-retrieval"
     | "settings-security"
+    | "settings-privacy"
     | "settings-integration";
   label: string;
   navLabel: string;
@@ -78,6 +83,26 @@ export const ADMIN_MODULES: AdminModule[] = [
       "Inspect indexed chunks, embedding models, and document-level processing status.",
   },
   {
+    key: "retrieval-monitoring",
+    label: "Retrieval Monitoring",
+    navLabel: "Retrieval Monitoring",
+    path: "/admin/retrieval-monitoring",
+    icon: "manage_search",
+    subtitle: "Ranking quality, latency, and citation validity",
+    description:
+      "Monitor live retrieval performance, result quality, and citation integrity across RAG queries.",
+  },
+  {
+    key: "security-monitoring",
+    label: "Security Monitoring",
+    navLabel: "Security",
+    path: "/admin/security-monitoring",
+    icon: "shield_lock",
+    subtitle: "Prompt safety, session integrity, and authentication events",
+    description:
+      "Monitor prompt injection attempts, failed logins, session anomalies, rate limit pressure, and JWT activity from one operational surface.",
+  },
+  {
     key: "logs",
     label: "AI Logs & Traceability",
     navLabel: "AI Logs",
@@ -110,6 +135,17 @@ export const ADMIN_MODULES: AdminModule[] = [
       "Review daily query activity and language distribution to understand platform usage trends.",
   },
   {
+    key: "analytics-platforms",
+    label: "Platform Analytics",
+    navLabel: "Platforms",
+    path: "/admin/analytics/platforms",
+    icon: "devices",
+    subtitle: "Web, WhatsApp, and voice channel distribution metrics",
+    description:
+      "Track platform usage distribution, response performance, and voice pipeline health across web and WhatsApp channels.",
+    parentKey: "analytics",
+  },
+  {
     key: "analytics-usage",
     label: "Usage Analytics",
     navLabel: "Usage",
@@ -118,6 +154,17 @@ export const ADMIN_MODULES: AdminModule[] = [
     subtitle: "Query volume, active users, and traffic trends",
     description:
       "Examine query counts, peak usage windows, and user activity metrics over time.",
+    parentKey: "analytics",
+  },
+  {
+    key: "analytics-cost",
+    label: "Cost Analytics",
+    navLabel: "Cost",
+    path: "/admin/analytics/cost",
+    icon: "payments",
+    subtitle: "OpenAI and Twilio spend across tokens, minutes, and messages",
+    description:
+      "Track OpenAI LLM, embedding, transcription, TTS, and Twilio messaging spend across the platform.",
     parentKey: "analytics",
   },
   {
@@ -155,13 +202,14 @@ export const ADMIN_MODULES: AdminModule[] = [
   },
   {
     key: "analytics-research",
-    label: "Research Metrics",
+    label: "Research",
     navLabel: "Research",
     path: "/admin/analytics/research-metrics",
     icon: "insights",
-    subtitle: "Custom research experiments and evaluation tracking",
+    subtitle:
+      "Academic evaluations, benchmark quality, and experiment tracking",
     description:
-      "Surface research experiment results, cohort comparisons, and metric trends.",
+      "Track RAGAS, faithfulness, context precision and recall, BLEU/ROUGE, and evaluation dataset readiness for research workflows.",
     parentKey: "analytics",
   },
   {
@@ -216,6 +264,16 @@ export const ADMIN_MODULES: AdminModule[] = [
       "Configure JWT expiry, rate limits, prompt validation, and account lockout policies.",
   },
   {
+    key: "settings-privacy",
+    label: "Privacy Settings",
+    navLabel: "Privacy",
+    path: "/admin/settings/privacy",
+    icon: "policy",
+    subtitle: "Data retention, anonymization, and transcript handling",
+    description:
+      "Configure auto-delete transcripts, retention periods, PII masking, query anonymization, and export restrictions for privacy-aware legal AI operations.",
+  },
+  {
     key: "settings-integration",
     label: "Integration Settings",
     navLabel: "Integrations",
@@ -240,9 +298,9 @@ export const ADMIN_MENU_ITEMS: Array<AdminModule | AdminMenuGroup> = [
   ADMIN_MODULES[1], // Users
   ADMIN_MODULES[2], // Data Sources
   ADMIN_MODULES[3], // Knowledge Monitoring
-  ADMIN_MODULES[4], // Logs
-  ADMIN_MODULES[5], // Error Monitoring
-  // Analytics group replaced by analytics_group below
+  ADMIN_MODULES.find((module) => module.key === "retrieval-monitoring")!,
+  ADMIN_MODULES.find((module) => module.key === "security-monitoring")!,
+  // Place Analytics group above AI Logs for easier access
   {
     key: "analytics_group",
     label: "Analytics",
@@ -250,13 +308,17 @@ export const ADMIN_MENU_ITEMS: Array<AdminModule | AdminMenuGroup> = [
     path: "/admin/analytics",
     icon: "insights",
     children: [
+      ADMIN_MODULES.find((m) => m.key === "analytics-platforms")!,
       ADMIN_MODULES.find((m) => m.key === "analytics-usage")!,
+      ADMIN_MODULES.find((m) => m.key === "analytics-cost")!,
       ADMIN_MODULES.find((m) => m.key === "analytics-multilingual")!,
       ADMIN_MODULES.find((m) => m.key === "analytics-retrieval-eval")!,
       ADMIN_MODULES.find((m) => m.key === "analytics-ai-eval")!,
       ADMIN_MODULES.find((m) => m.key === "analytics-research")!,
     ],
   },
+  ADMIN_MODULES.find((module) => module.key === "logs")!,
+  ADMIN_MODULES.find((module) => module.key === "error-monitoring")!,
   {
     key: "settings",
     label: "System Settings",
@@ -268,6 +330,7 @@ export const ADMIN_MENU_ITEMS: Array<AdminModule | AdminMenuGroup> = [
       ADMIN_MODULES.find((module) => module.key === "settings-ai")!,
       ADMIN_MODULES.find((module) => module.key === "settings-retrieval")!,
       ADMIN_MODULES.find((module) => module.key === "settings-security")!,
+      ADMIN_MODULES.find((module) => module.key === "settings-privacy")!,
       ADMIN_MODULES.find((module) => module.key === "settings-integration")!,
     ],
   },

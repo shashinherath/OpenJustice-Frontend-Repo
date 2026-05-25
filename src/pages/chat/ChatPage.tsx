@@ -1,18 +1,15 @@
-import React from "react";
-import { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { LanguageContext } from "@/contexts/LanguageContext";
 import { useChatStore } from "@/stores/chatStore";
 import { useVoiceStore } from "@/stores/voiceStore";
 import { useVoiceRecording } from "@/hooks/useVoiceRecording";
 import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
-import { SUPPORTED_LANGUAGES, type AppLanguage } from "@/constants/languages";
+import LanguageSwitcherButton from "@/components/ui/LanguageSwitcherButton";
 
 const ChatPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const languageContext = useContext(LanguageContext);
   const [question, setQuestion] = useState("");
   const [isVoicePreview, setIsVoicePreview] = useState(false);
   const {
@@ -32,25 +29,6 @@ const ChatPage: React.FC = () => {
     voiceLevel,
     isPaused,
   } = useVoiceRecording();
-  const currentLanguage = (
-    languageContext?.currentLanguage || "en"
-  ).toLowerCase() as AppLanguage;
-  const availableLanguages =
-    languageContext?.availableLanguages || SUPPORTED_LANGUAGES;
-  const languageLabelMap: Record<string, string> = {
-    en: t("langEnglish"),
-    si: t("langSinhala"),
-    ta: t("langTamil"),
-  };
-
-  const handleLanguageChange: React.ChangeEventHandler<HTMLSelectElement> = (
-    event,
-  ) => {
-    const nextLanguage = event.target.value as AppLanguage;
-    if (languageContext?.changeLanguage) {
-      void languageContext.changeLanguage(nextLanguage);
-    }
-  };
 
   useEffect(() => {
     void loadConversations();
@@ -67,6 +45,8 @@ const ChatPage: React.FC = () => {
     navigate(`/chat/${chatId}`);
     void sendMessageToChat(chatId, text);
   };
+
+  const hasTypedText = question.trim().length > 0;
 
   const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (
     event,
@@ -125,88 +105,72 @@ const ChatPage: React.FC = () => {
   };
 
   return (
-    <>
-      <header className="flex items-center justify-between px-8 py-4 border-b border-slate-200 dark:border-border-dark bg-white dark:bg-brand-bg shrink-0">
+    <div className="relative flex min-h-full flex-1 flex-col overflow-hidden">
+      <style>{`@keyframes gradient-shift { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }`}</style>
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -left-20 top-0 h-72 w-72 rounded-full bg-sky-400/15 blur-3xl dark:bg-cyan-500/10" />
+        <div className="absolute right-0 top-24 h-80 w-80 rounded-full bg-indigo-300/20 blur-3xl dark:bg-blue-500/10" />
+        <div className="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-white/40 blur-3xl dark:bg-white/5" />
+      </div>
+
+      <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-white/40 bg-white/55 px-6 py-4 shadow-[0_8px_32px_rgba(15,23,42,0.08)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#191919]/55 md:px-8">
         <div className="flex items-center gap-6">
           <nav className="flex items-center gap-6">
             <a
-              className="text-sm font-semibold border-b-2 border-slate-900 dark:border-white py-1 text-slate-900 dark:text-white"
+              className="border-b-2 border-slate-900 py-1 text-sm font-semibold text-slate-900 dark:border-white dark:text-white"
               href="#"
             >
               Research
             </a>
           </nav>
         </div>
-        <div className="flex gap-3 h-full items-center">
-          <div className="relative flex items-center h-full gap-2 bg-slate-50 dark:bg-surface-dark px-3 py-1.5 rounded-lg border border-slate-200 dark:border-border-dark">
-            <span className="material-symbols-outlined text-[18px] text-slate-500">
-              language
-            </span>
-            <select
-              className="appearance-none bg-transparent pr-5 text-sm font-semibold tracking-tight text-slate-900 outline-none dark:text-slate-100"
-              value={currentLanguage}
-              onChange={handleLanguageChange}
-              aria-label={t("selectLanguage")}
-            >
-              {availableLanguages.map((language) => (
-                <option
-                  key={language}
-                  value={language}
-                  className="bg-white text-slate-900"
-                >
-                  {languageLabelMap[language] || language.toUpperCase()}
-                </option>
-              ))}
-            </select>
-            <span className="material-symbols-outlined pointer-events-none absolute right-2 text-[14px] text-slate-500">
-              expand_more
-            </span>
-          </div>
+        <div className="flex h-full items-center gap-3">
+          <LanguageSwitcherButton />
         </div>
       </header>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-4 max-w-4xl mx-auto w-full">
-        <div className="w-full text-center mb-8">
-          <h2 className="text-slate-900 dark:text-white text-[36px] font-bold leading-tight tracking-tight mb-2">
+      <div className="relative z-10 flex w-full flex-1 flex-col items-center justify-center px-4 py-10 md:px-6">
+        <div className="w-full max-w-4xl text-center mb-8">
+          <h2 className="text-[36px] font-bold leading-tight tracking-tight text-slate-900 drop-shadow-sm dark:text-white">
             {t("chatResearchHeading")}
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 text-lg">
+          <p className="text-lg text-slate-600 dark:text-slate-300">
             {t("chatResearchSubheading")}
           </p>
         </div>
 
-        <div className="w-full max-w-3xl">
-          <div className="flex items-center justify-center gap-3 mb-6 flex-wrap">
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mr-1">
+        <div className="w-full max-w-4xl">
+          <div className="mb-6 flex flex-wrap items-center justify-center gap-3">
+            <span className="mr-1 text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
               {t("suggestions")}
             </span>
-            <button className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#2d2d2d] transition-all px-4 group">
-              <span className="material-symbols-outlined text-[16px] text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300">
+            <button className="group flex h-9 items-center justify-center gap-1.5 rounded-full border border-white/50 bg-white/55 px-4 transition-all hover:-translate-y-0.5 hover:bg-white/75 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 backdrop-blur-xl">
+              <span className="material-symbols-outlined text-[16px] text-slate-500 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
                 balance
               </span>
-              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100">
+              <span className="text-xs font-semibold text-slate-600 transition-colors group-hover:text-slate-900 dark:text-slate-400 dark:group-hover:text-slate-100">
                 {t("rights")}
               </span>
             </button>
-            <button className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#2d2d2d] transition-all px-4 group">
-              <span className="material-symbols-outlined text-[16px] text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300">
+            <button className="group flex h-9 items-center justify-center gap-1.5 rounded-full border border-white/50 bg-white/55 px-4 transition-all hover:-translate-y-0.5 hover:bg-white/75 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 backdrop-blur-xl">
+              <span className="material-symbols-outlined text-[16px] text-slate-500 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
                 checklist
               </span>
-              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100">
+              <span className="text-xs font-semibold text-slate-600 transition-colors group-hover:text-slate-900 dark:text-slate-400 dark:group-hover:text-slate-100">
                 {t("procedures")}
               </span>
             </button>
-            <button className="flex h-8 items-center justify-center gap-1.5 rounded-full border border-slate-200 dark:border-border-dark bg-white dark:bg-surface-dark hover:bg-slate-50 dark:hover:bg-[#2d2d2d] transition-all px-4 group">
-              <span className="material-symbols-outlined text-[16px] text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-300">
+            <button className="group flex h-9 items-center justify-center gap-1.5 rounded-full border border-white/50 bg-white/55 px-4 transition-all hover:-translate-y-0.5 hover:bg-white/75 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 backdrop-blur-xl">
+              <span className="material-symbols-outlined text-[16px] text-slate-500 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
                 menu_book
               </span>
-              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400 group-hover:text-slate-900 dark:group-hover:text-slate-100">
+              <span className="text-xs font-semibold text-slate-600 transition-colors group-hover:text-slate-900 dark:text-slate-400 dark:group-hover:text-slate-100">
                 {t("commonDefinitions")}
               </span>
             </button>
           </div>
 
-          <div className="flex flex-col md:flex-row items-center gap-3 w-full">
+          <div className="flex w-full flex-col items-center gap-3 md:flex-row">
             {recordingState.isRecording || isVoicePreview ? (
               <VoiceRecordingUI
                 durationLabel={formatDuration(recordingState.duration)}
@@ -220,38 +184,60 @@ const ChatPage: React.FC = () => {
                 onCancel={handleCancelVoice}
               />
             ) : (
-              <div className="relative flex-1 flex items-center bg-white dark:bg-surface-dark rounded-full border border-slate-200 dark:border-border-dark shadow-xl px-4 py-1.5 focus-within:ring-2 focus-within:ring-slate-200 dark:focus-within:ring-slate-700 transition-all w-full">
-                <button
-                  className="flex items-center justify-center size-10 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0"
-                  title={t("attachDocument")}
-                  type="button"
-                >
-                  <span className="material-symbols-outlined">attach_file</span>
-                </button>
-                <input
-                  className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-slate-900 dark:text-white text-base px-2 placeholder:text-slate-400 dark:placeholder:text-slate-600 min-w-0"
-                  placeholder={t("queryPlaceholder")}
-                  type="text"
-                  value={question}
-                  onChange={(event) => setQuestion(event.target.value)}
-                  onKeyDown={handleInputKeyDown}
+              <div className="relative isolate flex w-full flex-1 items-center rounded-[30px] p-[1.5px] transition-all duration-300">
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none absolute inset-0 rounded-[30px] bg-[linear-gradient(90deg,rgba(34,211,238,0.95),rgba(59,130,246,0.95),rgba(168,85,247,0.9),rgba(245,158,11,0.85),rgba(34,211,238,0.95))] bg-size-[300%_100%] blur-xl transition-opacity duration-300 animate-[gradient-shift_4s_linear_infinite] ${
+                    hasTypedText ? "opacity-100" : "opacity-35"
+                  }`}
                 />
-                <button
-                  className="flex items-center justify-center size-10 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors shrink-0 rounded-lg"
-                  title={t("voiceInput")}
-                  onClick={handleMicClick}
-                  type="button"
-                >
-                  <span className="material-symbols-outlined">mic</span>
-                </button>
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none absolute inset-0 rounded-[30px] bg-[linear-gradient(90deg,rgba(34,211,238,0.7),rgba(59,130,246,0.75),rgba(168,85,247,0.7),rgba(245,158,11,0.65),rgba(34,211,238,0.7))] bg-size-[300%_100%] transition-opacity duration-300 animate-[gradient-shift_4s_linear_infinite] ${
+                    hasTypedText ? "opacity-100" : "opacity-0"
+                  }`}
+                />
+                <div className="relative z-10 flex w-full items-center gap-1 rounded-[28px] border border-white/10 bg-[#111111] px-3 py-2.5 shadow-[0_16px_50px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-[#111111]">
+                  <button
+                    className="flex size-10 shrink-0 items-center justify-center text-slate-300 transition-colors hover:text-white"
+                    title={t("attachDocument")}
+                    type="button"
+                  >
+                    <span className="material-symbols-outlined text-[22px]">
+                      add
+                    </span>
+                  </button>
+                  <input
+                    className="min-w-0 flex-1 border-none bg-transparent px-2 text-[15px] font-medium text-white outline-none placeholder:text-slate-400 focus:ring-0"
+                    placeholder={t("queryPlaceholder")}
+                    type="text"
+                    value={question}
+                    onChange={(event) => setQuestion(event.target.value)}
+                    onKeyDown={handleInputKeyDown}
+                  />
+                  <button
+                    className={`flex size-11 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${
+                      hasTypedText
+                        ? "border-sky-400/90 bg-slate-950 text-white shadow-[0_0_0_4px_rgba(59,130,246,0.18),0_0_18px_rgba(59,130,246,0.5)]"
+                        : "border-slate-700 bg-slate-900 text-slate-200 hover:border-slate-500 hover:text-white"
+                    }`}
+                    title={t("voiceInput")}
+                    onClick={handleMicClick}
+                    type="button"
+                  >
+                    <span className="material-symbols-outlined text-[22px]">
+                      mic
+                    </span>
+                  </button>
+                </div>
               </div>
             )}
             {!recordingState.isRecording && !isVoicePreview && (
               <button
-                className={`flex h-14 w-14 items-center justify-center rounded-full font-bold transition-all shadow-lg shrink-0 mt-3 md:mt-0 ${
+                className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-white/40 font-bold shadow-[0_18px_45px_rgba(15,23,42,0.18)] transition-all md:mt-0 ${
                   !question.trim()
-                    ? "bg-slate-200 text-slate-400 dark:bg-slate-800 dark:text-slate-600 cursor-not-allowed shadow-none"
-                    : "bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white cursor-pointer"
+                    ? "cursor-not-allowed bg-slate-200 text-slate-400 shadow-none dark:bg-slate-800 dark:text-slate-600"
+                    : "cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"
                 }`}
                 type="button"
                 onClick={handleSubmitQuestion}
@@ -265,7 +251,7 @@ const ChatPage: React.FC = () => {
           </div>
 
           <div className="mt-8 text-center">
-            <p className="text-slate-400 dark:text-slate-500 text-[11px] flex items-center justify-center gap-1 uppercase tracking-wider font-semibold">
+            <p className="flex items-center justify-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               <span className="material-symbols-outlined text-[14px]">
                 info
               </span>
@@ -275,10 +261,10 @@ const ChatPage: React.FC = () => {
         </div>
       </div>
 
-      <footer className="p-6 text-center text-slate-500 dark:text-slate-600 text-[11px] uppercase tracking-widest font-bold shrink-0">
+      <footer className="relative z-10 shrink-0 p-6 text-center text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-500">
         {t("copyright")}
       </footer>
-    </>
+    </div>
   );
 };
 
