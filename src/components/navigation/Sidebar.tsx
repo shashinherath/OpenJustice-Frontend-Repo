@@ -110,7 +110,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
           >
             {isCollapsed ? (
               <button
-                className="group relative flex size-10 items-center justify-center"
+                className="group relative flex size-10 items-center justify-center cursor-pointer"
                 type="button"
                 onClick={() => setIsCollapsed(false)}
                 aria-label="Expand sidebar"
@@ -145,7 +145,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
 
             {!isCollapsed && (
               <button
-                className="flex size-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900 dark:border-border-dark dark:bg-surface-dark dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white"
+                className="flex size-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-900 dark:border-border-dark dark:bg-surface-dark dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-white cursor-pointer"
                 type="button"
                 onClick={() => setIsCollapsed((prev) => !prev)}
                 aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
@@ -160,7 +160,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
 
         <div className="flex flex-col gap-1">
           <button
-            className={`mb-4 flex items-center rounded-lg bg-slate-900 py-2.5 text-white transition-colors hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white ${
+            className={`mb-4 flex items-center rounded-lg bg-slate-900 py-2.5 text-white transition-colors hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white cursor-pointer ${
               isCollapsed ? "justify-center px-2" : "gap-3 px-3"
             }`}
             type="button"
@@ -251,7 +251,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
 
                   {!isCollapsed && (
                     <button
-                      className="ml-auto rounded p-1 text-slate-400 opacity-0 transition-all hover:bg-slate-200 hover:text-slate-700 group-hover:opacity-100 dark:hover:bg-border-dark dark:hover:text-slate-200"
+                      className="ml-auto rounded p-1 text-slate-400 opacity-0 transition-all hover:bg-slate-200 hover:text-slate-700 group-hover:opacity-100 dark:hover:bg-border-dark dark:hover:text-slate-200 cursor-pointer"
                       type="button"
                       aria-label="Chat item actions"
                       onClick={(event) => {
@@ -273,7 +273,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                       onClick={(event) => event.stopPropagation()}
                     >
                       <button
-                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
+                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark cursor-pointer"
                         type="button"
                         onClick={() => {
                           void archiveChat(chat.id);
@@ -286,7 +286,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                         Archive
                       </button>
                       <button
-                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
+                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark cursor-pointer"
                         type="button"
                       >
                         <span className="material-symbols-outlined text-[14px]">
@@ -295,7 +295,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                         Share
                       </button>
                       <button
-                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
+                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark cursor-pointer"
                         type="button"
                         onClick={() => {
                           const nextTitle = window.prompt(
@@ -314,7 +314,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                         Rename
                       </button>
                       <button
-                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
+                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark cursor-pointer"
                         type="button"
                         onClick={() => {
                           void pinChat(chat.id);
@@ -327,7 +327,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                         {chat.isPinned ? "Unpin" : "Pin"}
                       </button>
                       <button
-                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-red-500 transition-colors hover:bg-red-500/10"
+                        className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-red-500 transition-colors hover:bg-red-500/10 cursor-pointer"
                         type="button"
                         onClick={() => {
                           void deleteChat(chat.id);
@@ -355,7 +355,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
       <div className="p-4 border-t border-slate-200 dark:border-border-dark">
         <div className="relative profile-menu" ref={profileMenuRef}>
           <button
-            className={`flex w-full items-center rounded-lg px-2 py-2 text-left transition-colors group focus:outline-none ${
+            className={`flex w-full items-center rounded-lg px-2 py-2 text-left transition-colors group focus:outline-none cursor-pointer ${
               isCollapsed
                 ? "justify-center"
                 : "gap-3 hover:bg-slate-50 dark:hover:bg-surface-dark text-slate-900 dark:text-white"
@@ -404,7 +404,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
               </div>
 
               <button
-                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors"
+                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors cursor-pointer"
                 type="button"
                 onClick={() => {
                   openProfile();
@@ -418,7 +418,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
               </button>
 
               <button
-                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors"
+                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors cursor-pointer"
                 type="button"
                 onClick={() => {
                   openSettings();
@@ -517,7 +517,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
               <div className="my-1 border-t border-slate-100 dark:border-border-dark" />
 
               <button
-                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark"
+                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark cursor-pointer"
                 type="button"
                 onClick={handleLogout}
               >

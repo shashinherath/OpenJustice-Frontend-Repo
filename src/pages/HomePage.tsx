@@ -125,7 +125,7 @@ const HomePage: React.FC = () => {
                   {t("disclaimerText")}
                 </p>
                 <Link
-                  className="mt-2 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-amber-700 hover:text-amber-900 dark:text-amber-300 dark:hover:text-amber-200 transition-colors"
+                  className="mt-2 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-amber-700 hover:text-amber-900 dark:text-amber-300 dark:hover:text-amber-200 transition-colors cursor-pointer"
                   to="/privacy-policy"
                   target="_blank"
                 >
@@ -142,14 +142,14 @@ const HomePage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleGetStarted}
-                className="flex w-full sm:w-auto min-w-50 h-14 items-center justify-center gap-2 rounded-xl bg-primary dark:bg-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.98] text-white text-lg font-bold shadow-xl transition-all"
+                className="flex w-full sm:w-auto min-w-50 h-14 items-center justify-center gap-2 rounded-xl bg-primary dark:bg-white dark:text-primary hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.98] text-white text-lg font-bold shadow-xl transition-all cursor-pointer"
               >
                 <span className="material-symbols-outlined">chat_bubble</span>
                 <span>{t("askQuestion")}</span>
               </button>
               <Link
                 to="/topics"
-                className="flex w-full sm:w-auto min-w-50 h-14 items-center justify-center gap-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-lg font-bold transition-all shadow-sm"
+                className="flex w-full sm:w-auto min-w-50 h-14 items-center justify-center gap-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-lg font-bold transition-all shadow-sm cursor-pointer"
               >
                 <span className="material-symbols-outlined">grid_view</span>
                 <span>{t("browseTopics")}</span>
@@ -182,7 +182,7 @@ const HomePage: React.FC = () => {
                 </p>
                 <button
                   onClick={handleGetStarted}
-                  className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-green-700 active:scale-95"
+                  className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-green-700 active:scale-95 cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[18px]">
                     qr_code_scanner
@@ -215,7 +215,7 @@ const HomePage: React.FC = () => {
                 </p>
                 <button
                   onClick={handleGetStarted}
-                  className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-blue-700 active:scale-95"
+                  className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-md transition-all hover:bg-blue-700 active:scale-95 cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-[18px]">
                     chat_bubble
@@ -250,7 +250,7 @@ const HomePage: React.FC = () => {
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
               <Link
-                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
+                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800 cursor-pointer"
                 to="/about-us"
               >
                 <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-300">
@@ -267,7 +267,7 @@ const HomePage: React.FC = () => {
               </Link>
 
               <Link
-                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
+                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800 cursor-pointer"
                 to="/contact"
               >
                 <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 dark:bg-emerald-900/20 dark:text-emerald-300">
@@ -284,7 +284,7 @@ const HomePage: React.FC = () => {
               </Link>
 
               <Link
-                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
+                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800 cursor-pointer"
                 to="/terms-of-service"
               >
                 <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600 dark:bg-amber-900/20 dark:text-amber-300">
@@ -301,7 +301,7 @@ const HomePage: React.FC = () => {
               </Link>
 
               <Link
-                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
+                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800 cursor-pointer"
                 to="/research"
               >
                 <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-900/20 dark:text-violet-300">
@@ -318,7 +318,7 @@ const HomePage: React.FC = () => {
               </Link>
 
               <Link
-                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800"
+                className="group rounded-2xl border border-slate-200 bg-slate-50 p-5 transition-all hover:-translate-y-0.5 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-[#232323] dark:hover:border-slate-600 dark:hover:bg-slate-800 cursor-pointer"
                 to="/developers"
               >
                 <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-900/20 dark:text-rose-300">

@@ -1,18 +1,15 @@
-import React from "react";
-import { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { LanguageContext } from "@/contexts/LanguageContext";
 import { useChatStore } from "@/stores/chatStore";
 import { useVoiceStore } from "@/stores/voiceStore";
 import { useVoiceRecording } from "@/hooks/useVoiceRecording";
 import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
-import { SUPPORTED_LANGUAGES, type AppLanguage } from "@/constants/languages";
+import LanguageSwitcherButton from "@/components/ui/LanguageSwitcherButton";
 
 const ChatPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const languageContext = useContext(LanguageContext);
   const [question, setQuestion] = useState("");
   const [isVoicePreview, setIsVoicePreview] = useState(false);
   const {
@@ -32,25 +29,6 @@ const ChatPage: React.FC = () => {
     voiceLevel,
     isPaused,
   } = useVoiceRecording();
-  const currentLanguage = (
-    languageContext?.currentLanguage || "en"
-  ).toLowerCase() as AppLanguage;
-  const availableLanguages =
-    languageContext?.availableLanguages || SUPPORTED_LANGUAGES;
-  const languageLabelMap: Record<string, string> = {
-    en: t("langEnglish"),
-    si: t("langSinhala"),
-    ta: t("langTamil"),
-  };
-
-  const handleLanguageChange: React.ChangeEventHandler<HTMLSelectElement> = (
-    event,
-  ) => {
-    const nextLanguage = event.target.value as AppLanguage;
-    if (languageContext?.changeLanguage) {
-      void languageContext.changeLanguage(nextLanguage);
-    }
-  };
 
   useEffect(() => {
     void loadConversations();
@@ -144,30 +122,7 @@ const ChatPage: React.FC = () => {
           </nav>
         </div>
         <div className="flex h-full items-center gap-3">
-          <div className="relative flex h-full items-center gap-2 rounded-full border border-white/50 bg-white/60 px-3 py-1.5 shadow-sm backdrop-blur-xl dark:border-white/10 dark:bg-white/5">
-            <span className="material-symbols-outlined text-[18px] text-slate-500 dark:text-slate-300">
-              language
-            </span>
-            <select
-              className="appearance-none bg-transparent pr-5 text-sm font-semibold tracking-tight text-slate-900 outline-none dark:text-slate-100"
-              value={currentLanguage}
-              onChange={handleLanguageChange}
-              aria-label={t("selectLanguage")}
-            >
-              {availableLanguages.map((language) => (
-                <option
-                  key={language}
-                  value={language}
-                  className="bg-white text-slate-900"
-                >
-                  {languageLabelMap[language] || language.toUpperCase()}
-                </option>
-              ))}
-            </select>
-            <span className="pointer-events-none absolute right-2 text-[14px] text-slate-500 material-symbols-outlined dark:text-slate-400">
-              expand_more
-            </span>
-          </div>
+          <LanguageSwitcherButton />
         </div>
       </header>
 

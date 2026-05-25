@@ -10,7 +10,13 @@ interface Props {
   ariaLabel?: string;
 }
 
-const LanguageSelect: React.FC<Props> = ({ value, onChange, options, className = "", ariaLabel }) => {
+const LanguageSelect: React.FC<Props> = ({
+  value,
+  onChange,
+  options,
+  className = "",
+  ariaLabel,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -65,7 +71,10 @@ const LanguageSelect: React.FC<Props> = ({ value, onChange, options, className =
 
   useEffect(() => {
     const handlePointerDown = (event: PointerEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         closeDropdown(false);
       }
     };
@@ -77,7 +86,9 @@ const LanguageSelect: React.FC<Props> = ({ value, onChange, options, className =
     };
   }, []);
 
-  const handleTriggerKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+  const handleTriggerKeyDown = (
+    event: React.KeyboardEvent<HTMLButtonElement>,
+  ) => {
     switch (event.key) {
       case "ArrowDown":
         event.preventDefault();
@@ -111,7 +122,10 @@ const LanguageSelect: React.FC<Props> = ({ value, onChange, options, className =
     }
   };
 
-  const handleOptionKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>, index: number) => {
+  const handleOptionKeyDown = (
+    event: React.KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) => {
     switch (event.key) {
       case "ArrowDown":
         event.preventDefault();
@@ -150,15 +164,29 @@ const LanguageSelect: React.FC<Props> = ({ value, onChange, options, className =
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-controls={listboxId}
-        aria-activedescendant={isOpen && focusedIndex >= 0 ? getOptionId(focusedIndex) : undefined}
+        aria-activedescendant={
+          isOpen && focusedIndex >= 0 ? getOptionId(focusedIndex) : undefined
+        }
         onClick={() => (isOpen ? closeDropdown() : openDropdown())}
         onKeyDown={handleTriggerKeyDown}
         className="flex w-full min-w-32 items-center justify-between gap-2 rounded-xl border border-slate-300 bg-white px-3 py-2 text-left text-sm font-semibold text-slate-800 shadow-lg shadow-black/10 transition-all duration-200 hover:border-slate-400 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 dark:border-slate-700/70 dark:bg-brand-bg dark:text-slate-200 dark:shadow-black/20 dark:hover:border-cyan-400/20 dark:hover:bg-[#202020]"
       >
         <span className="truncate">{selectedOption?.label ?? value}</span>
         <span className="flex h-7 w-7 items-center justify-center rounded-lg border border-slate-200 bg-slate-100 text-slate-600 transition-transform duration-200 dark:border-white/10 dark:bg-white/5 dark:text-cyan-200">
-          <svg className={`h-3.5 w-3.5 transition-transform ${isOpen ? "rotate-180" : ""}`} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden={true}>
-            <path d="M6 8l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <svg
+            className={`h-3.5 w-3.5 transition-transform ${isOpen ? "rotate-180" : ""}`}
+            viewBox="0 0 20 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden={true}
+          >
+            <path
+              d="M6 8l4 4 4-4"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </span>
       </button>
@@ -176,7 +204,9 @@ const LanguageSelect: React.FC<Props> = ({ value, onChange, options, className =
               return (
                 <button
                   key={option.value}
-                  ref={(el) => { optionRefs.current[index] = el; }}
+                  ref={(el) => {
+                    optionRefs.current[index] = el;
+                  }}
                   id={getOptionId(index)}
                   type="button"
                   role="option"
@@ -184,15 +214,30 @@ const LanguageSelect: React.FC<Props> = ({ value, onChange, options, className =
                   tabIndex={focusedIndex === index ? 0 : -1}
                   onClick={() => handleSelect(option.value)}
                   onKeyDown={(e) => handleOptionKeyDown(e, index)}
-                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 ${isSelected
-                    ? "bg-cyan-400/10 text-slate-900 ring-1 ring-cyan-300/20 dark:text-slate-100"
-                    : "text-slate-700 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-slate-100"
-                    }`}
+                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 ${
+                    isSelected
+                      ? "rounded-md bg-white text-slate-900 ring-1 ring-cyan-300/20 dark:bg-white dark:text-slate-900"
+                      : "text-slate-700 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-slate-100"
+                  }`}
                 >
                   <span className="font-semibold">{option.label}</span>
-                  <span className={`flex h-6 w-6 items-center justify-center rounded-full border ${isSelected ? "border-cyan-300/30 bg-cyan-400/10 text-slate-900 dark:text-slate-100" : "border-slate-200 bg-slate-100 text-slate-400 dark:border-white/10 dark:bg-white/5 dark:text-slate-500"}`}>
-                    <svg className="h-3 w-3" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden={true}>
-                      <path d="M7.5 10.5l2 2 4-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  <span
+                    className={`flex h-6 w-6 items-center justify-center rounded-full border ${isSelected ? "border-cyan-300/30 bg-white text-slate-900 dark:bg-white dark:text-slate-900" : "border-slate-200 bg-slate-100 text-slate-400 dark:border-white/10 dark:bg-white/5 dark:text-slate-500"}`}
+                  >
+                    <svg
+                      className="h-3 w-3"
+                      viewBox="0 0 20 20"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-hidden={true}
+                    >
+                      <path
+                        d="M7.5 10.5l2 2 4-5"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
                     </svg>
                   </span>
                 </button>
