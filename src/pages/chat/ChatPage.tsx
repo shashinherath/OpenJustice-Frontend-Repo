@@ -46,6 +46,8 @@ const ChatPage: React.FC = () => {
     void sendMessageToChat(chatId, text);
   };
 
+  const hasTypedText = question.trim().length > 0;
+
   const handleInputKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (
     event,
   ) => {
@@ -104,6 +106,7 @@ const ChatPage: React.FC = () => {
 
   return (
     <div className="relative flex min-h-full flex-1 flex-col overflow-hidden">
+      <style>{`@keyframes gradient-shift { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }`}</style>
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -left-20 top-0 h-72 w-72 rounded-full bg-sky-400/15 blur-3xl dark:bg-cyan-500/10" />
         <div className="absolute right-0 top-24 h-80 w-80 rounded-full bg-indigo-300/20 blur-3xl dark:bg-blue-500/10" />
@@ -181,30 +184,52 @@ const ChatPage: React.FC = () => {
                 onCancel={handleCancelVoice}
               />
             ) : (
-              <div className="relative flex w-full flex-1 items-center rounded-full border border-white/60 bg-white/70 px-4 py-1.5 shadow-[0_20px_60px_rgba(15,23,42,0.12)] backdrop-blur-2xl transition-all focus-within:ring-2 focus-within:ring-sky-200 dark:border-white/10 dark:bg-white/5 dark:focus-within:ring-slate-700">
-                <button
-                  className="flex size-10 shrink-0 items-center justify-center text-slate-400 transition-colors hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
-                  title={t("attachDocument")}
-                  type="button"
-                >
-                  <span className="material-symbols-outlined">attach_file</span>
-                </button>
-                <input
-                  className="min-w-0 flex-1 border-none bg-transparent px-2 text-base text-slate-900 outline-none focus:ring-0 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                  placeholder={t("queryPlaceholder")}
-                  type="text"
-                  value={question}
-                  onChange={(event) => setQuestion(event.target.value)}
-                  onKeyDown={handleInputKeyDown}
+              <div className="relative isolate flex w-full flex-1 items-center rounded-[30px] p-[1.5px] transition-all duration-300">
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none absolute inset-0 rounded-[30px] bg-[linear-gradient(90deg,rgba(34,211,238,0.95),rgba(59,130,246,0.95),rgba(168,85,247,0.9),rgba(245,158,11,0.85),rgba(34,211,238,0.95))] bg-size-[300%_100%] blur-xl transition-opacity duration-300 animate-[gradient-shift_4s_linear_infinite] ${
+                    hasTypedText ? "opacity-100" : "opacity-35"
+                  }`}
                 />
-                <button
-                  className="flex size-10 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
-                  title={t("voiceInput")}
-                  onClick={handleMicClick}
-                  type="button"
-                >
-                  <span className="material-symbols-outlined">mic</span>
-                </button>
+                <span
+                  aria-hidden="true"
+                  className={`pointer-events-none absolute inset-0 rounded-[30px] bg-[linear-gradient(90deg,rgba(34,211,238,0.7),rgba(59,130,246,0.75),rgba(168,85,247,0.7),rgba(245,158,11,0.65),rgba(34,211,238,0.7))] bg-size-[300%_100%] transition-opacity duration-300 animate-[gradient-shift_4s_linear_infinite] ${
+                    hasTypedText ? "opacity-100" : "opacity-0"
+                  }`}
+                />
+                <div className="relative z-10 flex w-full items-center gap-1 rounded-[28px] border border-white/10 bg-[#111111] px-3 py-2.5 shadow-[0_16px_50px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-[#111111]">
+                  <button
+                    className="flex size-10 shrink-0 items-center justify-center text-slate-300 transition-colors hover:text-white"
+                    title={t("attachDocument")}
+                    type="button"
+                  >
+                    <span className="material-symbols-outlined text-[22px]">
+                      add
+                    </span>
+                  </button>
+                  <input
+                    className="min-w-0 flex-1 border-none bg-transparent px-2 text-[15px] font-medium text-white outline-none placeholder:text-slate-400 focus:ring-0"
+                    placeholder={t("queryPlaceholder")}
+                    type="text"
+                    value={question}
+                    onChange={(event) => setQuestion(event.target.value)}
+                    onKeyDown={handleInputKeyDown}
+                  />
+                  <button
+                    className={`flex size-11 shrink-0 items-center justify-center rounded-full border transition-all duration-300 ${
+                      hasTypedText
+                        ? "border-sky-400/90 bg-slate-950 text-white shadow-[0_0_0_4px_rgba(59,130,246,0.18),0_0_18px_rgba(59,130,246,0.5)]"
+                        : "border-slate-700 bg-slate-900 text-slate-200 hover:border-slate-500 hover:text-white"
+                    }`}
+                    title={t("voiceInput")}
+                    onClick={handleMicClick}
+                    type="button"
+                  >
+                    <span className="material-symbols-outlined text-[22px]">
+                      mic
+                    </span>
+                  </button>
+                </div>
               </div>
             )}
             {!recordingState.isRecording && !isVoicePreview && (
