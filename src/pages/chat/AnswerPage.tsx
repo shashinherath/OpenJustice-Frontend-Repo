@@ -265,7 +265,7 @@ const AnswerPage: React.FC = () => {
         </div>
       </div>
 
-      <footer className="shrink-0 border-t border-slate-200 bg-white px-4 py-4 dark:border-border-dark dark:bg-brand-bg">
+      <footer className="shrink-0 border-t border-transparent bg-transparent px-4 py-4 dark:border-transparent dark:bg-transparent">
         <div className="mx-auto flex w-full max-w-4xl items-center gap-3">
           <button
             className="flex size-10 shrink-0 items-center justify-center text-slate-400 transition-colors disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-500"
@@ -325,6 +325,12 @@ const AnswerPage: React.FC = () => {
               </button>
             </>
           )}
+        </div>
+        <div className="mt-4 text-center">
+          <p className="flex items-center justify-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+            <span className="material-symbols-outlined text-[14px]">info</span>
+            {t("aiVerificationNotice")}
+          </p>
         </div>
       </footer>
     </div>
