@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useChatStore } from "../../stores/chatStore";
@@ -43,6 +43,9 @@ const AnswerPage: React.FC = () => {
     () => chatMessagesById[chatId] || [],
     [chatMessagesById, chatId],
   );
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+  const [shouldAutoScrollToBottom, setShouldAutoScrollToBottom] =
+    useState(false);
 
   const createdAtLabel = useMemo(() => {
     const firstMessage = messages[0];
@@ -56,9 +59,25 @@ const AnswerPage: React.FC = () => {
 
   useEffect(() => {
     if (chatId) {
+      setShouldAutoScrollToBottom(true);
       void loadConversation(chatId);
     }
   }, [chatId, loadConversation]);
+
+  useEffect(() => {
+    if (!shouldAutoScrollToBottom) {
+      return;
+    }
+
+    messagesContainerRef.current?.scrollTo({
+      top: messagesContainerRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+
+    if (!isTyping) {
+      setShouldAutoScrollToBottom(false);
+    }
+  }, [isTyping, messages, shouldAutoScrollToBottom]);
 
   const handleSend = async () => {
     const trimmedQuestion = question.trim();
@@ -68,6 +87,7 @@ const AnswerPage: React.FC = () => {
     }
 
     setQuestion("");
+    setShouldAutoScrollToBottom(true);
 
     await sendMessageToChat(chatId, trimmedQuestion);
   };
@@ -138,6 +158,7 @@ const AnswerPage: React.FC = () => {
 
     reset();
     setIsVoicePreview(false);
+    setShouldAutoScrollToBottom(true);
 
     await sendVoiceMessageToChat(chatId, audioBlob);
   };
@@ -183,7 +204,10 @@ const AnswerPage: React.FC = () => {
         </button>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div
+        ref={messagesContainerRef}
+        className="min-h-0 flex-1 overflow-y-auto"
+      >
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 py-6">
           {showTypingIndicator ? (
             <div className="mr-auto max-w-[88%] rounded-xl border border-slate-200 bg-white p-3 px-4 text-sm text-slate-700 shadow-sm dark:border-border-dark dark:bg-surface-dark dark:text-slate-200">
