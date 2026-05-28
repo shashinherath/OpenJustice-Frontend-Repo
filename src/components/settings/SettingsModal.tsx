@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { createPortal } from "react-dom";
 import SettingsPage from "@/pages/settings/SettingsPage";
 
 interface SettingsModalProps {
@@ -33,8 +34,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
     return null;
   }
 
-  return (
-    <div className="fixed inset-0 z-120 flex items-center justify-center bg-black/60 p-3 sm:p-6" onClick={onClose}>
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[130] flex items-center justify-center bg-black/60 p-3 sm:p-6"
+      onClick={onClose}
+    >
       <div
         className="h-[82vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-zinc-800 bg-[#191919] text-zinc-100 shadow-2xl"
         onClick={(event) => event.stopPropagation()}
@@ -44,8 +48,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
       >
         <header className="sticky top-0 z-10 flex items-center justify-between border-b border-zinc-800 bg-[#121212] px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-zinc-300">settings</span>
-            <h2 className="text-base font-bold tracking-tight text-zinc-100 sm:text-lg">Account Settings</h2>
+            <span className="material-symbols-outlined text-zinc-300">
+              settings
+            </span>
+            <h2 className="text-base font-bold tracking-tight text-zinc-100 sm:text-lg">
+              Account Settings
+            </h2>
           </div>
           <button
             className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-zinc-900 hover:text-zinc-100"
@@ -61,7 +69,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
           <SettingsPage />
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 

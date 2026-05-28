@@ -166,9 +166,10 @@ const HomePage: React.FC = () => {
   const handleGetStarted = () => {
     if (isAuthenticated) {
       navigate(userRole === "admin" ? "/admin" : "/chat");
-    } else {
-      setIsLoginOpen(true);
+      return;
     }
+
+    setIsLoginOpen(true);
   };
 
   const handleHeroPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {

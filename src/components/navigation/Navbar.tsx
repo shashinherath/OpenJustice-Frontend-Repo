@@ -29,7 +29,7 @@ const Navbar: React.FC = () => {
 
             {/* Login Button */}
             <button
-              className="text-sm font-semibold text-primary dark:text-white hover:opacity-70 transition-opacity"
+              className="cursor-pointer text-sm font-semibold text-primary transition-opacity hover:opacity-70 dark:text-white"
               type="button"
               onClick={() => setIsLoginOpen(true)}
             >

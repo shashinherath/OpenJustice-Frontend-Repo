@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import BrandLogo from "@/components/ui/BrandLogo";
@@ -91,13 +92,13 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
       onClick={handleClose}
     >
       <div
-        className="w-full max-w-110 bg-slate-700 dark:bg-zinc-800 rounded-2xl shadow-2xl p-8 md:p-10 border border-slate-600 dark:border-slate-700"
+        className="relative w-full max-w-110 rounded-2xl border border-slate-600 bg-slate-700 p-8 shadow-2xl dark:border-slate-700 dark:bg-zinc-800 md:p-10"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
@@ -232,7 +233,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 

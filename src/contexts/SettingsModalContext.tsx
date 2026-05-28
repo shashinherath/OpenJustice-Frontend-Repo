@@ -11,9 +11,13 @@ export interface SettingsModalContextType {
   closeProfile: () => void;
 }
 
-export const SettingsModalContext = createContext<SettingsModalContextType | undefined>(undefined);
+export const SettingsModalContext = createContext<
+  SettingsModalContextType | undefined
+>(undefined);
 
-export const SettingsModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const SettingsModalProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
@@ -34,8 +38,7 @@ export const SettingsModalProvider: React.FC<{ children: React.ReactNode }> = ({
       }}
     >
       {children}
-      <SettingsModal isOpen={isSettingsOpen} onClose={closeSettings} />
-      <ProfileModal isOpen={isProfileOpen} onClose={closeProfile} />
+      {/* Modals are rendered inside the Router (App) to ensure navigation hooks like useNavigate work correctly */}
     </SettingsModalContext.Provider>
   );
 };
