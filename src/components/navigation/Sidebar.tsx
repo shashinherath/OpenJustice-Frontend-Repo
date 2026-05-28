@@ -4,6 +4,7 @@ import { useSettingsModal } from "@/hooks/common/useSettingsModal";
 import { useChatStore } from "@/stores/chatStore";
 import { useAuthStore } from "@/stores/authStore";
 import BrandLogo from "@/components/ui/BrandLogo";
+import ChatActionModal from "@/components/ui/ChatActionModal";
 
 interface SidebarProps {
   showBrand?: boolean;
@@ -13,6 +14,12 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [activeChatMenu, setActiveChatMenu] = useState<string | null>(null);
+  const [chatModalState, setChatModalState] = useState<{
+    mode: "rename" | "delete";
+    chatId: string;
+    title: string;
+    value?: string;
+  } | null>(null);
   const [historySearch, setHistorySearch] = useState("");
   const [isCollapsed, setIsCollapsed] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
@@ -298,14 +305,13 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                         className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-slate-600 transition-colors hover:bg-slate-50 dark:text-slate-300 dark:hover:bg-border-dark cursor-pointer"
                         type="button"
                         onClick={() => {
-                          const nextTitle = window.prompt(
-                            "Rename chat",
-                            chat.title,
-                          );
-                          if (nextTitle && nextTitle.trim()) {
-                            void renameChat(chat.id, nextTitle.trim());
-                          }
                           setActiveChatMenu(null);
+                          setChatModalState({
+                            mode: "rename",
+                            chatId: chat.id,
+                            title: chat.title,
+                            value: chat.title,
+                          });
                         }}
                       >
                         <span className="material-symbols-outlined text-[14px]">
@@ -330,8 +336,12 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                         className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-red-500 transition-colors hover:bg-red-500/10 cursor-pointer"
                         type="button"
                         onClick={() => {
-                          void deleteChat(chat.id);
                           setActiveChatMenu(null);
+                          setChatModalState({
+                            mode: "delete",
+                            chatId: chat.id,
+                            title: chat.title,
+                          });
                         }}
                       >
                         <span className="material-symbols-outlined text-[14px]">
@@ -351,6 +361,65 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
           </div>
         </div>
       </div>
+
+      <ChatActionModal
+        isOpen={chatModalState !== null}
+        title={
+          chatModalState?.mode === "rename" ? "Rename chat" : "Delete chat"
+        }
+        description={
+          chatModalState?.mode === "rename"
+            ? `Choose a new title for "${chatModalState.title}".`
+            : `Are you sure you want to permanently delete "${chatModalState?.title ?? "this chat"}"? This action cannot be undone.`
+        }
+        confirmLabel={chatModalState?.mode === "rename" ? "Rename" : "Delete"}
+        tone={chatModalState?.mode === "delete" ? "danger" : "default"}
+        icon={
+          chatModalState?.mode === "rename"
+            ? "drive_file_rename_outline"
+            : "delete_forever"
+        }
+        inputLabel={
+          chatModalState?.mode === "rename" ? "Chat title" : undefined
+        }
+        inputValue={
+          chatModalState?.mode === "rename"
+            ? (chatModalState.value ?? "")
+            : undefined
+        }
+        inputPlaceholder="Enter chat title"
+        onInputChange={
+          chatModalState?.mode === "rename"
+            ? (value) =>
+                setChatModalState((current) =>
+                  current?.mode === "rename" ? { ...current, value } : current,
+                )
+            : undefined
+        }
+        onClose={() => setChatModalState(null)}
+        onConfirm={() => {
+          if (!chatModalState) {
+            return;
+          }
+
+          if (chatModalState.mode === "rename") {
+            const nextTitle = (chatModalState.value ?? "").trim();
+            if (!nextTitle) {
+              return;
+            }
+
+            void renameChat(chatModalState.chatId, nextTitle);
+          } else {
+            void deleteChat(chatModalState.chatId);
+            if (selectedChatId === chatModalState.chatId) {
+              navigate("/chat");
+            }
+          }
+
+          setActiveChatMenu(null);
+          setChatModalState(null);
+        }}
+      />
 
       <div className="p-4 border-t border-slate-200 dark:border-border-dark">
         <div className="relative profile-menu" ref={profileMenuRef}>
