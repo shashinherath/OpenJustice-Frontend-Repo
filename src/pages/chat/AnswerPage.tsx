@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useChatStore } from "../../stores/chatStore";
@@ -6,6 +6,7 @@ import type { SidebarChatItem } from "../../stores/chatStore";
 import type { ChatMessage } from "../../types/chat.types";
 import { useVoiceStore } from "@/stores/voiceStore";
 import { useVoiceRecording } from "@/hooks/useVoiceRecording";
+import ConversationComposer from "@/components/chat/ConversationComposer";
 import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
 import VoiceMessagePlayer from "@/components/ui/VoiceMessagePlayer";
 import MarkdownText from "@/components/common/MarkdownText";
@@ -42,6 +43,9 @@ const AnswerPage: React.FC = () => {
     () => chatMessagesById[chatId] || [],
     [chatMessagesById, chatId],
   );
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
+  const [shouldAutoScrollToBottom, setShouldAutoScrollToBottom] =
+    useState(false);
 
   const createdAtLabel = useMemo(() => {
     const firstMessage = messages[0];
@@ -55,16 +59,37 @@ const AnswerPage: React.FC = () => {
 
   useEffect(() => {
     if (chatId) {
+      setShouldAutoScrollToBottom(true);
       void loadConversation(chatId);
     }
   }, [chatId, loadConversation]);
 
-  const handleSend = async () => {
-    if (!chatId || !question.trim()) {
+  useEffect(() => {
+    if (!shouldAutoScrollToBottom) {
       return;
     }
-    await sendMessageToChat(chatId, question.trim());
+
+    messagesContainerRef.current?.scrollTo({
+      top: messagesContainerRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+
+    if (!isTyping) {
+      setShouldAutoScrollToBottom(false);
+    }
+  }, [isTyping, messages, shouldAutoScrollToBottom]);
+
+  const handleSend = async () => {
+    const trimmedQuestion = question.trim();
+
+    if (!chatId || !trimmedQuestion) {
+      return;
+    }
+
     setQuestion("");
+    setShouldAutoScrollToBottom(true);
+
+    await sendMessageToChat(chatId, trimmedQuestion);
   };
 
   const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = (
@@ -131,9 +156,11 @@ const AnswerPage: React.FC = () => {
       return;
     }
 
-    await sendVoiceMessageToChat(chatId, audioBlob);
     reset();
     setIsVoicePreview(false);
+    setShouldAutoScrollToBottom(true);
+
+    await sendVoiceMessageToChat(chatId, audioBlob);
   };
 
   if (!chat) {
@@ -177,7 +204,10 @@ const AnswerPage: React.FC = () => {
         </button>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
+      <div
+        ref={messagesContainerRef}
+        className="min-h-0 flex-1 overflow-y-auto"
+      >
         <div className="mx-auto flex w-full max-w-4xl flex-col gap-4 px-4 py-6">
           {showTypingIndicator ? (
             <div className="mr-auto max-w-[88%] rounded-xl border border-slate-200 bg-white p-3 px-4 text-sm text-slate-700 shadow-sm dark:border-border-dark dark:bg-surface-dark dark:text-slate-200">
@@ -266,65 +296,58 @@ const AnswerPage: React.FC = () => {
       </div>
 
       <footer className="shrink-0 border-t border-transparent bg-transparent px-4 py-4 dark:border-transparent dark:bg-transparent">
-        <div className="mx-auto flex w-full max-w-4xl items-center gap-3">
-          <button
-            className="flex size-10 shrink-0 items-center justify-center text-slate-400 transition-colors disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-500"
-            title={t("attachDocument")}
-            type="button"
-            disabled
-          >
-            <span className="material-symbols-outlined text-[20px]">
-              attach_file
-            </span>
-          </button>
+        <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-3 md:flex-row">
           {recordingState.isRecording || isVoicePreview ? (
             <VoiceRecordingUI
               durationLabel={formatDuration(recordingState.duration)}
               voiceLevel={voiceLevel}
               isPaused={isPaused}
               isPreview={isVoicePreview}
+              isActive={recordingState.isRecording && !isPaused}
               onPauseResume={handlePauseResumeVoice}
               onStop={handleStopVoice}
               onPlay={handlePlayVoice}
-              onSend={handleSendVoice}
               onCancel={handleCancelVoice}
             />
           ) : (
-            <>
-              <div className="relative flex w-full flex-1 items-center rounded-full border border-white/60 bg-white/70 px-4 py-1.5 shadow-[0_20px_60px_rgba(15,23,42,0.12)] backdrop-blur-2xl transition-all focus-within:ring-2 focus-within:ring-sky-200 dark:border-white/10 dark:bg-white/5 dark:focus-within:ring-slate-700">
-                <input
-                  className="min-w-0 flex-1 border-none bg-transparent px-2 text-base text-slate-900 outline-none focus:ring-0 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600"
-                  placeholder={t("queryPlaceholder")}
-                  type="text"
-                  value={question}
-                  onChange={(event) => setQuestion(event.target.value)}
-                  onKeyDown={handleKeyDown}
-                />
-                <button
-                  className="flex size-10 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300"
-                  title={t("voiceInput")}
-                  type="button"
-                  onClick={handleMicClick}
-                >
-                  <span className="material-symbols-outlined">mic</span>
-                </button>
-              </div>
-              <button
-                className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-white/40 font-bold shadow-[0_18px_45px_rgba(15,23,42,0.18)] transition-all md:mt-0 ${
-                  !question.trim()
-                    ? "cursor-not-allowed bg-slate-200 text-slate-400 shadow-none dark:bg-slate-800 dark:text-slate-600"
-                    : "cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"
-                }`}
-                type="button"
-                onClick={handleSend}
-                disabled={!question.trim()}
-              >
-                <span className="material-symbols-outlined text-[28px]">
-                  arrow_forward
-                </span>
-              </button>
-            </>
+            <ConversationComposer
+              value={question}
+              placeholder={t("queryPlaceholder")}
+              attachTitle={t("attachDocument")}
+              micTitle={t("voiceInput")}
+              onChange={(event) => setQuestion(event.target.value)}
+              onKeyDown={handleKeyDown}
+              onMicClick={handleMicClick}
+              attachDisabled
+            />
           )}
+          {!recordingState.isRecording && !isVoicePreview ? (
+            <button
+              className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-white/40 font-bold shadow-[0_18px_45px_rgba(15,23,42,0.18)] transition-all md:mt-0 ${
+                !question.trim()
+                  ? "cursor-not-allowed bg-slate-200 text-slate-400 shadow-none dark:bg-slate-800 dark:text-slate-600"
+                  : "cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"
+              }`}
+              type="button"
+              onClick={handleSend}
+              disabled={!question.trim()}
+            >
+              <span className="material-symbols-outlined text-[28px]">
+                arrow_forward
+              </span>
+            </button>
+          ) : null}
+          {isVoicePreview ? (
+            <button
+              className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-white/40 font-bold shadow-[0_18px_45px_rgba(15,23,42,0.18)] transition-all md:mt-0 ${"cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"}`}
+              type="button"
+              onClick={handleSendVoice}
+            >
+              <span className="material-symbols-outlined text-[28px]">
+                arrow_upward
+              </span>
+            </button>
+          ) : null}
         </div>
         <div className="mt-4 text-center">
           <p className="flex items-center justify-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
