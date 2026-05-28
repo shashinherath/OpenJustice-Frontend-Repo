@@ -13,6 +13,7 @@ interface AuthStore {
 
   login: (user: User, token: string) => void;
   logout: () => Promise<void>;
+  clearSession: () => void;
   updateUser: (data: Partial<User>) => void;
   loadProfile: () => Promise<void>;
   updateProfileFromBackend: (data: Partial<User>) => Promise<void>;
@@ -53,6 +54,15 @@ export const useAuthStore = create<AuthStore>()(
           token: null,
           isAuthenticated: false,
           userRole: null,
+        });
+      },
+      clearSession: () => {
+        set({
+          user: null,
+          token: null,
+          isAuthenticated: false,
+          userRole: null,
+          isLoadingProfile: false,
         });
       },
       updateUser: (data) =>

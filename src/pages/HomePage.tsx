@@ -128,6 +128,7 @@ const HomePage: React.FC = () => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const userRole = useAuthStore((state) => state.userRole);
   const loadProfile = useAuthStore((state) => state.loadProfile);
+  const clearSession = useAuthStore((state) => state.clearSession);
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [heroMotion, setHeroMotion] = useState<HeroMotion>({
@@ -145,6 +146,32 @@ const HomePage: React.FC = () => {
       });
     }
   }, [isAuthenticated, loadProfile]);
+
+  useEffect(() => {
+    const sessionExpired =
+      window.sessionStorage.getItem("oj-auth-session-expired") === "1";
+
+    if (!sessionExpired && searchParams.get("login") !== "1") {
+      return;
+    }
+
+    clearSession();
+    window.sessionStorage.removeItem("oj-auth-session-expired");
+  }, [clearSession, searchParams]);
+
+  useEffect(() => {
+    const openLoginModal = () => {
+      clearSession();
+      window.sessionStorage.removeItem("oj-auth-session-expired");
+      setIsLoginOpen(true);
+    };
+
+    window.addEventListener("oj:open-login-modal", openLoginModal);
+
+    return () => {
+      window.removeEventListener("oj:open-login-modal", openLoginModal);
+    };
+  }, [clearSession]);
 
   // Redirect authenticated users away from login
   useEffect(() => {
