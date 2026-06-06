@@ -147,6 +147,11 @@ export const adminService = {
   async getSecurityMonitoring(): Promise<AdminSecurityMonitoringResponse> {
     const response = await apiClient.get<AdminSecurityMonitoringResponse>("/admin/security-monitoring");
     return response.data;
+  },
+
+  async getAIEvaluationMetrics(): Promise<AdminAIEvaluationResponse> {
+    const response = await apiClient.get<AdminAIEvaluationResponse>("/admin/analytics/ai-evaluation");
+    return response.data;
   }
 };
 
@@ -326,5 +331,18 @@ export interface AdminSecurityMonitoringResponse {
   monitoring_areas: MonitoringArea[];
   priority_alerts: PriorityAlert[];
   recent_events: SecurityEventRecord[];
+}
+
+export interface ModelRun {
+  model: string;
+  accuracy: number;
+  tokens: number;
+}
+
+export interface AdminAIEvaluationResponse {
+  accuracy: number;
+  hallucination_rate: number;
+  avg_tokens: number;
+  recent_model_runs: ModelRun[];
 }
 
