@@ -137,6 +137,11 @@ export const adminService = {
   async getRetrievalMonitoring(): Promise<AdminRetrievalMonitoringResponse> {
     const response = await apiClient.get<AdminRetrievalMonitoringResponse>("/admin/retrieval-monitoring");
     return response.data;
+  },
+
+  async getSecurityMonitoring(): Promise<AdminSecurityMonitoringResponse> {
+    const response = await apiClient.get<AdminSecurityMonitoringResponse>("/admin/security-monitoring");
+    return response.data;
   }
 };
 
@@ -267,5 +272,43 @@ export interface AdminRetrievalMonitoringResponse {
   trend_points: TrendPoint[];
   health_targets: HealthTargets;
   retrieval_checks: RetrievalCheck[];
+}
+
+export interface SecuritySignal {
+  label: string;
+  value: string;
+  note: string;
+  tone: "cyan" | "emerald" | "amber" | "violet" | "rose";
+}
+
+export interface MonitoringArea {
+  key: string;
+  title: string;
+  icon: string;
+  status: "Healthy" | "Watch" | "Needs Action";
+  summary: string;
+  metricLabel: string;
+  metricValue: string;
+}
+
+export interface PriorityAlert {
+  title: string;
+  detail: string;
+  severity: "Critical" | "High" | "Medium" | "Low";
+}
+
+export interface SecurityEventRecord {
+  area: string;
+  source: string;
+  detail: string;
+  severity: "Critical" | "High" | "Medium" | "Low";
+  timestamp: string;
+}
+
+export interface AdminSecurityMonitoringResponse {
+  signals: SecuritySignal[];
+  monitoring_areas: MonitoringArea[];
+  priority_alerts: PriorityAlert[];
+  recent_events: SecurityEventRecord[];
 }
 
