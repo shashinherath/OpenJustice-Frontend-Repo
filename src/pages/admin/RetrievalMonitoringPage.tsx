@@ -1,99 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-interface RetrievalMetric {
-  label: string;
-  value: string;
-  note: string;
-  tone: "emerald" | "cyan" | "amber" | "violet" | "rose";
-}
-
-interface RetrievalCheck {
-  queryFamily: string;
-  topK: number;
-  avgSimilarity: string;
-  latency: string;
-  citationValidity: string;
-  status: "Healthy" | "Review" | "Degraded";
-}
-
-const METRICS: RetrievalMetric[] = [
-  {
-    label: "Avg similarity score",
-    value: "0.87",
-    note: "Mean cosine similarity across recent retrievals.",
-    tone: "cyan",
-  },
-  {
-    label: "Top-K accuracy",
-    value: "92.4%",
-    note: "Relevant chunk appears inside the first K results.",
-    tone: "emerald",
-  },
-  {
-    label: "Retrieval latency",
-    value: "184ms",
-    note: "Median time from query to ranked chunk response.",
-    tone: "amber",
-  },
-  {
-    label: "Chunk hit rate",
-    value: "96.1%",
-    note: "Queries that return at least one highly relevant chunk.",
-    tone: "violet",
-  },
-  {
-    label: "Citation validity",
-    value: "98.3%",
-    note: "Answer citations resolve to matching retrieval evidence.",
-    tone: "rose",
-  },
-];
-
-const TREND_POINTS = [
-  { label: "Mon", value: 82 },
-  { label: "Tue", value: 84 },
-  { label: "Wed", value: 86 },
-  { label: "Thu", value: 87 },
-  { label: "Fri", value: 88 },
-  { label: "Sat", value: 86 },
-  { label: "Sun", value: 87 },
-];
-
-const RETRIEVAL_CHECKS: RetrievalCheck[] = [
-  {
-    queryFamily: "Constitutional rights",
-    topK: 5,
-    avgSimilarity: "0.91",
-    latency: "162ms",
-    citationValidity: "100%",
-    status: "Healthy",
-  },
-  {
-    queryFamily: "Land dispute precedent",
-    topK: 5,
-    avgSimilarity: "0.84",
-    latency: "188ms",
-    citationValidity: "96%",
-    status: "Healthy",
-  },
-  {
-    queryFamily: "Procedural rule lookup",
-    topK: 10,
-    avgSimilarity: "0.78",
-    latency: "241ms",
-    citationValidity: "92%",
-    status: "Review",
-  },
-  {
-    queryFamily: "Policy cross-reference",
-    topK: 5,
-    avgSimilarity: "0.72",
-    latency: "263ms",
-    citationValidity: "88%",
-    status: "Degraded",
-  },
-];
+import { adminService, AdminRetrievalMonitoringResponse, RetrievalMetric, RetrievalCheck } from "@/services/adminService";
 
 const getToneClasses = (tone: RetrievalMetric["tone"]) => {
   const tones: Record<RetrievalMetric["tone"], string> = {
@@ -120,6 +27,41 @@ const getStatusClasses = (status: RetrievalCheck["status"]) => {
 };
 
 const RetrievalMonitoringPage: React.FC = () => {
+  const [data, setData] = useState<AdminRetrievalMonitoringResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await adminService.getRetrievalMonitoring();
+        setData(response);
+      } catch (err: any) {
+        setError(err.message || "Failed to load retrieval monitoring data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center p-8">
+        <div className="text-cyan-400">Loading retrieval monitoring...</div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="flex h-64 items-center justify-center p-8">
+        <div className="text-rose-400">Error: {error || "No data available"}</div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 p-8">
       <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
@@ -144,7 +86,7 @@ const RetrievalMonitoringPage: React.FC = () => {
       </section>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
-        {METRICS.map((metric) => (
+        {data.metrics.map((metric) => (
           <article
             key={metric.label}
             className="rounded border border-white/10 bg-[#191919] p-5"
@@ -179,7 +121,7 @@ const RetrievalMonitoringPage: React.FC = () => {
           </div>
 
           <div className="mt-5 grid grid-cols-7 gap-2">
-            {TREND_POINTS.map((point) => (
+            {data.trend_points.map((point) => (
               <div key={point.label} className="space-y-2 text-center">
                 <div className="flex h-44 items-end rounded border border-white/10 bg-black/30 p-2">
                   <div
@@ -206,7 +148,7 @@ const RetrievalMonitoringPage: React.FC = () => {
                 <span className="text-sm font-semibold text-slate-200">
                   Latency p95
                 </span>
-                <span className="text-sm font-bold text-amber-300">240ms</span>
+                <span className="text-sm font-bold text-amber-300">{data.health_targets.latencyP95}</span>
               </div>
               <p className="mt-2 text-xs text-slate-400">
                 Investigate cache misses and vector store pressure when this
@@ -218,7 +160,7 @@ const RetrievalMonitoringPage: React.FC = () => {
                 <span className="text-sm font-semibold text-slate-200">
                   Citation mismatch rate
                 </span>
-                <span className="text-sm font-bold text-rose-300">1.7%</span>
+                <span className="text-sm font-bold text-rose-300">{data.health_targets.citationMismatchRate}</span>
               </div>
               <p className="mt-2 text-xs text-slate-400">
                 Any increase here should be traced to prompt grounding or source
@@ -230,7 +172,7 @@ const RetrievalMonitoringPage: React.FC = () => {
                 <span className="text-sm font-semibold text-slate-200">
                   Top-K hit confidence
                 </span>
-                <span className="text-sm font-bold text-emerald-300">High</span>
+                <span className="text-sm font-bold text-emerald-300">{data.health_targets.topKHitConfidence}</span>
               </div>
               <p className="mt-2 text-xs text-slate-400">
                 Prefer stable gains here before relaxing chunking or ranking
@@ -252,7 +194,7 @@ const RetrievalMonitoringPage: React.FC = () => {
             </p>
           </div>
           <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-            {RETRIEVAL_CHECKS.length} entries
+            {data.retrieval_checks.length} entries
           </span>
         </div>
 
@@ -269,8 +211,8 @@ const RetrievalMonitoringPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {RETRIEVAL_CHECKS.map((check) => (
-                <tr key={check.queryFamily} className="border-b border-white/5">
+              {data.retrieval_checks.map((check, index) => (
+                <tr key={`${check.queryFamily}-${index}`} className="border-b border-white/5">
                   <td className="px-3 py-3 text-slate-200">
                     {check.queryFamily}
                   </td>
