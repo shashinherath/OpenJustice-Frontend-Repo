@@ -122,8 +122,44 @@ export const adminService = {
   async getUsageAnalytics(): Promise<AdminUsageAnalyticsResponse> {
     const response = await apiClient.get<AdminUsageAnalyticsResponse>("/admin/usage-analytics");
     return response.data;
+  },
+
+  async getCostAnalytics(): Promise<AdminCostAnalyticsResponse> {
+    const response = await apiClient.get<AdminCostAnalyticsResponse>("/admin/cost-analytics");
+    return response.data;
   }
 };
+
+export interface CostDriver {
+  key: string;
+  title: string;
+  model: string;
+  unit: string;
+  usage: number;
+  estimatedCost: number;
+  trend: string;
+  detail: string;
+  colorClass: string;
+}
+
+export interface TwilioItem {
+  label: string;
+  value: number;
+  cost: number;
+  note: string;
+}
+
+export interface DailyCostPoint {
+  day: string;
+  openAi: number;
+  twilio: number;
+}
+
+export interface AdminCostAnalyticsResponse {
+  cost_drivers: CostDriver[];
+  twilio_items: TwilioItem[];
+  daily_costs: DailyCostPoint[];
+}
 
 export interface UsageDailyStat {
   day: string;
