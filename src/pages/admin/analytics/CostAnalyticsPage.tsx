@@ -1,100 +1,5 @@
-import React, { useMemo } from "react";
-
-interface CostDriver {
-  key: string;
-  title: string;
-  model: string;
-  unit: string;
-  usage: number;
-  estimatedCost: number;
-  trend: string;
-  detail: string;
-  colorClass: string;
-}
-
-interface DailyCostPoint {
-  day: string;
-  openAi: number;
-  twilio: number;
-}
-
-const COST_DRIVERS: CostDriver[] = [
-  {
-    key: "llm",
-    title: "Language Models",
-    model: "gpt-4o",
-    unit: "input/output tokens",
-    usage: 2840000,
-    estimatedCost: 124.8,
-    trend: "+14%",
-    detail: "Primary OpenAI cost driver for text generation and reasoning.",
-    colorClass: "bg-cyan-400",
-  },
-  {
-    key: "embeddings",
-    title: "Vector Embeddings",
-    model: "text-embedding-3-small",
-    unit: "embedded tokens",
-    usage: 9620000,
-    estimatedCost: 18.4,
-    trend: "+6%",
-    detail: "RAG indexing and semantic search for legal document retrieval.",
-    colorClass: "bg-emerald-400",
-  },
-  {
-    key: "stt",
-    title: "Speech-to-Text",
-    model: "whisper-1",
-    unit: "minutes transcribed",
-    usage: 418,
-    estimatedCost: 62.7,
-    trend: "+9%",
-    detail: "Audio uploads converted into text for downstream legal workflows.",
-    colorClass: "bg-amber-400",
-  },
-  {
-    key: "tts",
-    title: "Text-to-Speech",
-    model: "tts-1 / alloy",
-    unit: "characters generated",
-    usage: 1675000,
-    estimatedCost: 24.1,
-    trend: "-3%",
-    detail: "Audio responses generated for voice-enabled interactions.",
-    colorClass: "bg-rose-400",
-  },
-];
-
-const TWILIO_ITEMS = [
-  {
-    label: "WhatsApp messages",
-    value: 6240,
-    cost: 39.6,
-    note: "Per-message send/receive fees",
-  },
-  {
-    label: "Monthly phone number",
-    value: 1,
-    cost: 1.5,
-    note: "Recurring line rental",
-  },
-  {
-    label: "Delivery retries",
-    value: 180,
-    cost: 6.3,
-    note: "Retry and network fallback traffic",
-  },
-];
-
-const DAILY_COST: DailyCostPoint[] = [
-  { day: "Mon", openAi: 32.4, twilio: 5.1 },
-  { day: "Tue", openAi: 35.8, twilio: 5.3 },
-  { day: "Wed", openAi: 38.6, twilio: 5.9 },
-  { day: "Thu", openAi: 47.1, twilio: 6.4 },
-  { day: "Fri", openAi: 49.8, twilio: 6.8 },
-  { day: "Sat", openAi: 29.3, twilio: 4.1 },
-  { day: "Sun", openAi: 27.9, twilio: 3.8 },
-];
+import React, { useMemo, useEffect, useState } from "react";
+import { adminService, type AdminCostAnalyticsResponse } from "@/services/adminService";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -105,35 +10,61 @@ const currencyFormatter = new Intl.NumberFormat("en-US", {
 const integerFormatter = new Intl.NumberFormat("en-US");
 
 const CostAnalyticsPage: React.FC = () => {
+  const [data, setData] = useState<AdminCostAnalyticsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await adminService.getCostAnalytics();
+        setData(response);
+      } catch (err: any) {
+        setError(err.message || "Failed to load cost analytics");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const totalOpenAiCost = useMemo(
-    () => COST_DRIVERS.reduce((sum, driver) => sum + driver.estimatedCost, 0),
-    [],
+    () => data?.cost_drivers.reduce((sum, driver) => sum + driver.estimatedCost, 0) || 0,
+    [data]
   );
+  
   const totalTwilioCost = useMemo(
-    () => TWILIO_ITEMS.reduce((sum, item) => sum + item.cost, 0),
-    [],
+    () => data?.twilio_items.reduce((sum, item) => sum + item.cost, 0) || 0,
+    [data]
   );
+  
   const totalCost = totalOpenAiCost + totalTwilioCost;
+  
   const totalUsage = useMemo(
-    () => COST_DRIVERS.reduce((sum, driver) => sum + driver.usage, 0),
-    [],
+    () => data?.cost_drivers.reduce((sum, driver) => sum + driver.usage, 0) || 0,
+    [data]
   );
+  
   const maxDriverCost = useMemo(
-    () => Math.max(...COST_DRIVERS.map((driver) => driver.estimatedCost)),
-    [],
+    () => Math.max(1, ...(data?.cost_drivers.map((driver) => driver.estimatedCost) || [1])),
+    [data]
   );
+  
   const maxDailyTotal = useMemo(
-    () => Math.max(...DAILY_COST.map((entry) => entry.openAi + entry.twilio)),
-    [],
+    () => Math.max(1, ...(data?.daily_costs.map((entry) => entry.openAi + entry.twilio) || [1])),
+    [data]
   );
+
   const projectedMonthlyCost = totalCost * 4.3;
-  const openAiShare = Math.round((totalOpenAiCost / totalCost) * 100);
+  const openAiShare = totalCost > 0 ? Math.round((totalOpenAiCost / totalCost) * 100) : 0;
 
   const costSegments = useMemo(() => {
+    if (!data) return [];
     let cursor = 0;
 
     return [
-      ...COST_DRIVERS.map((driver) => ({
+      ...data.cost_drivers.map((driver) => ({
         label: driver.title,
         color: driver.colorClass.includes("cyan")
           ? "rgba(34, 211, 238, 0.9)"
@@ -143,7 +74,7 @@ const CostAnalyticsPage: React.FC = () => {
               ? "rgba(251, 191, 36, 0.9)"
               : "rgba(251, 113, 133, 0.9)",
         start: cursor,
-        end: (cursor += (driver.estimatedCost / totalCost) * 360),
+        end: (cursor += totalCost > 0 ? (driver.estimatedCost / totalCost) * 360 : 0),
       })),
       {
         label: "Twilio",
@@ -152,7 +83,23 @@ const CostAnalyticsPage: React.FC = () => {
         end: 360,
       },
     ];
-  }, [totalCost]);
+  }, [data, totalCost]);
+
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center p-8">
+        <div className="text-cyan-400">Loading cost analytics...</div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="flex h-64 items-center justify-center p-8">
+        <div className="text-rose-400">Error: {error || "No data available"}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 p-8">
@@ -166,9 +113,8 @@ const CostAnalyticsPage: React.FC = () => {
               Cost Analytics
             </h2>
             <p className="mt-3 max-w-3xl text-sm text-slate-300">
-              Track the main spend drivers: OpenAI for reasoning, embeddings,
-              transcription, and TTS, plus Twilio messaging for WhatsApp and
-              delivery traffic.
+              Track the main spend drivers: OpenAI models, vector embeddings,
+              transcription, and TTS, plus Twilio messaging.
             </p>
           </div>
           <div className="rounded border border-white/10 bg-black/30 px-4 py-3 text-right">
@@ -246,28 +192,28 @@ const CostAnalyticsPage: React.FC = () => {
           </div>
 
           <div className="mt-6 grid grid-cols-7 gap-2">
-            {DAILY_COST.map((entry) => {
+            {data.daily_costs.map((entry, idx) => {
               const total = entry.openAi + entry.twilio;
               const openAiHeight = Math.max(
-                16,
-                Math.round((entry.openAi / maxDailyTotal) * 100),
+                4,
+                Math.round((entry.openAi / maxDailyTotal) * 100)
               );
               const twilioHeight = Math.max(
-                12,
-                Math.round((entry.twilio / maxDailyTotal) * 100),
+                2,
+                Math.round((entry.twilio / maxDailyTotal) * 100)
               );
 
               return (
-                <div key={entry.day} className="space-y-2 text-center">
+                <div key={`${entry.day}-${idx}`} className="space-y-2 text-center">
                   <div className="flex h-44 items-end rounded border border-white/10 bg-black/20 p-2">
                     <div className="flex h-full w-full items-end gap-1">
                       <div
-                        className="w-1/2 rounded-sm bg-rose-400/80"
+                        className="w-1/2 rounded-sm bg-rose-400/80 transition-all duration-500 ease-in-out"
                         style={{ height: `${openAiHeight}%` }}
                         title={`${entry.day} OpenAI: ${currencyFormatter.format(entry.openAi)}`}
                       />
                       <div
-                        className="w-1/2 rounded-sm bg-blue-400/80"
+                        className="w-1/2 rounded-sm bg-blue-400/80 transition-all duration-500 ease-in-out"
                         style={{ height: `${twilioHeight}%` }}
                         title={`${entry.day} Twilio: ${currencyFormatter.format(entry.twilio)}`}
                       />
@@ -304,13 +250,13 @@ const CostAnalyticsPage: React.FC = () => {
 
           <div className="mt-6 flex items-center justify-center">
             <div
-              className="relative h-48 w-48 rounded-full border border-white/10"
+              className="relative h-48 w-48 rounded-full border border-white/10 transition-all duration-1000 ease-in-out"
               style={{
-                background: `conic-gradient(${costSegments
+                background: costSegments.length > 0 ? `conic-gradient(${costSegments
                   .map(
                     ({ color, start, end }) => `${color} ${start}deg ${end}deg`,
                   )
-                  .join(", ")})`,
+                  .join(", ")})` : '#333',
               }}
             >
               <div className="absolute inset-8 rounded-full border border-white/10 bg-[#191919]" />
@@ -325,11 +271,11 @@ const CostAnalyticsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-6 space-y-3">
-            {COST_DRIVERS.map((driver) => {
-              const share = Math.round(
+          <div className="mt-6 space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+            {data.cost_drivers.map((driver) => {
+              const share = totalCost > 0 ? Math.round(
                 (driver.estimatedCost / totalCost) * 100,
-              );
+              ) : 0;
               return (
                 <div
                   key={driver.key}
@@ -346,9 +292,9 @@ const CostAnalyticsPage: React.FC = () => {
                   </div>
                   <div className="h-2 overflow-hidden rounded bg-white/10">
                     <div
-                      className={`${driver.colorClass} h-full`}
+                      className={`${driver.colorClass} h-full transition-all duration-700 ease-in-out`}
                       style={{
-                        width: `${Math.max(12, Math.round((driver.estimatedCost / maxDriverCost) * 100))}%`,
+                        width: `${Math.max(2, Math.round((driver.estimatedCost / maxDriverCost) * 100))}%`,
                       }}
                     />
                   </div>
@@ -366,7 +312,7 @@ const CostAnalyticsPage: React.FC = () => {
               OpenAI Cost Drivers
             </h3>
             <p className="mt-1 text-sm text-slate-400">
-              The backend cost is mostly driven by gpt-4o tokens, embeddings,
+              The backend cost is mostly driven by LLM tokens, embeddings,
               Whisper transcription minutes, and TTS character generation.
             </p>
           </div>
@@ -376,7 +322,7 @@ const CostAnalyticsPage: React.FC = () => {
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {COST_DRIVERS.map((driver) => (
+          {data.cost_drivers.map((driver) => (
             <article
               key={driver.key}
               className="rounded border border-white/10 bg-black/20 p-4"
@@ -411,9 +357,9 @@ const CostAnalyticsPage: React.FC = () => {
                 </div>
                 <div className="h-2 overflow-hidden rounded bg-white/10">
                   <div
-                    className={`${driver.colorClass} h-full`}
+                    className={`${driver.colorClass} h-full transition-all duration-700 ease-in-out`}
                     style={{
-                      width: `${Math.max(10, Math.round((driver.estimatedCost / maxDriverCost) * 100))}%`,
+                      width: `${Math.max(4, Math.round((driver.estimatedCost / maxDriverCost) * 100))}%`,
                     }}
                   />
                 </div>
@@ -446,7 +392,7 @@ const CostAnalyticsPage: React.FC = () => {
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-          {TWILIO_ITEMS.map((item) => (
+          {data.twilio_items.map((item) => (
             <article
               key={item.label}
               className="rounded border border-white/10 bg-black/20 p-4"
@@ -469,9 +415,9 @@ const CostAnalyticsPage: React.FC = () => {
                 </div>
                 <div className="h-2 flex-1 overflow-hidden rounded bg-white/10">
                   <div
-                    className="h-full bg-blue-400"
+                    className="h-full bg-blue-400 transition-all duration-700 ease-in-out"
                     style={{
-                      width: `${Math.max(18, Math.round((item.cost / totalTwilioCost) * 100))}%`,
+                      width: `${Math.max(4, Math.round((item.cost / Math.max(1, totalTwilioCost)) * 100))}%`,
                     }}
                   />
                 </div>
