@@ -132,6 +132,11 @@ export const adminService = {
   async getMultilingualAnalytics(): Promise<AdminMultilingualAnalyticsResponse> {
     const response = await apiClient.get<AdminMultilingualAnalyticsResponse>("/admin/multilingual-analytics");
     return response.data;
+  },
+
+  async getRetrievalMonitoring(): Promise<AdminRetrievalMonitoringResponse> {
+    const response = await apiClient.get<AdminRetrievalMonitoringResponse>("/admin/retrieval-monitoring");
+    return response.data;
   }
 };
 
@@ -228,5 +233,39 @@ export interface AdminPlatformAnalyticsResponse {
   platform_mode_split: PlatformModeSplit[];
   voice_metrics: VoiceHealthMetric[];
   language_detection: LanguageDetectionRow[];
+}
+
+export interface RetrievalMetric {
+  label: string;
+  value: string;
+  note: string;
+  tone: "cyan" | "emerald" | "amber" | "violet" | "rose";
+}
+
+export interface TrendPoint {
+  label: string;
+  value: number;
+}
+
+export interface HealthTargets {
+  latencyP95: string;
+  citationMismatchRate: string;
+  topKHitConfidence: string;
+}
+
+export interface RetrievalCheck {
+  queryFamily: string;
+  topK: number;
+  avgSimilarity: string;
+  latency: string;
+  citationValidity: string;
+  status: "Healthy" | "Review" | "Degraded";
+}
+
+export interface AdminRetrievalMonitoringResponse {
+  metrics: RetrievalMetric[];
+  trend_points: TrendPoint[];
+  health_targets: HealthTargets;
+  retrieval_checks: RetrievalCheck[];
 }
 
