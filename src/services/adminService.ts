@@ -112,5 +112,50 @@ export const adminService = {
 
   async deleteLog(logId: string): Promise<void> {
     await apiClient.delete(`/admin/logs/${logId}`);
+  },
+
+  async getPlatformAnalytics(): Promise<AdminPlatformAnalyticsResponse> {
+    const response = await apiClient.get<AdminPlatformAnalyticsResponse>("/admin/platform-analytics");
+    return response.data;
   }
 };
+
+export interface PlatformShare {
+  label: string;
+  value: number;
+  requests: string;
+  avgResponse: string;
+  tone: "cyan" | "emerald" | "amber" | "rose";
+}
+
+export interface PlatformModeSplit {
+  platform: "Web" | "WhatsApp";
+  messageUsage: string;
+  voiceUsage: string;
+  messageRequests: string;
+  voiceRequests: string;
+  avgResponseMessage: string;
+  avgResponseVoice: string;
+}
+
+export interface VoiceHealthMetric {
+  label: string;
+  value: string;
+  note: string;
+  tone: "cyan" | "emerald" | "amber" | "rose";
+}
+
+export interface LanguageDetectionRow {
+  language: string;
+  confidence: string;
+  detectedRequests: string;
+  fallbackRate: string;
+}
+
+export interface AdminPlatformAnalyticsResponse {
+  platform_distribution: PlatformShare[];
+  platform_mode_split: PlatformModeSplit[];
+  voice_metrics: VoiceHealthMetric[];
+  language_detection: LanguageDetectionRow[];
+}
+
