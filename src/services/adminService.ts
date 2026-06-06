@@ -127,8 +127,26 @@ export const adminService = {
   async getCostAnalytics(): Promise<AdminCostAnalyticsResponse> {
     const response = await apiClient.get<AdminCostAnalyticsResponse>("/admin/cost-analytics");
     return response.data;
+  },
+
+  async getMultilingualAnalytics(): Promise<AdminMultilingualAnalyticsResponse> {
+    const response = await apiClient.get<AdminMultilingualAnalyticsResponse>("/admin/multilingual-analytics");
+    return response.data;
   }
 };
+
+export interface LanguageStat {
+  code: string;
+  label: string;
+  count: number;
+}
+
+export interface AdminMultilingualAnalyticsResponse {
+  total_queries: number;
+  total_languages: number;
+  translation_requests: number;
+  languages: LanguageStat[];
+}
 
 export interface CostDriver {
   key: string;
