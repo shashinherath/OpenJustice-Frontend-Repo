@@ -1,184 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { adminService } from "@/services/adminService";
+import type { SecuritySignal, MonitoringArea, PriorityAlert, SecurityEventRecord, AdminSecurityMonitoringResponse } from "@/services/adminService";
 
-type SecurityTone = "emerald" | "cyan" | "amber" | "rose" | "violet";
-type Severity = "Critical" | "High" | "Medium" | "Low";
 
-interface SecuritySignal {
-  label: string;
-  value: string;
-  note: string;
-  tone: SecurityTone;
-}
 
-interface MonitoringArea {
-  key: string;
-  title: string;
-  icon: string;
-  status: "Healthy" | "Watch" | "Needs Action";
-  summary: string;
-  metricLabel: string;
-  metricValue: string;
-}
 
-interface SecurityEvent {
-  area: string;
-  source: string;
-  detail: string;
-  severity: Severity;
-  timestamp: string;
-}
-
-const SIGNALS: SecuritySignal[] = [
-  {
-    label: "Prompt Injection Attempts",
-    value: "128",
-    note: "Detected in last 24h",
-    tone: "rose",
-  },
-  {
-    label: "Failed Logins",
-    value: "57",
-    note: "Across web and mobile",
-    tone: "amber",
-  },
-  {
-    label: "Active Sessions",
-    value: "2,430",
-    note: "Tracked for anomalies",
-    tone: "cyan",
-  },
-  {
-    label: "Rate Limit Events",
-    value: "114",
-    note: "Throttled safely",
-    tone: "emerald",
-  },
-  {
-    label: "JWT Activity",
-    value: "6 anomalies",
-    note: "Invalid/expired/replay",
-    tone: "violet",
-  },
-];
-
-const MONITORING_AREAS: MonitoringArea[] = [
-  {
-    key: "prompt-injection",
-    title: "Prompt Injection",
-    icon: "psychology",
-    status: "Needs Action",
-    summary:
-      "Adversarial prompts are being blocked, but high-severity attempts increased this morning.",
-    metricLabel: "Blocks (24h)",
-    metricValue: "128",
-  },
-  {
-    key: "failed-logins",
-    title: "Failed Logins",
-    icon: "vpn_key",
-    status: "Watch",
-    summary:
-      "Lockout policy is containing most failed login bursts; monitor suspicious IP clusters.",
-    metricLabel: "Lockouts (24h)",
-    metricValue: "8",
-  },
-  {
-    key: "session-monitoring",
-    title: "Session Monitoring",
-    icon: "devices",
-    status: "Healthy",
-    summary:
-      "Most sessions are stable with a small number of geo and device-fingerprint anomalies.",
-    metricLabel: "Suspicious sessions",
-    metricValue: "4",
-  },
-  {
-    key: "rate-limits",
-    title: "Rate Limits",
-    icon: "speed",
-    status: "Healthy",
-    summary:
-      "Throttling is active and protecting upstream services during batch and burst traffic.",
-    metricLabel: "Throttled requests",
-    metricValue: "114",
-  },
-  {
-    key: "jwt-activity",
-    title: "JWT Activity",
-    icon: "token",
-    status: "Watch",
-    summary:
-      "Token validation catches expiry and replay attempts; continue monitoring refresh endpoint anomalies.",
-    metricLabel: "Invalid tokens",
-    metricValue: "6",
-  },
-];
-
-const PRIORITY_ALERTS: Array<{
-  title: string;
-  detail: string;
-  severity: Severity;
-}> = [
-  {
-    title: "Jailbreak prompt burst detected",
-    detail: "Prompt injection attempts are above baseline between 08:30-10:00.",
-    severity: "High",
-  },
-  {
-    title: "Suspicious login cluster",
-    detail:
-      "Multiple failed admin logins from a narrow IP range triggered lockout controls.",
-    severity: "Medium",
-  },
-  {
-    title: "JWT replay attempt blocked",
-    detail: "Reused rotated token rejected by signature validation.",
-    severity: "High",
-  },
-];
-
-const RECENT_EVENTS: SecurityEvent[] = [
-  {
-    area: "Prompt Injection",
-    source: "Web chat client",
-    detail:
-      "Jailbreak phrasing with instruction override tokens blocked pre-generation.",
-    severity: "High",
-    timestamp: "2026-05-24 09:42",
-  },
-  {
-    area: "Failed Logins",
-    source: "Admin portal",
-    detail: "Five consecutive failures caused automatic temporary lockout.",
-    severity: "Medium",
-    timestamp: "2026-05-24 10:03",
-  },
-  {
-    area: "Session Monitoring",
-    source: "Field investigator",
-    detail: "Location drift detected inside same token refresh cycle.",
-    severity: "High",
-    timestamp: "2026-05-24 09:50",
-  },
-  {
-    area: "Rate Limits",
-    source: "AI chat endpoint",
-    detail: "Burst traffic exceeded per-minute policy and was throttled.",
-    severity: "Medium",
-    timestamp: "2026-05-24 10:18",
-  },
-  {
-    area: "JWT Activity",
-    source: "Refresh endpoint",
-    detail: "Rotated token reuse failed signature validation.",
-    severity: "High",
-    timestamp: "2026-05-24 10:06",
-  },
-];
-
-const getToneClasses = (tone: SecurityTone) => {
-  const toneMap: Record<SecurityTone, string> = {
+const getToneClasses = (tone: string) => {
+  const toneMap: Record<string, string> = {
     emerald: "text-emerald-300",
     cyan: "text-cyan-300",
     amber: "text-amber-300",
@@ -189,7 +18,7 @@ const getToneClasses = (tone: SecurityTone) => {
   return toneMap[tone];
 };
 
-const getSeverityClasses = (severity: Severity) => {
+const getSeverityClasses = (severity: string) => {
   if (severity === "Critical") {
     return "bg-rose-500/15 text-rose-300";
   }
@@ -218,6 +47,61 @@ const getStatusClasses = (status: MonitoringArea["status"]) => {
 };
 
 const SecurityMonitoringPage: React.FC = () => {
+  const [data, setData] = useState<AdminSecurityMonitoringResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await adminService.getSecurityMonitoring();
+        if (mounted) {
+          setData(response);
+          setError(null);
+        }
+      } catch (err) {
+        if (mounted) {
+          console.error("Failed to load security monitoring data:", err);
+          setError("Failed to load security monitoring data.");
+        }
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-8">
+        <div className="text-rose-400">Loading security monitoring data...</div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="flex min-h-screen items-center justify-center p-8">
+        <div className="text-rose-500">Failed to load security monitoring data.</div>
+      </div>
+    );
+  }
+
+  const SIGNALS = data.signals;
+  const MONITORING_AREAS = data.monitoring_areas;
+  const PRIORITY_ALERTS = data.priority_alerts;
+  const RECENT_EVENTS = data.recent_events;
+
   return (
     <div className="space-y-8 p-8">
       <section className="rounded border border-rose-400/20 bg-[#191919] p-6">
