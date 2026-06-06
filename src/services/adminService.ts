@@ -139,6 +139,11 @@ export const adminService = {
     return response.data;
   },
 
+  async getRetrievalEvaluation(): Promise<AdminRetrievalEvaluationResponse> {
+    const response = await apiClient.get<AdminRetrievalEvaluationResponse>("/admin/analytics/retrieval-evaluation");
+    return response.data;
+  },
+
   async getSecurityMonitoring(): Promise<AdminSecurityMonitoringResponse> {
     const response = await apiClient.get<AdminSecurityMonitoringResponse>("/admin/security-monitoring");
     return response.data;
@@ -264,7 +269,7 @@ export interface RetrievalCheck {
   avgSimilarity: string;
   latency: string;
   citationValidity: string;
-  status: "Healthy" | "Review" | "Degraded";
+  status: "Pass" | "Fail" | "Warn";
 }
 
 export interface AdminRetrievalMonitoringResponse {
@@ -272,6 +277,17 @@ export interface AdminRetrievalMonitoringResponse {
   trend_points: TrendPoint[];
   health_targets: HealthTargets;
   retrieval_checks: RetrievalCheck[];
+}
+
+export interface RetrievalDistributionBin {
+  bin_label: string;
+  count: number;
+}
+
+export interface AdminRetrievalEvaluationResponse {
+  recall_at_5: number;
+  precision_at_5: number;
+  similarity_distribution: RetrievalDistributionBin[];
 }
 
 export interface SecuritySignal {
