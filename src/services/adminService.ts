@@ -152,6 +152,11 @@ export const adminService = {
   async getAIEvaluationMetrics(): Promise<AdminAIEvaluationResponse> {
     const response = await apiClient.get<AdminAIEvaluationResponse>("/admin/analytics/ai-evaluation");
     return response.data;
+  },
+
+  async getResearchMetrics(): Promise<AdminResearchMetricsResponse> {
+    const response = await apiClient.get<AdminResearchMetricsResponse>("/admin/analytics/research-metrics");
+    return response.data;
   }
 };
 
@@ -344,5 +349,32 @@ export interface AdminAIEvaluationResponse {
   hallucination_rate: number;
   avg_tokens: number;
   recent_model_runs: ModelRun[];
+}
+
+export interface ResearchMetricItem {
+  label: string;
+  value: string;
+  note: string;
+  trend: "up" | "down" | "neutral";
+}
+
+export interface EvaluationDatasetItem {
+  name: string;
+  version: string;
+  samples: number;
+  split: string;
+  lastRun: string;
+  status: "Ready" | "Running" | "Needs Refresh";
+}
+
+export interface ExperimentNoteItem {
+  title: string;
+  description: string;
+}
+
+export interface AdminResearchMetricsResponse {
+  metrics: ResearchMetricItem[];
+  datasets: EvaluationDatasetItem[];
+  experiment_notes: ExperimentNoteItem[];
 }
 
