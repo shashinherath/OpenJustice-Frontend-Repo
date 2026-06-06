@@ -1,17 +1,48 @@
-import React, { useMemo } from "react";
-
-const DAILY = [
-  { day: "Mon", count: 320 },
-  { day: "Tue", count: 410 },
-  { day: "Wed", count: 380 },
-  { day: "Thu", count: 455 },
-  { day: "Fri", count: 502 },
-  { day: "Sat", count: 290 },
-  { day: "Sun", count: 260 },
-];
+import React, { useEffect, useState } from "react";
+import { adminService, type AdminUsageAnalyticsResponse } from "@/services/adminService";
 
 const UsageAnalyticsPage: React.FC = () => {
-  const total = useMemo(() => DAILY.reduce((s, d) => s + d.count, 0), []);
+  const [data, setData] = useState<AdminUsageAnalyticsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await adminService.getUsageAnalytics();
+        setData(response);
+      } catch (err: any) {
+        setError(err.message || "Failed to load usage analytics");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center p-8">
+        <div className="text-cyan-400">Loading usage analytics...</div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="flex h-64 items-center justify-center p-8">
+        <div className="text-rose-400">Error: {error || "No data available"}</div>
+      </div>
+    );
+  }
+
+  // Calculate maximum count for scaling the bar chart
+  // Default to 1 to avoid division by zero, and enforce a minimum reasonable scale.
+  const maxCount = Math.max(
+    10, 
+    ...data.queries_per_day.map(d => d.count)
+  );
 
   return (
     <div className="space-y-8 p-8">
@@ -32,19 +63,19 @@ const UsageAnalyticsPage: React.FC = () => {
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
             Queries This Week
           </p>
-          <p className="mt-3 text-2xl font-black text-white">{total}</p>
+          <p className="mt-3 text-2xl font-black text-white">{data.total_queries_this_week.toLocaleString()}</p>
         </article>
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
             Active Users
           </p>
-          <p className="mt-3 text-2xl font-black text-cyan-400">1,248</p>
+          <p className="mt-3 text-2xl font-black text-cyan-400">{data.active_users.toLocaleString()}</p>
         </article>
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
             Peak Hour
           </p>
-          <p className="mt-3 text-2xl font-black text-white">18:00</p>
+          <p className="mt-3 text-2xl font-black text-white">{data.peak_hour}</p>
         </article>
       </section>
 
@@ -53,13 +84,13 @@ const UsageAnalyticsPage: React.FC = () => {
           Queries Per Day
         </h3>
         <div className="mt-4 grid grid-cols-7 gap-2">
-          {DAILY.map((d) => (
-            <div key={d.day} className="space-y-2 text-center">
+          {data.queries_per_day.map((d, idx) => (
+            <div key={`${d.day}-${idx}`} className="space-y-2 text-center">
               <div className="flex h-40 items-end rounded border border-white/10 bg-[#191919] p-2">
                 <div
-                  className="w-full rounded-sm bg-cyan-400/80"
+                  className="w-full rounded-sm bg-cyan-400/80 transition-all duration-500 ease-in-out"
                   style={{
-                    height: `${Math.max(18, Math.round((d.count / 502) * 100))}%`,
+                    height: `${Math.max(4, Math.round((d.count / maxCount) * 100))}%`,
                   }}
                 />
               </div>

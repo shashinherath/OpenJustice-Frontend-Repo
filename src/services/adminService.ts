@@ -117,8 +117,25 @@ export const adminService = {
   async getPlatformAnalytics(): Promise<AdminPlatformAnalyticsResponse> {
     const response = await apiClient.get<AdminPlatformAnalyticsResponse>("/admin/platform-analytics");
     return response.data;
+  },
+
+  async getUsageAnalytics(): Promise<AdminUsageAnalyticsResponse> {
+    const response = await apiClient.get<AdminUsageAnalyticsResponse>("/admin/usage-analytics");
+    return response.data;
   }
 };
+
+export interface UsageDailyStat {
+  day: string;
+  count: number;
+}
+
+export interface AdminUsageAnalyticsResponse {
+  total_queries_this_week: number;
+  active_users: number;
+  peak_hour: string;
+  queries_per_day: UsageDailyStat[];
+}
 
 export interface PlatformShare {
   label: string;
