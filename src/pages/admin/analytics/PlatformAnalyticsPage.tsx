@@ -1,122 +1,5 @@
-import React from "react";
-
-interface PlatformShare {
-  label: string;
-  value: number;
-  requests: string;
-  avgResponse: string;
-  tone: "cyan" | "emerald";
-}
-
-interface PlatformModeSplit {
-  platform: "Web" | "WhatsApp";
-  messageUsage: string;
-  voiceUsage: string;
-  messageRequests: string;
-  voiceRequests: string;
-  avgResponseMessage: string;
-  avgResponseVoice: string;
-}
-
-interface VoiceHealthMetric {
-  label: string;
-  value: string;
-  note: string;
-  tone: "cyan" | "emerald" | "amber" | "rose";
-}
-
-interface LanguageDetectionRow {
-  language: string;
-  confidence: string;
-  detectedRequests: string;
-  fallbackRate: string;
-}
-
-const PLATFORM_DISTRIBUTION: PlatformShare[] = [
-  {
-    label: "Web",
-    value: 64,
-    requests: "23,550",
-    avgResponse: "0.92s",
-    tone: "cyan",
-  },
-  {
-    label: "WhatsApp",
-    value: 36,
-    requests: "10,580",
-    avgResponse: "1.18s",
-    tone: "emerald",
-  },
-];
-
-const PLATFORM_MODE_SPLIT: PlatformModeSplit[] = [
-  {
-    platform: "Web",
-    messageUsage: "78%",
-    voiceUsage: "22%",
-    messageRequests: "18,369",
-    voiceRequests: "5,181",
-    avgResponseMessage: "0.81s",
-    avgResponseVoice: "2.26s",
-  },
-  {
-    platform: "WhatsApp",
-    messageUsage: "73%",
-    voiceUsage: "27%",
-    messageRequests: "7,723",
-    voiceRequests: "2,857",
-    avgResponseMessage: "0.96s",
-    avgResponseVoice: "2.62s",
-  },
-];
-
-const VOICE_METRICS: VoiceHealthMetric[] = [
-  {
-    label: "Voice requests",
-    value: "5,130",
-    note: "Web and WhatsApp voice interactions in the current 7-day window.",
-    tone: "cyan",
-  },
-  {
-    label: "STT failures",
-    value: "2.9%",
-    note: "Whisper transcription failures after retry and confidence gating.",
-    tone: "rose",
-  },
-  {
-    label: "Avg transcription time",
-    value: "1.62s",
-    note: "Median time from audio upload to completed transcript output.",
-    tone: "amber",
-  },
-  {
-    label: "Language detection",
-    value: "97.4%",
-    note: "Correct language detection confidence before downstream response.",
-    tone: "emerald",
-  },
-];
-
-const LANGUAGE_DETECTION_ROWS: LanguageDetectionRow[] = [
-  {
-    language: "English",
-    confidence: "98.6%",
-    detectedRequests: "2,220",
-    fallbackRate: "0.7%",
-  },
-  {
-    language: "Sinhala",
-    confidence: "96.9%",
-    detectedRequests: "1,730",
-    fallbackRate: "1.8%",
-  },
-  {
-    language: "Tamil",
-    confidence: "95.8%",
-    detectedRequests: "1,180",
-    fallbackRate: "2.4%",
-  },
-];
+import React, { useEffect, useState } from "react";
+import { adminService, type AdminPlatformAnalyticsResponse, type PlatformShare, type VoiceHealthMetric } from "@/services/adminService";
 
 const getToneClasses = (
   tone: PlatformShare["tone"] | VoiceHealthMetric["tone"],
@@ -137,6 +20,47 @@ const getToneClasses = (
 };
 
 const PlatformAnalyticsPage: React.FC = () => {
+  const [data, setData] = useState<AdminPlatformAnalyticsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await adminService.getPlatformAnalytics();
+        setData(response);
+      } catch (err: any) {
+        setError(err.message || "Failed to load platform analytics");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center p-8">
+        <div className="text-cyan-400">Loading platform analytics...</div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="flex h-64 items-center justify-center p-8">
+        <div className="text-rose-400">Error: {error || "No data available"}</div>
+      </div>
+    );
+  }
+
+  const webShare = data.platform_distribution.find((p) => p.label === "Web") || { value: 0, requests: "0" };
+  const waShare = data.platform_distribution.find((p) => p.label === "WhatsApp") || { value: 0, requests: "0" };
+  const voiceUsageTotal = data.platform_mode_split.reduce((acc, curr) => {
+    return acc + parseInt(curr.voiceRequests.replace(/,/g, ""));
+  }, 0);
+
   return (
     <div className="space-y-8 p-8">
       <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
@@ -157,25 +81,27 @@ const PlatformAnalyticsPage: React.FC = () => {
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
             Web Platform Usage
           </p>
-          <p className="mt-3 text-2xl font-black text-cyan-300">64%</p>
-          <p className="mt-2 text-xs text-slate-400">23,550 requests</p>
+          <p className="mt-3 text-2xl font-black text-cyan-300">{webShare.value}%</p>
+          <p className="mt-2 text-xs text-slate-400">{webShare.requests} requests</p>
         </article>
 
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
             WhatsApp Platform Usage
           </p>
-          <p className="mt-3 text-2xl font-black text-emerald-300">36%</p>
-          <p className="mt-2 text-xs text-slate-400">10,580 requests</p>
+          <p className="mt-3 text-2xl font-black text-emerald-300">{waShare.value}%</p>
+          <p className="mt-2 text-xs text-slate-400">{waShare.requests} requests</p>
         </article>
 
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
             Voice Modality Usage
           </p>
-          <p className="mt-3 text-2xl font-black text-amber-300">22.0%</p>
+          <p className="mt-3 text-2xl font-black text-amber-300">
+             {voiceUsageTotal.toLocaleString()} reqs
+          </p>
           <p className="mt-2 text-xs text-slate-400">
-            8,038 voice requests across Web and WhatsApp
+            Total voice requests across platforms
           </p>
         </article>
 
@@ -196,7 +122,7 @@ const PlatformAnalyticsPage: React.FC = () => {
         </h3>
 
         <div className="mt-5 space-y-4">
-          {PLATFORM_DISTRIBUTION.map((platform) => (
+          {data.platform_distribution.map((platform) => (
             <article
               key={platform.label}
               className={`rounded border p-4 ${getToneClasses(platform.tone)}`}
@@ -236,7 +162,7 @@ const PlatformAnalyticsPage: React.FC = () => {
         </p>
 
         <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-2">
-          {PLATFORM_MODE_SPLIT.map((row) => (
+          {data.platform_mode_split.map((row) => (
             <article
               key={row.platform}
               className="rounded border border-white/10 bg-black/30 p-5"
@@ -283,7 +209,7 @@ const PlatformAnalyticsPage: React.FC = () => {
             Minimal Voice Metrics
           </h3>
           <div className="mt-4 space-y-3">
-            {VOICE_METRICS.map((metric) => (
+            {data.voice_metrics.map((metric) => (
               <div
                 key={metric.label}
                 className={`rounded border p-4 ${getToneClasses(metric.tone)}`}
@@ -324,7 +250,7 @@ const PlatformAnalyticsPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {LANGUAGE_DETECTION_ROWS.map((row) => (
+                {data.language_detection.map((row) => (
                   <tr key={row.language} className="border-b border-white/5">
                     <td className="px-3 py-3 text-slate-300">{row.language}</td>
                     <td className="px-3 py-3 text-cyan-300">
