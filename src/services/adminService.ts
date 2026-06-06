@@ -40,12 +40,20 @@ export interface DataSourceItem {
   progressColorClass?: string;
 }
 
+export interface QuickActionItem {
+  icon: string;
+  label: string;
+  highlight?: boolean;
+  action_id: string;
+}
+
 export interface AdminOverviewResponse {
   stats: StatItem[];
   activities: ActivityItem[];
   core_services: ServiceStatusItem[];
   data_sources: DataSourceItem[];
   queries_per_day: DailyQueryStat[];
+  quick_actions: QuickActionItem[];
 }
 
 export interface AdminUserItem {
@@ -89,6 +97,10 @@ export const adminService = {
   async getOverview(): Promise<AdminOverviewResponse> {
     const response = await apiClient.get<AdminOverviewResponse>("/admin/overview");
     return response.data;
+  },
+
+  async clearSemanticCache(): Promise<void> {
+    await apiClient.post("/admin/clear-semantic-cache");
   },
   
   async getUsers(skip = 0, limit = 100): Promise<AdminUserListResponse> {

@@ -4,12 +4,7 @@ import StatCard from "@/components/admin/StatCard";
 import ActivityItem from "@/components/admin/ActivityItem";
 import { useAdminStore } from "@/stores/adminStore";
 
-const QUICK_ACTIONS = [
-  { icon: "refresh", label: "Clear Cache" },
-  { icon: "download", label: "Export Report" },
-  { icon: "lock_reset", label: "Reset API" },
-  { icon: "help", label: "Support", highlight: true },
-];
+import { adminService } from "@/services/adminService";
 
 // Mock dashboard card data - will be replaced with backend data
 const DEFAULT_STATS = [
@@ -111,6 +106,20 @@ const AdminDashboard: React.FC = () => {
   useEffect(() => {
     void fetchOverview();
   }, [fetchOverview]);
+
+  const handleQuickAction = async (actionId: string) => {
+    if (actionId === "clear_semantic_cache") {
+      try {
+        await adminService.clearSemanticCache();
+        alert("Semantic cache cleared successfully.");
+      } catch (err) {
+        console.error(err);
+        alert("Failed to clear semantic cache.");
+      }
+    } else if (actionId === "export_report") {
+      alert("Export report functionality not yet implemented.");
+    }
+  };
 
   if (isLoading) {
     return (
@@ -394,9 +403,10 @@ const AdminDashboard: React.FC = () => {
               Admin Quick Actions
             </h2>
             <div className="grid grid-cols-2 gap-3">
-              {QUICK_ACTIONS.map((action) => (
+              {data.quick_actions?.map((action) => (
                 <button
-                  key={action.label}
+                  key={action.action_id}
+                  onClick={() => handleQuickAction(action.action_id)}
                   className={`space-y-2 rounded border border-slate-700/70 bg-[#191919] p-3 text-center transition-all hover:border-cyan-400/35 hover:bg-cyan-500/5 ${action.highlight ? "text-cyan-100" : ""}`}
                 >
                   <span className="material-symbols-outlined text-cyan-200">
