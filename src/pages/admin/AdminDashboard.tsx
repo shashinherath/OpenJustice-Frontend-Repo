@@ -423,11 +423,8 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       <footer className="border-t border-cyan-400/15 pb-8 pt-16 text-center">
-        <div className="flex justify-center items-center gap-4 mb-6 opacity-30 grayscale">
-          <span className="material-symbols-outlined text-xl">school</span>
-        </div>
         <p className="text-[11px] font-medium uppercase tracking-widest text-cyan-200/65">
-          OpenJustice Â© 2026. All rights reserved.
+          OpenJustice © 2026. All rights reserved.
         </p>
       </footer>
     </div>
