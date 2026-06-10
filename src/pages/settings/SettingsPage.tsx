@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { LanguageContext } from "@/contexts/LanguageContext";
 import LanguageSelect from "@/components/ui/LanguageSelect";
 import ChatActionModal from "@/components/ui/ChatActionModal";
 import { useTheme } from "@/hooks/common/useTheme";
 import { useChatStore } from "@/stores/chatStore";
+import { useAuthStore } from "@/stores/authStore";
 import { LANGUAGE_OPTIONS, type AppLanguage } from "@/constants/languages";
 import { useNavigate } from "react-router-dom";
 
@@ -72,9 +73,11 @@ const SettingsPage: React.FC = () => {
     deleteChat,
     deleteAllChats,
   } = useChatStore();
+  const user = useAuthStore((state) => state.user);
 
   const [activeSection, setActiveSection] =
     useState<SettingsSection>("general");
+  const contentTopRef = useRef<HTMLDivElement | null>(null);
 
   const [appearance, setAppearance] = useState<"system" | "light" | "dark">(
     theme,
@@ -171,6 +174,10 @@ const SettingsPage: React.FC = () => {
     localStorage.setItem(ACCENT_STORAGE_KEY, accentColor);
   }, [accentColor]);
 
+  useEffect(() => {
+    contentTopRef.current?.scrollIntoView({ block: "start", behavior: "auto" });
+  }, [activeSection]);
+
   const autoDetectInterfaceLanguage = () => {
     const detected = detectLanguage();
     setLanguage(detected);
@@ -234,6 +241,7 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div className="grid h-full grid-cols-1 gap-5 lg:grid-cols-12">
+      <div ref={contentTopRef} className="sr-only" aria-hidden="true" />
       <aside className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-3 lg:col-span-3">
         <p className="px-2 pb-2 text-[11px] font-bold uppercase tracking-widest text-zinc-500">
           {tr("Settings", "සැකසුම්", "அமைப்புகள்")}
@@ -691,7 +699,7 @@ const SettingsPage: React.FC = () => {
           <section className="space-y-4 rounded-xl border border-zinc-800 bg-zinc-900/50 p-5">
             <h3 className="text-lg font-semibold text-zinc-100">Account</h3>
             <div className="space-y-2 text-sm text-zinc-300">
-              <p>Email: jsmith@university.edu</p>
+              <p>Email: {user?.email || "Not available"}</p>
               <p>Plan: Research Prototype</p>
             </div>
             <div className="flex flex-wrap gap-2">
