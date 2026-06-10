@@ -104,7 +104,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
 
   return (
     <aside
-      className={`relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-white transition-all duration-200 dark:border-border-dark dark:bg-brand-bg ${
+      className={`relative flex h-full min-h-0 shrink-0 flex-col overflow-visible border-r border-slate-200 bg-white transition-all duration-200 dark:border-border-dark dark:bg-brand-bg ${
         isCollapsed ? "w-20" : "w-64"
       }`}
     >
@@ -423,7 +423,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
         }}
       />
 
-      <div className="flex-none border-t border-slate-200 p-4 dark:border-border-dark">
+      <div className="relative z-20 flex-none border-t border-slate-200 p-4 dark:border-border-dark">
         <div className="relative profile-menu" ref={profileMenuRef}>
           <button
             className={`flex w-full items-center rounded-lg px-2 py-2 text-left transition-colors group focus:outline-none cursor-pointer ${
