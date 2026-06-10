@@ -148,7 +148,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="h-[82vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-zinc-800 bg-[#191919] text-zinc-100 shadow-2xl"
+        className="flex h-[min(82vh,calc(100vh-3rem))] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-[#191919] text-zinc-100 shadow-2xl sm:h-[min(82vh,calc(100vh-4rem))]"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
@@ -174,7 +174,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
           </button>
         </header>
 
-        <div className="h-[calc(82vh-121px)] overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
+        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6">
           <div className="space-y-5">
             {errorMessage && (
               <p className="rounded-lg border border-red-700/50 bg-red-900/30 px-3 py-2 text-xs font-semibold text-red-300">
@@ -315,7 +315,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        <footer className="flex items-center justify-end gap-2 border-t border-zinc-800 bg-[#121212] px-4 py-3 sm:px-6">
+        <footer className="flex shrink-0 items-center justify-end gap-2 border-t border-zinc-800 bg-[#121212] px-4 py-3 sm:px-6">
           <button
             className="rounded-lg border border-zinc-700 px-4 py-2 text-sm font-semibold text-zinc-300 transition-colors hover:bg-zinc-800 disabled:opacity-50"
             type="button"
