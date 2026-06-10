@@ -104,13 +104,11 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
 
   return (
     <aside
-      className={`relative flex shrink-0 flex-col justify-between border-r border-slate-200 bg-white transition-all duration-200 dark:border-border-dark dark:bg-brand-bg ${
+      className={`relative flex h-full min-h-0 shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-white transition-all duration-200 dark:border-border-dark dark:bg-brand-bg ${
         isCollapsed ? "w-20" : "w-64"
       }`}
     >
-      <div
-        className={`flex flex-col ${isCollapsed ? "gap-4 p-2" : "gap-6 p-4"}`}
-      >
+      <div className={`flex-none ${isCollapsed ? "gap-4 p-2" : "gap-6 p-4"}`}>
         {showBrand && (
           <div
             className={`flex items-center ${isCollapsed ? "justify-center gap-2" : "justify-between gap-3"}`}
@@ -164,10 +162,12 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
             )}
           </div>
         )}
+      </div>
 
-        <div className="flex flex-col gap-1">
+      <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-4">
+        <div className="flex-none">
           <button
-            className={`mb-4 flex items-center rounded-lg bg-slate-900 py-2.5 text-white transition-colors hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white cursor-pointer ${
+            className={`mb-4 flex w-full items-center rounded-lg bg-slate-900 py-2.5 text-white transition-colors hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white cursor-pointer ${
               isCollapsed ? "justify-center px-2" : "gap-3 px-3"
             }`}
             type="button"
@@ -218,7 +218,9 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
               </div>
             </div>
           )}
+        </div>
 
+        <div className="min-h-0 flex-1 overflow-y-auto pr-2">
           <div className="flex flex-col gap-1">
             {activeChats.length > 0 ? (
               activeChats.map((chat) => (
@@ -421,7 +423,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
         }}
       />
 
-      <div className="p-4 border-t border-slate-200 dark:border-border-dark">
+      <div className="flex-none border-t border-slate-200 p-4 dark:border-border-dark">
         <div className="relative profile-menu" ref={profileMenuRef}>
           <button
             className={`flex w-full items-center rounded-lg px-2 py-2 text-left transition-colors group focus:outline-none cursor-pointer ${
