@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { adminService, IntegrationSettingsPayload } from "../../../services/adminService";
 
 interface IntegrationSettings {
   openaiApiKey: string;
@@ -11,30 +12,67 @@ interface IntegrationSettings {
 
 const IntegrationSettingsPage: React.FC = () => {
   const [settings, setSettings] = useState<IntegrationSettings>({
-    openaiApiKey: "sk-••••••••••••••••••••••••••••••••",
+    openaiApiKey: "",
     openaiApiKeyHidden: true,
-    twilioAccountSid: "AC••••••••••••••••••••••••••••••",
-    twilioAuthToken: "••••••••••••••••••••••••••••••••",
-    whatsappPhoneNumber: "+1 (555) 123-4567",
-    webSocketUrl: "wss://api.openjustice.local/ws",
+    twilioAccountSid: "",
+    twilioAuthToken: "",
+    whatsappPhoneNumber: "",
+    webSocketUrl: "",
   });
 
   const [saveNotice, setSaveNotice] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const data = await adminService.getIntegrationSettings();
+        setSettings({
+          openaiApiKey: data.openai_api_key || "",
+          openaiApiKeyHidden: true,
+          twilioAccountSid: data.twilio_account_sid || "",
+          twilioAuthToken: data.twilio_auth_token || "",
+          whatsappPhoneNumber: data.whatsapp_phone_number || "",
+          webSocketUrl: data.web_socket_url || "",
+        });
+      } catch (error) {
+        console.error("Failed to fetch integration settings", error);
+      } finally {
+        setIsFetching(false);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const payload: IntegrationSettingsPayload = {
+        openai_api_key: settings.openaiApiKey,
+        twilio_account_sid: settings.twilioAccountSid,
+        twilio_auth_token: settings.twilioAuthToken,
+        whatsapp_phone_number: settings.whatsappPhoneNumber,
+        web_socket_url: settings.webSocketUrl,
+      };
+      await adminService.updateIntegrationSettings(payload);
       setSaveNotice("Integration settings saved successfully.");
       setTimeout(() => setSaveNotice(""), 3000);
     } catch (error) {
+      console.error("Failed to save integration settings", error);
       setSaveNotice("Failed to save integration settings.");
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (isFetching) {
+    return (
+      <div className="flex h-full items-center justify-center p-8">
+        <p className="text-sm font-semibold text-slate-400">Loading settings...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 p-8">
@@ -88,8 +126,14 @@ const IntegrationSettingsPage: React.FC = () => {
                 <input
                   type={settings.openaiApiKeyHidden ? "password" : "text"}
                   value={settings.openaiApiKey}
-                  readOnly
-                  className="flex-1 rounded border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-300"
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      openaiApiKey: e.target.value,
+                    })
+                  }
+                  placeholder="sk-..."
+                  className="flex-1 rounded border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-300 transition-colors hover:border-cyan-400/30 focus:border-cyan-400/50 focus:outline-none"
                 />
                 <button
                   type="button"
@@ -127,10 +171,16 @@ const IntegrationSettingsPage: React.FC = () => {
                 Account SID
               </label>
               <input
-                type="password"
+                type="text"
                 value={settings.twilioAccountSid}
-                readOnly
-                className="w-full rounded border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-300"
+                onChange={(e) =>
+                  setSettings({
+                    ...settings,
+                    twilioAccountSid: e.target.value,
+                  })
+                }
+                placeholder="AC..."
+                className="w-full rounded border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-300 transition-colors hover:border-cyan-400/30 focus:border-cyan-400/50 focus:outline-none"
               />
             </div>
             <div>
@@ -140,8 +190,14 @@ const IntegrationSettingsPage: React.FC = () => {
               <input
                 type="password"
                 value={settings.twilioAuthToken}
-                readOnly
-                className="w-full rounded border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-300"
+                onChange={(e) =>
+                  setSettings({
+                    ...settings,
+                    twilioAuthToken: e.target.value,
+                  })
+                }
+                placeholder="••••••••••••••••"
+                className="w-full rounded border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-300 transition-colors hover:border-cyan-400/30 focus:border-cyan-400/50 focus:outline-none"
               />
             </div>
             <button
