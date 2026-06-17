@@ -199,6 +199,16 @@ export const adminService = {
   async updateRetrievalSettings(payload: RetrievalSettingsPayload): Promise<RetrievalSettingsPayload> {
     const response = await apiClient.patch<RetrievalSettingsPayload>("/admin/settings/retrieval", payload);
     return response.data;
+  },
+
+  async getIntegrationSettings(): Promise<IntegrationSettingsPayload> {
+    const response = await apiClient.get<IntegrationSettingsPayload>("/admin/settings/integration");
+    return response.data;
+  },
+
+  async updateIntegrationSettings(payload: IntegrationSettingsPayload): Promise<IntegrationSettingsPayload> {
+    const response = await apiClient.patch<IntegrationSettingsPayload>("/admin/settings/integration", payload);
+    return response.data;
   }
 };
 
@@ -222,6 +232,14 @@ export interface RetrievalSettingsPayload {
   retrieval_embedding_model: string;
   retrieval_chunk_size: number;
   retrieval_chunk_overlap: number;
+}
+
+export interface IntegrationSettingsPayload {
+  openai_api_key: string | null;
+  twilio_account_sid: string | null;
+  twilio_auth_token: string | null;
+  whatsapp_phone_number: string | null;
+  web_socket_url: string | null;
 }
 
 
