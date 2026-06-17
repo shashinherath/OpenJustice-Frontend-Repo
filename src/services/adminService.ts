@@ -169,8 +169,61 @@ export const adminService = {
   async getResearchMetrics(): Promise<AdminResearchMetricsResponse> {
     const response = await apiClient.get<AdminResearchMetricsResponse>("/admin/analytics/research-metrics");
     return response.data;
+  },
+
+  async getLanguageSettings(): Promise<LanguageSettingsPayload> {
+    const response = await apiClient.get<LanguageSettingsPayload>("/admin/settings/language");
+    return response.data;
+  },
+
+  async updateLanguageSettings(payload: LanguageSettingsPayload): Promise<LanguageSettingsPayload> {
+    const response = await apiClient.patch<LanguageSettingsPayload>("/admin/settings/language", payload);
+    return response.data;
+  },
+
+  async getAISettings(): Promise<AISettingsPayload> {
+    const response = await apiClient.get<AISettingsPayload>("/admin/settings/ai");
+    return response.data;
+  },
+
+  async updateAISettings(payload: AISettingsPayload): Promise<AISettingsPayload> {
+    const response = await apiClient.patch<AISettingsPayload>("/admin/settings/ai", payload);
+    return response.data;
+  },
+
+  async getRetrievalSettings(): Promise<RetrievalSettingsPayload> {
+    const response = await apiClient.get<RetrievalSettingsPayload>("/admin/settings/retrieval");
+    return response.data;
+  },
+
+  async updateRetrievalSettings(payload: RetrievalSettingsPayload): Promise<RetrievalSettingsPayload> {
+    const response = await apiClient.patch<RetrievalSettingsPayload>("/admin/settings/retrieval", payload);
+    return response.data;
   }
 };
+
+export interface LanguageSettingsPayload {
+  enabled_languages: string[];
+  default_language: string;
+  translation_pipeline_enabled: boolean;
+}
+
+export interface AISettingsPayload {
+  ai_model_name: string;
+  ai_temperature: number;
+  ai_max_tokens: number;
+  ai_top_p: number;
+  ai_frequency_penalty: number;
+}
+
+export interface RetrievalSettingsPayload {
+  retrieval_top_k: number;
+  retrieval_similarity_threshold: number;
+  retrieval_embedding_model: string;
+  retrieval_chunk_size: number;
+  retrieval_chunk_overlap: number;
+}
+
 
 export interface LanguageStat {
   code: string;

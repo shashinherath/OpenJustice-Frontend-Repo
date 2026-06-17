@@ -1,12 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { adminService, type RetrievalSettingsPayload } from "@/services/adminService";
 
-interface RetrievalSettings {
-  topK: number;
-  similarityThreshold: number;
-  embeddingModel: string;
-  chunkSize: number;
-  chunkOverlap: number;
-}
+
 
 const EMBEDDING_MODELS = [
   { value: "text-embedding-3-large", label: "Text Embedding 3 Large" },
@@ -15,25 +10,37 @@ const EMBEDDING_MODELS = [
 ];
 
 const RetrievalSettingsPage: React.FC = () => {
-  const [settings, setSettings] = useState<RetrievalSettings>({
-    topK: 5,
-    similarityThreshold: 0.7,
-    embeddingModel: "text-embedding-3-large",
-    chunkSize: 512,
-    chunkOverlap: 64,
+  const [settings, setSettings] = useState<RetrievalSettingsPayload>({
+    retrieval_top_k: 5,
+    retrieval_similarity_threshold: 0.7,
+    retrieval_embedding_model: "text-embedding-3-large",
+    retrieval_chunk_size: 1000,
+    retrieval_chunk_overlap: 200,
   });
 
   const [saveNotice, setSaveNotice] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const data = await adminService.getRetrievalSettings();
+        setSettings(data);
+      } catch (error) {
+        console.error("Failed to fetch retrieval settings", error);
+      }
+    };
+    fetchSettings();
+  }, []);
+
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await adminService.updateRetrievalSettings(settings);
       setSaveNotice("Retrieval settings saved successfully.");
       setTimeout(() => setSaveNotice(""), 3000);
     } catch (error) {
+      console.error(error);
       setSaveNotice("Failed to save retrieval settings.");
     } finally {
       setIsLoading(false);
@@ -60,7 +67,7 @@ const RetrievalSettingsPage: React.FC = () => {
             Top-K Results
           </p>
           <p className="mt-3 text-2xl font-black text-cyan-400">
-            {settings.topK}
+            {settings.retrieval_top_k}
           </p>
         </article>
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
@@ -68,7 +75,7 @@ const RetrievalSettingsPage: React.FC = () => {
             Similarity Threshold
           </p>
           <p className="mt-3 text-2xl font-black text-white">
-            {(settings.similarityThreshold * 100).toFixed(0)}%
+            {(settings.retrieval_similarity_threshold * 100).toFixed(0)}%
           </p>
         </article>
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
@@ -76,7 +83,7 @@ const RetrievalSettingsPage: React.FC = () => {
             Chunk Size
           </p>
           <p className="mt-3 text-2xl font-black text-white">
-            {settings.chunkSize}
+            {settings.retrieval_chunk_size}
           </p>
         </article>
       </section>
@@ -91,14 +98,18 @@ const RetrievalSettingsPage: React.FC = () => {
           </p>
           <div className="mt-4 md:w-96">
             <select
-              value={settings.embeddingModel}
+              value={settings.retrieval_embedding_model}
               onChange={(e) =>
-                setSettings({ ...settings, embeddingModel: e.target.value })
+                setSettings({ ...settings, retrieval_embedding_model: e.target.value })
               }
-              className="w-full rounded border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-300 transition-colors hover:border-cyan-400/30 focus:border-cyan-400/50 focus:outline-none"
+              className="w-full rounded border border-white/10 bg-[#191919] px-3 py-2 text-sm text-slate-300 transition-colors hover:border-cyan-400/30 focus:border-cyan-400/50 focus:outline-none"
             >
               {EMBEDDING_MODELS.map((model) => (
-                <option key={model.value} value={model.value}>
+                <option 
+                  key={model.value} 
+                  value={model.value}
+                  className="bg-[#191919] text-slate-300"
+                >
                   {model.label}
                 </option>
               ))}
@@ -119,11 +130,11 @@ const RetrievalSettingsPage: React.FC = () => {
               min="1"
               max="20"
               step="1"
-              value={settings.topK}
+              value={settings.retrieval_top_k}
               onChange={(e) =>
                 setSettings({
                   ...settings,
-                  topK: parseInt(e.target.value, 10),
+                  retrieval_top_k: parseInt(e.target.value, 10),
                 })
               }
               className="w-full"
@@ -131,7 +142,7 @@ const RetrievalSettingsPage: React.FC = () => {
             <div className="flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-2">
               <span className="text-xs text-slate-400">Range: 1 - 20</span>
               <span className="text-sm font-bold text-cyan-300">
-                {settings.topK}
+                {settings.retrieval_top_k}
               </span>
             </div>
           </div>
@@ -150,11 +161,11 @@ const RetrievalSettingsPage: React.FC = () => {
               min="0"
               max="1"
               step="0.05"
-              value={settings.similarityThreshold}
+              value={settings.retrieval_similarity_threshold}
               onChange={(e) =>
                 setSettings({
                   ...settings,
-                  similarityThreshold: parseFloat(e.target.value),
+                  retrieval_similarity_threshold: parseFloat(e.target.value),
                 })
               }
               className="w-full"
@@ -162,7 +173,7 @@ const RetrievalSettingsPage: React.FC = () => {
             <div className="flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-2">
               <span className="text-xs text-slate-400">Range: 0.0 - 1.0</span>
               <span className="text-sm font-bold text-cyan-300">
-                {settings.similarityThreshold.toFixed(2)}
+                {settings.retrieval_similarity_threshold.toFixed(2)}
               </span>
             </div>
           </div>
@@ -181,11 +192,11 @@ const RetrievalSettingsPage: React.FC = () => {
               min="128"
               max="1024"
               step="128"
-              value={settings.chunkSize}
+              value={settings.retrieval_chunk_size}
               onChange={(e) =>
                 setSettings({
                   ...settings,
-                  chunkSize: parseInt(e.target.value, 10),
+                  retrieval_chunk_size: parseInt(e.target.value, 10),
                 })
               }
               className="w-full"
@@ -193,7 +204,7 @@ const RetrievalSettingsPage: React.FC = () => {
             <div className="flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-2">
               <span className="text-xs text-slate-400">Range: 128 - 1024</span>
               <span className="text-sm font-bold text-cyan-300">
-                {settings.chunkSize}
+                {settings.retrieval_chunk_size}
               </span>
             </div>
           </div>
@@ -212,11 +223,11 @@ const RetrievalSettingsPage: React.FC = () => {
               min="0"
               max="256"
               step="16"
-              value={settings.chunkOverlap}
+              value={settings.retrieval_chunk_overlap}
               onChange={(e) =>
                 setSettings({
                   ...settings,
-                  chunkOverlap: parseInt(e.target.value, 10),
+                  retrieval_chunk_overlap: parseInt(e.target.value, 10),
                 })
               }
               className="w-full"
@@ -224,7 +235,7 @@ const RetrievalSettingsPage: React.FC = () => {
             <div className="flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-2">
               <span className="text-xs text-slate-400">Range: 0 - 256</span>
               <span className="text-sm font-bold text-cyan-300">
-                {settings.chunkOverlap}
+                {settings.retrieval_chunk_overlap}
               </span>
             </div>
           </div>
