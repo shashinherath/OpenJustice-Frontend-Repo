@@ -1,39 +1,44 @@
-import React, { useState } from "react";
-
-interface AISettings {
-  modelName: string;
-  temperature: number;
-  maxTokens: number;
-  topP: number;
-  frequencyPenalty: number;
-}
+import React, { useState, useEffect } from "react";
+import { adminService, type AISettingsPayload } from "@/services/adminService";
 
 const AI_MODELS = [
-  { value: "gpt-4-turbo", label: "GPT-4 Turbo" },
-  { value: "gpt-4", label: "GPT-4" },
-  { value: "gpt-3.5-turbo", label: "GPT-3.5 Turbo" },
+  { value: "gpt-4o", label: "GPT-4o" },
+  { value: "gpt-4o-mini", label: "GPT-4o-Mini" }
 ];
 
 const AISettingsPage: React.FC = () => {
-  const [settings, setSettings] = useState<AISettings>({
-    modelName: "gpt-4-turbo",
-    temperature: 0.7,
-    maxTokens: 2048,
-    topP: 0.9,
-    frequencyPenalty: 0.6,
+  const [settings, setSettings] = useState<AISettingsPayload>({
+    ai_model_name: "gpt-4o-mini",
+    ai_temperature: 0.2,
+    ai_max_tokens: 1200,
+    ai_top_p: 1.0,
+    ai_frequency_penalty: 0.0,
   });
 
-  const [saveNotice, setSaveNotice] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [saveNotice, setSaveNotice] = useState<string>("");
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const data = await adminService.getAISettings();
+        setSettings(data);
+      } catch (error) {
+        console.error("Failed to fetch AI settings", error);
+      }
+    };
+    fetchSettings();
+  }, []);
+
 
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await adminService.updateAISettings(settings);
       setSaveNotice("AI settings saved successfully.");
       setTimeout(() => setSaveNotice(""), 3000);
     } catch (error) {
+      console.error(error);
       setSaveNotice("Failed to save AI settings.");
     } finally {
       setIsLoading(false);
@@ -60,7 +65,7 @@ const AISettingsPage: React.FC = () => {
             Active Model
           </p>
           <p className="mt-3 text-2xl font-black text-cyan-400">
-            {settings.modelName.split("-").pop()?.toUpperCase()}
+            {settings.ai_model_name.toUpperCase()}
           </p>
         </article>
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
@@ -68,7 +73,7 @@ const AISettingsPage: React.FC = () => {
             Temperature
           </p>
           <p className="mt-3 text-2xl font-black text-white">
-            {settings.temperature.toFixed(2)}
+            {settings.ai_temperature.toFixed(2)}
           </p>
         </article>
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
@@ -76,7 +81,7 @@ const AISettingsPage: React.FC = () => {
             Max Tokens
           </p>
           <p className="mt-3 text-2xl font-black text-white">
-            {settings.maxTokens}
+            {settings.ai_max_tokens}
           </p>
         </article>
       </section>
@@ -91,14 +96,18 @@ const AISettingsPage: React.FC = () => {
           </p>
           <div className="mt-4 md:w-96">
             <select
-              value={settings.modelName}
+              value={settings.ai_model_name}
               onChange={(e) =>
-                setSettings({ ...settings, modelName: e.target.value })
+                setSettings({ ...settings, ai_model_name: e.target.value })
               }
-              className="w-full rounded border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-300 transition-colors hover:border-cyan-400/30 focus:border-cyan-400/50 focus:outline-none"
+              className="w-full rounded border border-white/10 bg-[#191919] px-3 py-2 text-sm text-slate-300 transition-colors hover:border-cyan-400/30 focus:border-cyan-400/50 focus:outline-none"
             >
               {AI_MODELS.map((model) => (
-                <option key={model.value} value={model.value}>
+                <option 
+                  key={model.value} 
+                  value={model.value}
+                  className="bg-[#191919] text-slate-300"
+                >
                   {model.label}
                 </option>
               ))}
@@ -119,11 +128,11 @@ const AISettingsPage: React.FC = () => {
               min="0"
               max="2"
               step="0.1"
-              value={settings.temperature}
+              value={settings.ai_temperature}
               onChange={(e) =>
                 setSettings({
                   ...settings,
-                  temperature: parseFloat(e.target.value),
+                  ai_temperature: parseFloat(e.target.value),
                 })
               }
               className="w-full"
@@ -131,7 +140,7 @@ const AISettingsPage: React.FC = () => {
             <div className="flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-2">
               <span className="text-xs text-slate-400">Range: 0.0 - 2.0</span>
               <span className="text-sm font-bold text-cyan-300">
-                {settings.temperature.toFixed(2)}
+                {settings.ai_temperature.toFixed(2)}
               </span>
             </div>
           </div>
@@ -150,11 +159,11 @@ const AISettingsPage: React.FC = () => {
               min="256"
               max="4096"
               step="256"
-              value={settings.maxTokens}
+              value={settings.ai_max_tokens}
               onChange={(e) =>
                 setSettings({
                   ...settings,
-                  maxTokens: parseInt(e.target.value, 10),
+                  ai_max_tokens: parseInt(e.target.value, 10),
                 })
               }
               className="w-full"
@@ -162,7 +171,7 @@ const AISettingsPage: React.FC = () => {
             <div className="flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-2">
               <span className="text-xs text-slate-400">Range: 256 - 4096</span>
               <span className="text-sm font-bold text-cyan-300">
-                {settings.maxTokens}
+                {settings.ai_max_tokens}
               </span>
             </div>
           </div>
@@ -181,16 +190,16 @@ const AISettingsPage: React.FC = () => {
               min="0"
               max="1"
               step="0.05"
-              value={settings.topP}
+              value={settings.ai_top_p}
               onChange={(e) =>
-                setSettings({ ...settings, topP: parseFloat(e.target.value) })
+                setSettings({ ...settings, ai_top_p: parseFloat(e.target.value) })
               }
               className="w-full"
             />
             <div className="flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-2">
               <span className="text-xs text-slate-400">Range: 0.0 - 1.0</span>
               <span className="text-sm font-bold text-cyan-300">
-                {settings.topP.toFixed(2)}
+                {settings.ai_top_p.toFixed(2)}
               </span>
             </div>
           </div>
@@ -209,11 +218,11 @@ const AISettingsPage: React.FC = () => {
               min="0"
               max="2"
               step="0.1"
-              value={settings.frequencyPenalty}
+              value={settings.ai_frequency_penalty}
               onChange={(e) =>
                 setSettings({
                   ...settings,
-                  frequencyPenalty: parseFloat(e.target.value),
+                  ai_frequency_penalty: parseFloat(e.target.value),
                 })
               }
               className="w-full"
@@ -221,7 +230,7 @@ const AISettingsPage: React.FC = () => {
             <div className="flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-2">
               <span className="text-xs text-slate-400">Range: 0.0 - 2.0</span>
               <span className="text-sm font-bold text-cyan-300">
-                {settings.frequencyPenalty.toFixed(2)}
+                {settings.ai_frequency_penalty.toFixed(2)}
               </span>
             </div>
           </div>

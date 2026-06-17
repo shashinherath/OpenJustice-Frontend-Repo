@@ -80,6 +80,32 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     }
   }, [initialLanguage]);
 
+  useEffect(() => {
+    // Sync with backend on mount
+    const syncWithBackend = async () => {
+      try {
+        const { adminService } = await import("@/services/adminService");
+        const settings = await adminService.getLanguageSettings();
+        
+        const validLanguages = settings.enabled_languages.filter((l: string) => SUPPORTED_LANGUAGES.includes(l as AppLanguage)) as AppLanguage[];
+        if (validLanguages.length > 0) {
+          setAvailableLanguages(validLanguages);
+          setDefaultLanguage(settings.default_language as AppLanguage);
+          setTranslationPipelineEnabled(settings.translation_pipeline_enabled);
+
+          if (typeof localStorage !== "undefined") {
+            localStorage.setItem(ENABLED_LANGUAGES_STORAGE_KEY, JSON.stringify(validLanguages));
+            localStorage.setItem(DEFAULT_ADMIN_LANGUAGE_STORAGE_KEY, settings.default_language);
+            localStorage.setItem(TRANSLATION_PIPELINE_STORAGE_KEY, String(settings.translation_pipeline_enabled));
+          }
+        }
+      } catch (error) {
+        console.warn("Failed to sync language settings with backend, using local defaults", error);
+      }
+    };
+    void syncWithBackend();
+  }, []);
+
   const changeLanguage = useCallback(async (lang: AppLanguage) => {
     if (!availableLanguages.includes(lang)) {
       return;
@@ -109,21 +135,33 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       ? nextDefaultLanguage
       : safeEnabledLanguages[0];
 
-    setAvailableLanguages(safeEnabledLanguages);
-    setDefaultLanguage(safeDefaultLanguage);
-    setTranslationPipelineEnabled(nextTranslationPipelineEnabled);
+    try {
+      const { adminService } = await import("@/services/adminService");
+      await adminService.updateLanguageSettings({
+        enabled_languages: safeEnabledLanguages,
+        default_language: safeDefaultLanguage,
+        translation_pipeline_enabled: nextTranslationPipelineEnabled
+      });
+      
+      setAvailableLanguages(safeEnabledLanguages);
+      setDefaultLanguage(safeDefaultLanguage);
+      setTranslationPipelineEnabled(nextTranslationPipelineEnabled);
 
-    if (typeof localStorage !== "undefined") {
-      localStorage.setItem(ENABLED_LANGUAGES_STORAGE_KEY, JSON.stringify(safeEnabledLanguages));
-      localStorage.setItem(DEFAULT_ADMIN_LANGUAGE_STORAGE_KEY, safeDefaultLanguage);
-      localStorage.setItem(TRANSLATION_PIPELINE_STORAGE_KEY, String(nextTranslationPipelineEnabled));
+      if (typeof localStorage !== "undefined") {
+        localStorage.setItem(ENABLED_LANGUAGES_STORAGE_KEY, JSON.stringify(safeEnabledLanguages));
+        localStorage.setItem(DEFAULT_ADMIN_LANGUAGE_STORAGE_KEY, safeDefaultLanguage);
+        localStorage.setItem(TRANSLATION_PIPELINE_STORAGE_KEY, String(nextTranslationPipelineEnabled));
+      }
+
+      // Apply selected default immediately so changes are visible across the app.
+      const nextCurrentLanguage = safeDefaultLanguage;
+
+      await changeLanguage(nextCurrentLanguage);
+    } catch (error) {
+      console.error("Failed to save language settings to backend", error);
+      throw error;
     }
-
-    // Apply selected default immediately so changes are visible across the app.
-    const nextCurrentLanguage = safeDefaultLanguage;
-
-    await changeLanguage(nextCurrentLanguage);
-  }, [changeLanguage, currentLanguage]);
+  }, [changeLanguage]);
 
   return (
     <LanguageContext.Provider 
@@ -138,5 +176,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     >
       {children}
     </LanguageContext.Provider>
+
   );
 };
