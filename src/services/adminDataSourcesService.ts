@@ -19,8 +19,23 @@ export interface SuccessResponse<T> {
 }
 
 export const adminDataSourcesService = {
-  async listDocuments(skip = 0, limit = 100): Promise<DocumentItem[]> {
-    const response = await apiClient.get<SuccessResponse<DocumentItem[]>>(`/documents?skip=${skip}&limit=${limit}`);
+  async listDocuments(
+    skip = 0,
+    limit = 25,
+    searchQuery?: string,
+    language?: string,
+    status?: string
+  ): Promise<DocumentItem[]> {
+    const params = new URLSearchParams({
+      skip: skip.toString(),
+      limit: limit.toString(),
+    });
+    
+    if (searchQuery) params.append("search_query", searchQuery);
+    if (language && language !== "All") params.append("language", language);
+    if (status && status !== "All") params.append("status", status);
+
+    const response = await apiClient.get<SuccessResponse<DocumentItem[]>>(`/documents?${params.toString()}`);
     return response.data.data;
   },
 
@@ -37,6 +52,11 @@ export const adminDataSourcesService = {
         "Content-Type": "multipart/form-data"
       }
     });
+    return response.data.data;
+  },
+
+  async getStats(): Promise<{total: number; processed: number; pending: number; failed: number}> {
+    const response = await apiClient.get<SuccessResponse<any>>("/documents/stats");
     return response.data.data;
   },
 

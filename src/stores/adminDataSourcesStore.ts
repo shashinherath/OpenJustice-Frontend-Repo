@@ -7,6 +7,17 @@ interface AdminDataSourcesState {
   error: string | null;
   isUploading: boolean;
 
+  searchQuery: string;
+  filterLanguage: string;
+  filterStatus: string;
+
+  stats: { total: number; processed: number; pending: number; failed: number };
+
+  setSearchQuery: (query: string) => void;
+  setFilterLanguage: (lang: string) => void;
+  setFilterStatus: (status: string) => void;
+
+  fetchStats: () => Promise<void>;
   fetchDocuments: () => Promise<void>;
   uploadDocument: (file: File, language: string) => Promise<void>;
   processDocument: (documentId: string) => Promise<void>;
@@ -20,10 +31,32 @@ export const useAdminDataSourcesStore = create<AdminDataSourcesState>((set, get)
   error: null,
   isUploading: false,
 
+  searchQuery: "",
+  filterLanguage: "All",
+  filterStatus: "All",
+
+  stats: { total: 0, processed: 0, pending: 0, failed: 0 },
+
+  setSearchQuery: (query) => set({ searchQuery: query }),
+  setFilterLanguage: (lang) => set({ filterLanguage: lang }),
+  setFilterStatus: (status) => set({ filterStatus: status }),
+
+  fetchStats: async () => {
+    try {
+      const stats = await adminDataSourcesService.getStats();
+      set({ stats });
+    } catch (error) {
+      console.error("Failed to fetch stats", error);
+    }
+  },
+
   fetchDocuments: async () => {
     set({ isLoading: true, error: null });
+    const { searchQuery, filterLanguage, filterStatus } = get();
+    // Fetch stats without awaiting to avoid blocking documents list
+    void get().fetchStats();
     try {
-      const documents = await adminDataSourcesService.listDocuments();
+      const documents = await adminDataSourcesService.listDocuments(0, 25, searchQuery, filterLanguage, filterStatus);
       set({ documents, isLoading: false });
     } catch (error: any) {
       set({ 
