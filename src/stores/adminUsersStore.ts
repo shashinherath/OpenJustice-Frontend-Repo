@@ -8,6 +8,7 @@ interface AdminUsersState {
   
   fetchUsers: () => Promise<void>;
   toggleUserStatus: (userId: string, currentStatus: "Active" | "Blocked") => Promise<void>;
+  addAdminUser: (payload: { first_name: string; last_name: string; phone_number: string; email: string; password: string }) => Promise<void>;
 }
 
 export const useAdminUsersStore = create<AdminUsersState>((set, get) => ({
@@ -54,6 +55,17 @@ export const useAdminUsersStore = create<AdminUsersState>((set, get) => ({
     } catch (error: any) {
       console.error("Failed to update user status", error);
       // Optional: Set a specific error state for toasts
+    }
+  },
+  
+  addAdminUser: async (payload) => {
+    try {
+      await adminService.createAdminUser(payload);
+      // Re-fetch users to update the list and counts
+      await get().fetchUsers();
+    } catch (error: any) {
+      console.error("Failed to add admin user", error);
+      throw error;
     }
   }
 }));

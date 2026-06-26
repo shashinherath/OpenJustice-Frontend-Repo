@@ -58,7 +58,11 @@ export interface AdminOverviewResponse {
 
 export interface AdminUserItem {
   id: string;
+  first_name: string | null;
+  last_name: string | null;
   email: string;
+  phone_number: string | null;
+  role: string;
   status: "Active" | "Blocked";
   createdDate: string;
 }
@@ -106,6 +110,11 @@ export const adminService = {
   async getUsers(skip = 0, limit = 100): Promise<AdminUserListResponse> {
     const response = await apiClient.get<AdminUserListResponse>(`/admin/users?skip=${skip}&limit=${limit}`);
     return response.data;
+  },
+  
+  async createAdminUser(payload: { first_name: string; last_name: string; phone_number: string; email: string; password: string }): Promise<AdminUserItem> {
+    const response = await apiClient.post<{ data: AdminUserItem; message: string }>("/admin/users", payload);
+    return response.data.data;
   },
   
   async updateUserStatus(userId: string, isActive: boolean): Promise<AdminUserItem> {
