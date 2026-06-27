@@ -94,6 +94,7 @@ export const APP_ROUTES: RouteConfig[] = [
   { path: "/", component: HomePage },
   { path: "/chat", component: ChatPage },
   { path: "/chat/library", component: ChatPage },
+  { path: "/chat/lawyers", component: ChatPage },
   { path: "/chat/:chatId", component: AnswerPage },
   { path: "/privacy-policy", component: PrivacyPolicyPage },
   { path: "/terms-of-service", component: TermsOfServicePage },
