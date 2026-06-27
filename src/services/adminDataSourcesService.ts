@@ -9,6 +9,7 @@ export interface DocumentItem {
   storage_path: string | null;
   status: "Processed" | "Pending" | "Failed";
   published_year: number | null;
+  collection_id: string | null;
   created_at: string;
 }
 
@@ -39,10 +40,14 @@ export const adminDataSourcesService = {
     return response.data.data;
   },
 
-  async uploadDocument(file: File, language: string): Promise<DocumentItem> {
+  async uploadDocument(file: File, language: string, collectionId: string, publishedYear: string): Promise<DocumentItem> {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("language", language);
+    formData.append("collection_id", collectionId);
+    if (publishedYear) {
+      formData.append("published_year", publishedYear);
+    }
     
     // In a real app we might also extract title or let user specify type
     formData.append("title", file.name);

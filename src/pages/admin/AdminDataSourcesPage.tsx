@@ -24,6 +24,8 @@ const AdminDataSourcesPage: React.FC = () => {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("English");
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string>("special");
+  const [publishedYear, setPublishedYear] = useState<string>("");
   const [localErrorMessage, setLocalErrorMessage] = useState<string>("");
 
   useEffect(() => {
@@ -62,8 +64,9 @@ const AdminDataSourcesPage: React.FC = () => {
 
     setLocalErrorMessage("");
     try {
-      await uploadDocument(selectedFile, selectedLanguage);
+      await uploadDocument(selectedFile, selectedLanguage, selectedCollectionId, publishedYear);
       setSelectedFile(null);
+      setPublishedYear("");
     } catch (e: any) {
       setLocalErrorMessage(e.message || "Upload failed");
     }
@@ -130,15 +133,35 @@ const AdminDataSourcesPage: React.FC = () => {
         <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
           Upload Legal Document (PDF)
         </h3>
-        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_180px_auto_auto]">
+        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <input
             type="file"
-            accept="application/pdf,.pdf"
+            accept="application/pdf,.pdf,.docx"
             onChange={handleFileChange}
             disabled={isUploading}
             className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 file:mr-4 file:rounded file:border-0 file:bg-cyan-500/15 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-cyan-100 hover:file:bg-cyan-500/25 disabled:opacity-50"
           />
-          <div className="lg:ml-2">
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <select
+              value={selectedCollectionId}
+              onChange={(e) => setSelectedCollectionId(e.target.value)}
+              className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 outline-none focus:border-cyan-400 sm:w-1/3"
+            >
+              <option value="special">Special</option>
+              <option value="slr">SLR</option>
+              <option value="nlr">NLR</option>
+              <option value="sclr">SCLR</option>
+              <option value="scoa">SCOA</option>
+              <option value="acts">Acts</option>
+            </select>
+            <input
+              type="number"
+              placeholder="Year (e.g. 2023)"
+              value={publishedYear}
+              onChange={(e) => setPublishedYear(e.target.value)}
+              className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 outline-none placeholder:text-slate-600 focus:border-cyan-400 sm:w-1/3"
+            />
+            <div className="w-full sm:w-1/3">
             <LanguageSelect
               value={selectedLanguage}
               onChange={(v) => setSelectedLanguage(v)}
@@ -149,7 +172,10 @@ const AdminDataSourcesPage: React.FC = () => {
               ]}
               ariaLabel="Select document language"
             />
+            </div>
           </div>
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-4">
           <button
             type="button"
             onClick={handleUploadDocument}

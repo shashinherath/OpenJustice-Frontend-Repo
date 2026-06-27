@@ -19,7 +19,7 @@ interface AdminDataSourcesState {
 
   fetchStats: () => Promise<void>;
   fetchDocuments: () => Promise<void>;
-  uploadDocument: (file: File, language: string) => Promise<void>;
+  uploadDocument: (file: File, language: string, collectionId: string, publishedYear: string) => Promise<void>;
   processDocument: (documentId: string) => Promise<void>;
   processAllPending: () => Promise<void>;
   deleteDocument: (documentId: string) => Promise<void>;
@@ -66,10 +66,10 @@ export const useAdminDataSourcesStore = create<AdminDataSourcesState>((set, get)
     }
   },
 
-  uploadDocument: async (file: File, language: string) => {
+  uploadDocument: async (file: File, language: string, collectionId: string, publishedYear: string) => {
     set({ isUploading: true, error: null });
     try {
-      const newDoc = await adminDataSourcesService.uploadDocument(file, language);
+      const newDoc = await adminDataSourcesService.uploadDocument(file, language, collectionId, publishedYear);
       const { documents } = get();
       set({ 
         documents: [newDoc, ...documents],
