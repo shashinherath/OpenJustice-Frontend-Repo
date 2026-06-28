@@ -142,24 +142,27 @@ const AdminDataSourcesPage: React.FC = () => {
             className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 file:mr-4 file:rounded file:border-0 file:bg-cyan-500/15 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-cyan-100 hover:file:bg-cyan-500/25 disabled:opacity-50"
           />
           <div className="flex flex-col gap-4 sm:flex-row">
-            <select
+            <div className="w-full sm:w-1/3">
+            <LanguageSelect
               value={selectedCollectionId}
-              onChange={(e) => setSelectedCollectionId(e.target.value)}
-              className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 outline-none focus:border-cyan-400 sm:w-1/3"
-            >
-              <option value="special">Special</option>
-              <option value="slr">SLR</option>
-              <option value="nlr">NLR</option>
-              <option value="sclr">SCLR</option>
-              <option value="scoa">SCOA</option>
-              <option value="acts">Acts</option>
-            </select>
+              onChange={(v) => setSelectedCollectionId(v)}
+              options={[
+                { value: "special", label: "Special" },
+                { value: "slr", label: "SLR" },
+                { value: "nlr", label: "NLR" },
+                { value: "sclr", label: "SCLR" },
+                { value: "scoa", label: "SCOA" },
+                { value: "acts", label: "Acts" },
+              ]}
+              ariaLabel="Select collection"
+            />
+            </div>
             <input
               type="number"
               placeholder="Year (e.g. 2023)"
               value={publishedYear}
               onChange={(e) => setPublishedYear(e.target.value)}
-              className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 outline-none placeholder:text-slate-600 focus:border-cyan-400 sm:w-1/3"
+              className="flex w-full sm:w-1/3 min-w-32 items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 py-2 text-left text-sm font-semibold text-slate-800 shadow-lg shadow-black/10 transition-all duration-200 hover:border-slate-400 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 dark:border-slate-700/70 dark:bg-[#191919] dark:text-slate-200 dark:shadow-black/20 dark:hover:border-cyan-400/20 dark:hover:bg-[#202020] placeholder:font-normal placeholder:text-slate-400 dark:placeholder:text-slate-500"
             />
             <div className="w-full sm:w-1/3">
             <LanguageSelect

@@ -13,6 +13,18 @@ export interface DocumentItem {
   created_at: string;
 }
 
+export interface DocumentChunkItem {
+  id: string;
+  document_id: string;
+  content: string;
+  language: string;
+  chunk_index: number;
+  chunk_total: number;
+  chunk_size: number;
+  embedding_model: string | null;
+  metadata_: any | null;
+}
+
 export interface SuccessResponse<T> {
   success: boolean;
   data: T;
@@ -71,5 +83,10 @@ export const adminDataSourcesService = {
 
   async deleteDocument(documentId: string): Promise<void> {
     await apiClient.delete(`/documents/${documentId}`);
+  },
+
+  async getDocumentChunks(documentId: string): Promise<DocumentChunkItem[]> {
+    const response = await apiClient.get<SuccessResponse<DocumentChunkItem[]>>(`/documents/${documentId}/chunks`);
+    return response.data.data;
   }
 };
