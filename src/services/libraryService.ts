@@ -33,14 +33,14 @@ export const libraryService = {
   },
 
   async getDocuments(
-    collectionId: string,
+    collectionId?: string,
     letter?: string,
     searchQuery?: string,
     skip = 0,
     limit = 50
   ): Promise<DocumentItem[]> {
     const params = new URLSearchParams();
-    params.append("collection_id", collectionId);
+    if (collectionId) params.append("collection_id", collectionId);
     params.append("skip", skip.toString());
     params.append("limit", limit.toString());
     

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLibraryStore } from "@/stores/libraryStore";
 import { API_CONFIG } from "@/config/api.config";
 
@@ -28,8 +28,27 @@ const LegalLibrary: React.FC = () => {
     fetchCollections();
   }, [fetchCollections]);
 
+  const [isSearching, setIsSearching] = useState(false);
+
   // Current view logic
-  const currentView = activeDocument ? "documentView" : activeLetter ? "documents" : activeCollectionId ? "letters" : "home";
+  const currentView = activeDocument 
+    ? "documentView" 
+    : isSearching 
+      ? "documents"
+      : activeLetter 
+        ? "documents" 
+        : activeCollectionId 
+          ? "letters" 
+          : "home";
+
+  const handleGlobalSearch = () => {
+    if (searchQuery.trim() !== "") {
+      setIsSearching(true);
+      setActiveCollection(null);
+      setActiveLetter(null);
+      fetchDocuments(undefined, undefined, searchQuery);
+    }
+  };
 
   const handleCollectionClick = (id: string) => {
     setActiveCollection(id);
@@ -44,6 +63,7 @@ const LegalLibrary: React.FC = () => {
   };
 
   const handleBackToHome = () => {
+    setIsSearching(false);
     setActiveCollection(null);
     setActiveLetter(null);
     setSearchQuery("");
@@ -77,11 +97,16 @@ const LegalLibrary: React.FC = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && searchQuery.trim() !== "") {
-              // Future: Global search logic
+              handleGlobalSearch();
             }
           }}
         />
-        <button className="bg-slate-900 dark:bg-slate-200 text-white dark:text-black font-bold text-sm px-6 rounded-r-lg hover:bg-slate-800 dark:hover:bg-white transition-colors">SEARCH</button>
+        <button 
+          onClick={handleGlobalSearch}
+          className="bg-slate-900 dark:bg-slate-200 text-white dark:text-black font-bold text-sm px-6 rounded-r-lg hover:bg-slate-800 dark:hover:bg-white transition-colors"
+        >
+          SEARCH
+        </button>
       </div>
 
       <div className="mb-4">
@@ -167,21 +192,34 @@ const LegalLibrary: React.FC = () => {
   };
 
   const renderDocuments = () => {
-    if (!activeCollectionId || !activeLetter) return null;
-    const meta = collectionMeta[activeCollectionId] || { title: activeCollectionId, code: activeCollectionId };
+    if (!isSearching && (!activeCollectionId || !activeLetter)) return null;
+    
+    const meta = activeCollectionId 
+      ? (collectionMeta[activeCollectionId] || { title: activeCollectionId, code: activeCollectionId })
+      : { title: "Search Results", code: "ALL" };
 
     return (
       <div className="w-full max-w-5xl pb-10">
         <div className="flex items-center text-xs font-bold uppercase tracking-widest text-slate-400 mb-6">
-          <button onClick={handleBackToLetters} className="hover:text-cyan-400 uppercase">&larr; BACK TO {meta.title}</button>
-          <span className="mx-2">/</span>
-          <span className="text-cyan-500">{activeLetter}</span>
+          {isSearching ? (
+             <button onClick={handleBackToHome} className="hover:text-cyan-400 uppercase">&larr; BACK TO LIBRARY</button>
+          ) : (
+            <>
+              <button onClick={handleBackToLetters} className="hover:text-cyan-400 uppercase">&larr; BACK TO {meta.title}</button>
+              <span className="mx-2">/</span>
+              <span className="text-cyan-500">{activeLetter}</span>
+            </>
+          )}
         </div>
 
         <div className="mb-6">
-          <div className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-2">Documents / Records</div>
+          <div className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-2">
+            {isSearching ? 'Global Search' : 'Documents / Records'}
+          </div>
           <div className="flex items-end gap-3">
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-white font-serif">{meta.title} - {activeLetter}</h1>
+            <h1 className="text-4xl font-bold text-slate-900 dark:text-white font-serif">
+              {isSearching ? `Results for "${searchQuery}"` : `${meta.title} - ${activeLetter}`}
+            </h1>
             <span className="text-sm font-mono text-cyan-600 dark:text-cyan-400 mb-1">{documents.length} documents</span>
           </div>
         </div>
@@ -192,25 +230,31 @@ const LegalLibrary: React.FC = () => {
           <div className="text-center py-10 text-slate-500">No documents found.</div>
         ) : (
           <div className="border-t border-slate-200 dark:border-slate-800">
-            {documents.map(doc => (
-              <button
-                key={doc.id}
-                className="group w-full flex items-center justify-between border-b border-slate-200 dark:border-slate-800 py-4 px-2 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors text-left"
-                onClick={() => setActiveDocument(doc)}
-              >
-                <div className="flex items-start gap-4">
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mt-1 w-12 shrink-0">{meta.code}</div>
-                  <div>
-                    <div className="text-base font-semibold text-slate-900 dark:text-slate-200 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">{doc.title}</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1">{doc.document_type || 'PDF'}</div>
-                    <div className="text-xs text-slate-400 dark:text-slate-500 mt-1">{doc.published_year || 'Unknown Year'}</div>
+            {documents.map(doc => {
+              const docMeta = doc.collection_id 
+                ? (collectionMeta[doc.collection_id] || { code: doc.collection_id.toUpperCase() })
+                : { code: "DOC" };
+              
+              return (
+                <button
+                  key={doc.id}
+                  className="group w-full flex items-center justify-between border-b border-slate-200 dark:border-slate-800 py-4 px-2 hover:bg-slate-50 dark:hover:bg-white/5 transition-colors text-left"
+                  onClick={() => setActiveDocument(doc)}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mt-1 w-12 shrink-0">{docMeta.code}</div>
+                    <div>
+                      <div className="text-base font-semibold text-slate-900 dark:text-slate-200 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">{doc.title}</div>
+                      <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider mt-1">{doc.document_type || 'PDF'}</div>
+                      <div className="text-xs text-slate-400 dark:text-slate-500 mt-1">{doc.published_year || 'Unknown Year'}</div>
+                    </div>
                   </div>
-                </div>
-                <div className="text-xs font-bold uppercase tracking-widest text-cyan-600 dark:text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap ml-4">
-                  VIEW &rarr;
-                </div>
-              </button>
-            ))}
+                  <div className="text-xs font-bold uppercase tracking-widest text-cyan-600 dark:text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap ml-4">
+                    VIEW &rarr;
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
