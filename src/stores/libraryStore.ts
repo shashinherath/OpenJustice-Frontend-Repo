@@ -23,7 +23,7 @@ interface LibraryState {
 
   fetchCollections: () => Promise<void>;
   fetchLetters: (collectionId: string) => Promise<void>;
-  fetchDocuments: (collectionId: string, letter?: string, searchQuery?: string) => Promise<void>;
+  fetchDocuments: (collectionId?: string, letter?: string, searchQuery?: string) => Promise<void>;
   
   setActiveCollection: (collectionId: string | null) => void;
   setActiveLetter: (letter: string | null) => void;
@@ -102,7 +102,7 @@ export const useLibraryStore = create<LibraryState>((set, get) => ({
     }
   },
 
-  fetchDocuments: async (collectionId: string, letter?: string, searchQuery?: string) => {
+  fetchDocuments: async (collectionId?: string, letter?: string, searchQuery?: string) => {
     set({ isLoadingDocuments: true, error: null });
     try {
       const documents = await libraryService.getDocuments(collectionId, letter, searchQuery);
