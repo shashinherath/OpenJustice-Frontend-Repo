@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import LanguageSelect from "@/components/ui/LanguageSelect";
 import { useAdminDataSourcesStore } from "@/stores/adminDataSourcesStore";
 
@@ -11,10 +11,12 @@ const AdminDataSourcesPage: React.FC = () => {
     searchQuery,
     filterLanguage,
     filterStatus,
+    filterCollection,
     stats,
     setSearchQuery,
     setFilterLanguage,
     setFilterStatus,
+    setFilterCollection,
     fetchDocuments,
     uploadDocument,
     processDocument,
@@ -27,13 +29,26 @@ const AdminDataSourcesPage: React.FC = () => {
   const [selectedCollectionId, setSelectedCollectionId] = useState<string>("special");
   const [publishedYear, setPublishedYear] = useState<string>("");
   const [localErrorMessage, setLocalErrorMessage] = useState<string>("");
+  const [collapsedCollections, setCollapsedCollections] = useState<Set<string>>(new Set());
+
+  const toggleCollection = (collectionId: string) => {
+    setCollapsedCollections(prev => {
+      const next = new Set(prev);
+      if (next.has(collectionId)) {
+        next.delete(collectionId);
+      } else {
+        next.add(collectionId);
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       void fetchDocuments();
     }, 300);
     return () => clearTimeout(timeoutId);
-  }, [searchQuery, filterLanguage, filterStatus, fetchDocuments]);
+  }, [searchQuery, filterLanguage, filterStatus, filterCollection, fetchDocuments]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nextFile = event.target.files?.[0] ?? null;
@@ -72,6 +87,14 @@ const AdminDataSourcesPage: React.FC = () => {
     }
   };
 
+  const groupedDocuments = useMemo(() => {
+    return documents.reduce((acc, doc) => {
+      const colId = doc.collection_id || "Unassigned";
+      if (!acc[colId]) acc[colId] = [];
+      acc[colId].push(doc);
+      return acc;
+    }, {} as Record<string, typeof documents>);
+  }, [documents]);
 
   return (
     <div className="space-y-8 p-8">
@@ -220,7 +243,7 @@ const AdminDataSourcesPage: React.FC = () => {
           </span>
         </div>
 
-        <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
           <input
             type="text"
             placeholder="Search documents by title..."
@@ -228,6 +251,19 @@ const AdminDataSourcesPage: React.FC = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
           />
+          <select
+            value={filterCollection}
+            onChange={(e) => setFilterCollection(e.target.value)}
+            className="w-full rounded border border-cyan-400/20 bg-[#191919] px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+          >
+            <option value="All">All Collections</option>
+            <option value="special">Special</option>
+            <option value="slr">SLR</option>
+            <option value="nlr">NLR</option>
+            <option value="sclr">SCLR</option>
+            <option value="scoa">SCOA</option>
+            <option value="acts">Acts</option>
+          </select>
           <select
             value={filterLanguage}
             onChange={(e) => setFilterLanguage(e.target.value)}
@@ -262,50 +298,7 @@ const AdminDataSourcesPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {documents.map((document) => (
-                <tr key={document.id} className="border-b border-white/5">
-                  <td className="px-3 py-3 text-slate-200">{document.title}</td>
-                  <td className="px-3 py-3 text-slate-300">
-                    {document.language}
-                  </td>
-                  <td className="px-3 py-3">
-                    <span
-                      className={`rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${
-                        document.status === "Processed"
-                          ? "bg-green-500/15 text-green-400"
-                          : document.status === "Failed"
-                            ? "bg-red-500/15 text-red-400"
-                            : "bg-amber-500/15 text-amber-300"
-                      }`}
-                    >
-                      {document.status}
-                    </span>
-                  </td>
-                  <td className="px-3 py-3 text-slate-400">
-                    {new Date(document.created_at).toLocaleDateString()}
-                  </td>
-                  <td className="px-3 py-3">
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        type="button"
-                        onClick={() => processDocument(document.id)}
-                        disabled={document.status === "Processed"}
-                        className="rounded border border-cyan-400/25 bg-cyan-500/10 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-cyan-100 transition-colors hover:bg-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-40"
-                      >
-                        Process
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => deleteDocument(document.id)}
-                        className="rounded border border-red-400/30 bg-red-500/10 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-red-300 transition-colors hover:bg-red-500/20"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {documents.length === 0 && (
+              {Object.keys(groupedDocuments).length === 0 && (
                 <tr>
                   <td
                     colSpan={5}
@@ -315,6 +308,74 @@ const AdminDataSourcesPage: React.FC = () => {
                   </td>
                 </tr>
               )}
+              {Object.entries(groupedDocuments).map(([collectionId, docs]) => {
+                const isCollapsed = collapsedCollections.has(collectionId);
+                return (
+                <React.Fragment key={collectionId}>
+                  <tr 
+                    className="border-b border-cyan-400/20 bg-cyan-900/10 cursor-pointer hover:bg-cyan-900/20 transition-colors"
+                    onClick={() => toggleCollection(collectionId)}
+                  >
+                    <td colSpan={5} className="px-3 py-2 text-xs font-bold uppercase tracking-widest text-cyan-300">
+                      <div className="flex items-center gap-2">
+                        <svg
+                          className={`w-4 h-4 transition-transform duration-200 ${isCollapsed ? "-rotate-90" : "rotate-0"}`}
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                        {collectionId}
+                      </div>
+                    </td>
+                  </tr>
+                  {!isCollapsed && docs.map((document) => (
+                    <tr key={document.id} className="border-b border-white/5">
+                      <td className="px-3 py-3 text-slate-200 pl-6">{document.title}</td>
+                      <td className="px-3 py-3 text-slate-300">
+                        {document.language}
+                      </td>
+                      <td className="px-3 py-3">
+                        <span
+                          className={`rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${
+                            document.status === "Processed"
+                              ? "bg-green-500/15 text-green-400"
+                              : document.status === "Failed"
+                                ? "bg-red-500/15 text-red-400"
+                                : "bg-amber-500/15 text-amber-300"
+                          }`}
+                        >
+                          {document.status}
+                        </span>
+                      </td>
+                      <td className="px-3 py-3 text-slate-400">
+                        {new Date(document.created_at).toLocaleDateString()}
+                      </td>
+                      <td className="px-3 py-3">
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => processDocument(document.id)}
+                            disabled={document.status === "Processed"}
+                            className="rounded border border-cyan-400/25 bg-cyan-500/10 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-cyan-100 transition-colors hover:bg-cyan-500/20 disabled:cursor-not-allowed disabled:opacity-40"
+                          >
+                            Process
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => deleteDocument(document.id)}
+                            className="rounded border border-red-400/30 bg-red-500/10 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-red-300 transition-colors hover:bg-red-500/20"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </React.Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>

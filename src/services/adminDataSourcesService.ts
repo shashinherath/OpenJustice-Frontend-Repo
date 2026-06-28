@@ -37,7 +37,8 @@ export const adminDataSourcesService = {
     limit = 25,
     searchQuery?: string,
     language?: string,
-    status?: string
+    status?: string,
+    collectionId?: string
   ): Promise<DocumentItem[]> {
     const params = new URLSearchParams({
       skip: skip.toString(),
@@ -47,6 +48,7 @@ export const adminDataSourcesService = {
     if (searchQuery) params.append("search_query", searchQuery);
     if (language && language !== "All") params.append("language", language);
     if (status && status !== "All") params.append("status", status);
+    if (collectionId && collectionId !== "All") params.append("collection_id", collectionId);
 
     const response = await apiClient.get<SuccessResponse<DocumentItem[]>>(`/documents?${params.toString()}`);
     return response.data.data;
