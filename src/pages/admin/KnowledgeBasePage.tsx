@@ -8,6 +8,21 @@ const KnowledgeBasePage: React.FC = () => {
   const [isLoadingChunks, setIsLoadingChunks] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
+  const [filterCollection, setFilterCollection] = useState("All");
+  const [collapsedCollections, setCollapsedCollections] = useState<Set<string>>(new Set());
+
+  const toggleCollection = (collectionId: string) => {
+    setCollapsedCollections(prev => {
+      const next = new Set(prev);
+      if (next.has(collectionId)) {
+        next.delete(collectionId);
+      } else {
+        next.add(collectionId);
+      }
+      return next;
+    });
+  };
+
   const {
     records,
     isLoading,
@@ -41,8 +56,21 @@ const KnowledgeBasePage: React.FC = () => {
       result = result.filter((row) => row.status === filterStatus);
     }
 
+    if (filterCollection !== "All") {
+      result = result.filter((row) => (row.collectionId || "unassigned").toLowerCase() === filterCollection.toLowerCase());
+    }
+
     return result;
-  }, [records, searchQuery, filterStatus]);
+  }, [records, searchQuery, filterStatus, filterCollection]);
+
+  const groupedRecords = useMemo(() => {
+    return filteredRecords.reduce((acc, row) => {
+      const colId = row.collectionId || "Unassigned";
+      if (!acc[colId]) acc[colId] = [];
+      acc[colId].push(row);
+      return acc;
+    }, {} as Record<string, typeof filteredRecords>);
+  }, [filteredRecords]);
 
   const handleReprocessDocument = async (documentId: string) => {
     try {
@@ -159,6 +187,19 @@ const KnowledgeBasePage: React.FC = () => {
             className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
           />
           <select
+            value={filterCollection}
+            onChange={(e) => setFilterCollection(e.target.value)}
+            className="w-full rounded border border-cyan-400/20 bg-[#191919] px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+          >
+            <option value="All">All Collections</option>
+            <option value="special">Special</option>
+            <option value="slr">SLR</option>
+            <option value="nlr">NLR</option>
+            <option value="sclr">SCLR</option>
+            <option value="scoa">SCOA</option>
+            <option value="acts">Acts</option>
+          </select>
+          <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
             className="w-full rounded border border-cyan-400/20 bg-[#191919] px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
@@ -183,53 +224,78 @@ const KnowledgeBasePage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredRecords.length === 0 ? (
+              {Object.keys(groupedRecords).length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-3 py-6 text-center text-sm text-slate-500">
                     No documents match your search.
                   </td>
                 </tr>
               ) : (
-                filteredRecords.map((row) => (
-                  <tr key={row.documentId} className="border-b border-white/5">
-                    <td className="px-3 py-3 text-slate-200">
-                      {row.documentTitle || row.documentId}
-                    </td>
-                    <td className="px-3 py-3 text-slate-300">{row.chunkCount}</td>
-                    <td className="px-3 py-3 text-slate-300">
-                      {row.embeddingModel}
-                    </td>
-                    <td className="px-3 py-3">
-                      <span
-                        className={`rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${
-                          row.status === "Active"
-                            ? "bg-green-500/15 text-green-400"
-                            : "bg-red-500/15 text-red-300"
-                        }`}
-                      >
-                        {row.status}
-                      </span>
-                    </td>
-                    <td className="px-3 py-3">
-                      <div className="flex flex-wrap gap-2">
-                        <button
-                          type="button"
-                          onClick={() => handleReprocessDocument(row.documentId)}
-                          className="rounded border border-white/10 bg-white/5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
-                        >
-                          Re-process document
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleViewChunks(row.documentId)}
-                          className="rounded border border-white/10 bg-white/5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
-                        >
-                          View chunk details
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                Object.entries(groupedRecords).map(([collectionId, rows]) => {
+                  const isCollapsed = collapsedCollections.has(collectionId);
+                  return (
+                  <React.Fragment key={collectionId}>
+                    <tr 
+                      className="border-b border-cyan-400/20 bg-cyan-900/10 cursor-pointer hover:bg-cyan-900/20 transition-colors"
+                      onClick={() => toggleCollection(collectionId)}
+                    >
+                      <td colSpan={5} className="px-3 py-2 text-xs font-bold uppercase tracking-widest text-cyan-300">
+                        <div className="flex items-center gap-2">
+                          <svg
+                            className={`w-4 h-4 transition-transform duration-200 ${isCollapsed ? "-rotate-90" : "rotate-0"}`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                          {collectionId}
+                        </div>
+                      </td>
+                    </tr>
+                    {!isCollapsed && rows.map((row) => (
+                      <tr key={row.documentId} className="border-b border-white/5">
+                        <td className="px-3 py-3 text-slate-200 pl-6">
+                          {row.documentTitle || row.documentId}
+                        </td>
+                        <td className="px-3 py-3 text-slate-300">{row.chunkCount}</td>
+                        <td className="px-3 py-3 text-slate-300">
+                          {row.embeddingModel}
+                        </td>
+                        <td className="px-3 py-3">
+                          <span
+                            className={`rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${
+                              row.status === "Active"
+                                ? "bg-green-500/15 text-green-400"
+                                : "bg-red-500/15 text-red-300"
+                            }`}
+                          >
+                            {row.status}
+                          </span>
+                        </td>
+                        <td className="px-3 py-3">
+                          <div className="flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleReprocessDocument(row.documentId)}
+                              className="rounded border border-white/10 bg-white/5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+                            >
+                              Re-process document
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleViewChunks(row.documentId)}
+                              className="rounded border border-white/10 bg-white/5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+                            >
+                              View chunk details
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </React.Fragment>
+                  );
+                })
               )}
             </tbody>
           </table>

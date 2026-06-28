@@ -10,12 +10,14 @@ interface AdminDataSourcesState {
   searchQuery: string;
   filterLanguage: string;
   filterStatus: string;
+  filterCollection: string;
 
   stats: { total: number; processed: number; pending: number; failed: number };
 
   setSearchQuery: (query: string) => void;
   setFilterLanguage: (lang: string) => void;
   setFilterStatus: (status: string) => void;
+  setFilterCollection: (collection: string) => void;
 
   fetchStats: () => Promise<void>;
   fetchDocuments: () => Promise<void>;
@@ -34,12 +36,14 @@ export const useAdminDataSourcesStore = create<AdminDataSourcesState>((set, get)
   searchQuery: "",
   filterLanguage: "All",
   filterStatus: "All",
+  filterCollection: "All",
 
   stats: { total: 0, processed: 0, pending: 0, failed: 0 },
 
   setSearchQuery: (query) => set({ searchQuery: query }),
   setFilterLanguage: (lang) => set({ filterLanguage: lang }),
   setFilterStatus: (status) => set({ filterStatus: status }),
+  setFilterCollection: (collection) => set({ filterCollection: collection }),
 
   fetchStats: async () => {
     try {
@@ -52,11 +56,11 @@ export const useAdminDataSourcesStore = create<AdminDataSourcesState>((set, get)
 
   fetchDocuments: async () => {
     set({ isLoading: true, error: null });
-    const { searchQuery, filterLanguage, filterStatus } = get();
+    const { searchQuery, filterLanguage, filterStatus, filterCollection } = get();
     // Fetch stats without awaiting to avoid blocking documents list
     void get().fetchStats();
     try {
-      const documents = await adminDataSourcesService.listDocuments(0, 25, searchQuery, filterLanguage, filterStatus);
+      const documents = await adminDataSourcesService.listDocuments(0, 25, searchQuery, filterLanguage, filterStatus, filterCollection);
       set({ documents, isLoading: false });
     } catch (error: any) {
       set({ 

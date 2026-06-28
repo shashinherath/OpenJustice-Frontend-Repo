@@ -3,6 +3,7 @@ import { apiClient } from "@/services/apiClient";
 export interface KnowledgeRecord {
   documentId: string;
   documentTitle?: string;
+  collectionId?: string;
   chunkCount: number;
   embeddingModel: string;
   status: "Active" | "Failed";
