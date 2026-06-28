@@ -5,20 +5,36 @@ interface AdminUsersState {
   data: AdminUserListResponse | null;
   isLoading: boolean;
   error: string | null;
+  searchQuery: string;
+  filterRole: string;
+  filterStatus: string;
+  
+  setSearchQuery: (query: string) => void;
+  setFilterRole: (role: string) => void;
+  setFilterStatus: (status: string) => void;
   
   fetchUsers: () => Promise<void>;
   toggleUserStatus: (userId: string, currentStatus: "Active" | "Blocked") => Promise<void>;
+  addAdminUser: (payload: { first_name: string; last_name: string; phone_number: string; email: string; password: string }) => Promise<void>;
 }
 
 export const useAdminUsersStore = create<AdminUsersState>((set, get) => ({
   data: null,
   isLoading: true,
   error: null,
+  searchQuery: "",
+  filterRole: "All",
+  filterStatus: "All",
   
+  setSearchQuery: (query) => set({ searchQuery: query }),
+  setFilterRole: (role) => set({ filterRole: role }),
+  setFilterStatus: (status) => set({ filterStatus: status }),
+
   fetchUsers: async () => {
     set({ isLoading: true, error: null });
+    const { searchQuery, filterRole, filterStatus } = get();
     try {
-      const response = await adminService.getUsers();
+      const response = await adminService.getUsers(0, 100, searchQuery, filterRole, filterStatus);
       set({ data: response, isLoading: false });
     } catch (error: any) {
       set({ 
@@ -54,6 +70,17 @@ export const useAdminUsersStore = create<AdminUsersState>((set, get) => ({
     } catch (error: any) {
       console.error("Failed to update user status", error);
       // Optional: Set a specific error state for toasts
+    }
+  },
+  
+  addAdminUser: async (payload) => {
+    try {
+      await adminService.createAdminUser(payload);
+      // Re-fetch users to update the list and counts
+      await get().fetchUsers();
+    } catch (error: any) {
+      console.error("Failed to add admin user", error);
+      throw error;
     }
   }
 }));

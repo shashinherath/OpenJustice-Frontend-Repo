@@ -58,7 +58,11 @@ export interface AdminOverviewResponse {
 
 export interface AdminUserItem {
   id: string;
+  first_name: string | null;
+  last_name: string | null;
   email: string;
+  phone_number: string | null;
+  role: string;
   status: "Active" | "Blocked";
   createdDate: string;
 }
@@ -103,9 +107,21 @@ export const adminService = {
     await apiClient.post("/admin/clear-semantic-cache");
   },
   
-  async getUsers(skip = 0, limit = 100): Promise<AdminUserListResponse> {
-    const response = await apiClient.get<AdminUserListResponse>(`/admin/users?skip=${skip}&limit=${limit}`);
+  async getUsers(skip = 0, limit = 100, searchQuery?: string, role?: string, status?: string): Promise<AdminUserListResponse> {
+    const params = new URLSearchParams();
+    params.append('skip', skip.toString());
+    params.append('limit', limit.toString());
+    if (searchQuery) params.append('search_query', searchQuery);
+    if (role && role !== 'All') params.append('role', role);
+    if (status && status !== 'All') params.append('status_filter', status);
+    
+    const response = await apiClient.get<AdminUserListResponse>(`/admin/users?${params.toString()}`);
     return response.data;
+  },
+  
+  async createAdminUser(payload: { first_name: string; last_name: string; phone_number: string; email: string; password: string }): Promise<AdminUserItem> {
+    const response = await apiClient.post<{ data: AdminUserItem; message: string }>("/admin/users", payload);
+    return response.data.data;
   },
   
   async updateUserStatus(userId: string, isActive: boolean): Promise<AdminUserItem> {

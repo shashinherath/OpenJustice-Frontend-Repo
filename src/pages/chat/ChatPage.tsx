@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useChatStore } from "@/stores/chatStore";
 import { useVoiceStore } from "@/stores/voiceStore";
@@ -7,12 +7,43 @@ import { useVoiceRecording } from "@/hooks/useVoiceRecording";
 import ConversationComposer from "@/components/chat/ConversationComposer";
 import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
 import LanguageSwitcherButton from "@/components/ui/LanguageSwitcherButton";
+import LegalLibrary from "@/components/library/LegalLibrary";
+import LawyerDirectory from "@/components/lawyers/LawyerDirectory";
 
 const ChatPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState<"library" | "research" | "lawyers">(
+    location.pathname === "/chat/library" 
+      ? "library" 
+      : location.pathname === "/chat/lawyers"
+      ? "lawyers"
+      : "research"
+  );
   const [question, setQuestion] = useState("");
   const [isVoicePreview, setIsVoicePreview] = useState(false);
+
+  useEffect(() => {
+    setActiveTab(
+      location.pathname === "/chat/library" 
+        ? "library" 
+        : location.pathname === "/chat/lawyers"
+        ? "lawyers"
+        : "research"
+    );
+  }, [location.pathname]);
+
+  const handleTabChange = (tab: "library" | "research" | "lawyers") => {
+    setActiveTab(tab);
+    if (tab === "library") {
+      navigate("/chat/library");
+    } else if (tab === "lawyers") {
+      navigate("/chat/lawyers");
+    } else {
+      navigate("/chat");
+    }
+  };
   const {
     createNewChat,
     sendMessageToChat,
@@ -115,12 +146,36 @@ const ChatPage: React.FC = () => {
       <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-white/40 bg-white/55 px-6 py-4 shadow-[0_8px_32px_rgba(15,23,42,0.08)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#191919]/55 md:px-8">
         <div className="flex items-center gap-6">
           <nav className="flex items-center gap-6">
-            <a
-              className="border-b-2 border-slate-900 py-1 text-sm font-semibold text-slate-900 dark:border-white dark:text-white"
-              href="#"
+            <button
+              onClick={() => handleTabChange("research")}
+              className={`py-1 text-sm font-semibold transition-colors ${
+                activeTab === "research"
+                  ? "border-b-2 border-slate-900 text-slate-900 dark:border-white dark:text-white"
+                  : "border-b-2 border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+              }`}
             >
               Research
-            </a>
+            </button>
+            <button
+              onClick={() => handleTabChange("library")}
+              className={`py-1 text-sm font-semibold transition-colors ${
+                activeTab === "library"
+                  ? "border-b-2 border-slate-900 text-slate-900 dark:border-white dark:text-white"
+                  : "border-b-2 border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+              }`}
+            >
+              Legal Library
+            </button>
+            <button
+              onClick={() => handleTabChange("lawyers")}
+              className={`py-1 text-sm font-semibold transition-colors ${
+                activeTab === "lawyers"
+                  ? "border-b-2 border-slate-900 text-slate-900 dark:border-white dark:text-white"
+                  : "border-b-2 border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+              }`}
+            >
+              Lawyer Directory
+            </button>
           </nav>
         </div>
         <div className="flex h-full items-center gap-3">
@@ -128,8 +183,10 @@ const ChatPage: React.FC = () => {
         </div>
       </header>
 
-      <div className="relative z-10 flex w-full flex-1 flex-col items-center justify-center px-4 py-10 md:px-6">
-        <div className="w-full max-w-4xl text-center mb-8">
+      <div className={`relative z-10 w-full flex-1 flex-col items-center ${activeTab === 'research' ? 'flex justify-center px-4 md:px-6 py-10' : 'flex min-h-0'}`}>
+        {activeTab === "research" ? (
+          <>
+            <div className="w-full max-w-4xl text-center mb-8">
           <h2 className="text-[36px] font-bold leading-tight tracking-tight text-slate-900 drop-shadow-sm dark:text-white">
             {t("chatResearchHeading")}
           </h2>
@@ -231,6 +288,12 @@ const ChatPage: React.FC = () => {
             </p>
           </div>
         </div>
+      </>
+      ) : activeTab === "library" ? (
+        <LegalLibrary />
+      ) : (
+        <LawyerDirectory />
+      )}
       </div>
 
       <footer className="relative z-10 shrink-0 p-6 text-center text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-500">

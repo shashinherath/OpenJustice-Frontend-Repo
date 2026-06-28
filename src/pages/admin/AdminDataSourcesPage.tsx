@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import LanguageSelect from "@/components/ui/LanguageSelect";
 import { useAdminDataSourcesStore } from "@/stores/adminDataSourcesStore";
 
@@ -8,6 +8,13 @@ const AdminDataSourcesPage: React.FC = () => {
     isLoading,
     error,
     isUploading,
+    searchQuery,
+    filterLanguage,
+    filterStatus,
+    stats,
+    setSearchQuery,
+    setFilterLanguage,
+    setFilterStatus,
     fetchDocuments,
     uploadDocument,
     processDocument,
@@ -17,18 +24,16 @@ const AdminDataSourcesPage: React.FC = () => {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("English");
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string>("special");
+  const [publishedYear, setPublishedYear] = useState<string>("");
   const [localErrorMessage, setLocalErrorMessage] = useState<string>("");
 
   useEffect(() => {
-    void fetchDocuments();
-  }, [fetchDocuments]);
-
-  const processedCount = useMemo(
-    () =>
-      documents.filter((document) => document.status === "Processed").length,
-    [documents],
-  );
-  const pendingCount = documents.length - processedCount;
+    const timeoutId = setTimeout(() => {
+      void fetchDocuments();
+    }, 300);
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery, filterLanguage, filterStatus, fetchDocuments]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const nextFile = event.target.files?.[0] ?? null;
@@ -59,22 +64,14 @@ const AdminDataSourcesPage: React.FC = () => {
 
     setLocalErrorMessage("");
     try {
-      await uploadDocument(selectedFile, selectedLanguage);
+      await uploadDocument(selectedFile, selectedLanguage, selectedCollectionId, publishedYear);
       setSelectedFile(null);
+      setPublishedYear("");
     } catch (e: any) {
       setLocalErrorMessage(e.message || "Upload failed");
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="p-8 flex justify-center items-center h-64">
-        <div className="text-cyan-400 animate-pulse font-bold tracking-widest uppercase text-sm">
-          Loading Data Sources...
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-8 p-8">
@@ -102,7 +99,7 @@ const AdminDataSourcesPage: React.FC = () => {
             Total Documents
           </p>
           <p className="mt-3 text-2xl font-black text-white">
-            {documents.length}
+            {stats.total}
           </p>
           <p className="mt-2 text-xs text-slate-400">
             All uploaded legal PDFs in this source.
@@ -113,7 +110,7 @@ const AdminDataSourcesPage: React.FC = () => {
             Processed
           </p>
           <p className="mt-3 text-2xl font-black text-emerald-300">
-            {processedCount}
+            {stats.processed}
           </p>
           <p className="mt-2 text-xs text-slate-400">
             Documents with generated chunks and embeddings.
@@ -124,7 +121,7 @@ const AdminDataSourcesPage: React.FC = () => {
             Pending
           </p>
           <p className="mt-3 text-2xl font-black text-amber-300">
-            {pendingCount}
+            {stats.pending}
           </p>
           <p className="mt-2 text-xs text-slate-400">
             Documents waiting for processing.
@@ -136,15 +133,38 @@ const AdminDataSourcesPage: React.FC = () => {
         <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
           Upload Legal Document (PDF)
         </h3>
-        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_180px_auto_auto]">
+        <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
           <input
             type="file"
-            accept="application/pdf,.pdf"
+            accept="application/pdf,.pdf,.docx"
             onChange={handleFileChange}
             disabled={isUploading}
             className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 file:mr-4 file:rounded file:border-0 file:bg-cyan-500/15 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-cyan-100 hover:file:bg-cyan-500/25 disabled:opacity-50"
           />
-          <div className="lg:ml-2">
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <div className="w-full sm:w-1/3">
+            <LanguageSelect
+              value={selectedCollectionId}
+              onChange={(v) => setSelectedCollectionId(v)}
+              options={[
+                { value: "special", label: "Special" },
+                { value: "slr", label: "SLR" },
+                { value: "nlr", label: "NLR" },
+                { value: "sclr", label: "SCLR" },
+                { value: "scoa", label: "SCOA" },
+                { value: "acts", label: "Acts" },
+              ]}
+              ariaLabel="Select collection"
+            />
+            </div>
+            <input
+              type="number"
+              placeholder="Year (e.g. 2023)"
+              value={publishedYear}
+              onChange={(e) => setPublishedYear(e.target.value)}
+              className="flex w-full sm:w-1/3 min-w-32 items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 py-2 text-left text-sm font-semibold text-slate-800 shadow-lg shadow-black/10 transition-all duration-200 hover:border-slate-400 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 dark:border-slate-700/70 dark:bg-[#191919] dark:text-slate-200 dark:shadow-black/20 dark:hover:border-cyan-400/20 dark:hover:bg-[#202020] placeholder:font-normal placeholder:text-slate-400 dark:placeholder:text-slate-500"
+            />
+            <div className="w-full sm:w-1/3">
             <LanguageSelect
               value={selectedLanguage}
               onChange={(v) => setSelectedLanguage(v)}
@@ -155,7 +175,10 @@ const AdminDataSourcesPage: React.FC = () => {
               ]}
               ariaLabel="Select document language"
             />
+            </div>
           </div>
+        </div>
+        <div className="mt-4 flex flex-wrap items-center gap-4">
           <button
             type="button"
             onClick={handleUploadDocument}
@@ -167,7 +190,7 @@ const AdminDataSourcesPage: React.FC = () => {
           <button
             type="button"
             onClick={processAllPending}
-            disabled={pendingCount === 0}
+            disabled={stats.pending === 0}
             className="rounded border border-slate-700 bg-black/30 px-4 py-2 text-xs font-bold uppercase tracking-widest text-slate-300 transition-colors hover:border-cyan-400/30 hover:bg-cyan-500/10 hover:text-cyan-100 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Trigger Processing
@@ -182,12 +205,49 @@ const AdminDataSourcesPage: React.FC = () => {
 
       <section className="rounded border border-cyan-400/15 bg-[#191919] p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
-            All Documents
-          </h3>
+          <div className="flex items-center gap-3">
+            <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+              All Documents
+            </h3>
+            {isLoading && (
+              <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-400 animate-pulse">
+                Loading...
+              </span>
+            )}
+          </div>
           <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-200/70">
             {documents.length} entries
           </span>
+        </div>
+
+        <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <input
+            type="text"
+            placeholder="Search documents by title..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+          />
+          <select
+            value={filterLanguage}
+            onChange={(e) => setFilterLanguage(e.target.value)}
+            className="w-full rounded border border-cyan-400/20 bg-[#191919] px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+          >
+            <option value="All">All Languages</option>
+            <option value="English">English</option>
+            <option value="Sinhala">Sinhala</option>
+            <option value="Tamil">Tamil</option>
+          </select>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="w-full rounded border border-cyan-400/20 bg-[#191919] px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+          >
+            <option value="All">All Statuses</option>
+            <option value="Processed">Processed</option>
+            <option value="Pending">Pending</option>
+            <option value="Failed">Failed</option>
+          </select>
         </div>
 
         <div className="overflow-x-auto">
