@@ -356,6 +356,7 @@ const AdminDashboard: React.FC = () => {
                   timeAgo={activity.timeAgo}
                   icon={activity.icon}
                   iconColorClass={activity.iconColorClass}
+                  userEmail={activity.userEmail}
                 />
               ))}
             </div>
