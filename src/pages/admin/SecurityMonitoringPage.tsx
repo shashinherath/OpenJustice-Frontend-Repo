@@ -101,6 +101,7 @@ const SecurityMonitoringPage: React.FC = () => {
   const MONITORING_AREAS = data.monitoring_areas;
   const PRIORITY_ALERTS = data.priority_alerts;
   const RECENT_EVENTS = data.recent_events;
+  const ACTIVITY_LOGS = data.activity_logs || [];
 
   return (
     <div className="space-y-8 p-8">
@@ -119,28 +120,22 @@ const SecurityMonitoringPage: React.FC = () => {
               needed.
             </p>
           </div>
-          <Link
-            to="/admin"
-            className="inline-flex items-center gap-2 rounded border border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-300 transition-colors hover:bg-white/5 hover:text-white"
-          >
-            <span className="material-symbols-outlined text-sm">
-              arrow_back
-            </span>
-            Back to Overview
-          </Link>
+          <div className="rounded border border-white/10 bg-black/30 px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            Security Operations Layer
+          </div>
         </div>
       </section>
 
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {SIGNALS.map((signal) => (
           <article
             key={signal.label}
-            className={`rounded border border-white/10 bg-[#191919] p-5 ${getToneClasses(signal.tone)}`}
+            className="rounded border border-white/10 bg-[#191919] p-5"
           >
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
               {signal.label}
             </p>
-            <p className="mt-3 text-2xl font-black text-white">
+            <p className={`mt-3 text-2xl font-black ${getToneClasses(signal.tone)}`}>
               {signal.value}
             </p>
             <p className="mt-2 text-xs text-slate-400">{signal.note}</p>
@@ -148,96 +143,58 @@ const SecurityMonitoringPage: React.FC = () => {
         ))}
       </section>
 
-      <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
-        <div className="mb-4 flex items-center justify-between gap-4">
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
-              Priority Alerts
-            </h3>
-            <p className="mt-2 text-sm text-slate-400">
-              Focus on these first during incident triage.
-            </p>
-          </div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-            Top 3 active signals
-          </span>
-        </div>
-
-        <div className="space-y-3">
-          {PRIORITY_ALERTS.map((alert) => (
-            <article
-              key={alert.title}
-              className="rounded border border-white/10 bg-black/30 p-4"
-            >
-              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <h4 className="text-sm font-semibold text-white">
+      <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <article className="rounded border border-slate-700/70 bg-[#191919] p-6">
+          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+            Priority Alerts
+          </h3>
+          <div className="mt-5 space-y-4">
+            {PRIORITY_ALERTS.map((alert) => (
+              <div key={alert.title} className="rounded border border-white/10 bg-black/30 p-4">
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-sm font-semibold text-slate-200">
                     {alert.title}
-                  </h4>
-                  <p className="mt-1 text-xs text-slate-400">{alert.detail}</p>
+                  </span>
+                  <span className={`text-sm font-bold ${getToneClasses(alert.severity === "Critical" ? "rose" : alert.severity === "High" ? "amber" : alert.severity === "Medium" ? "cyan" : "emerald")}`}>
+                    {alert.severity}
+                  </span>
                 </div>
-                <span
-                  className={`inline-flex w-fit rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${getSeverityClasses(alert.severity)}`}
-                >
-                  {alert.severity}
-                </span>
+                <p className="mt-2 text-xs text-slate-400">
+                  {alert.detail}
+                </p>
               </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
-        <div className="mb-4 flex items-center justify-between gap-4">
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
-              Monitoring Areas
-            </h3>
-            <p className="mt-2 text-sm text-slate-400">
-              Five focused areas with a clear status and one key metric each.
-            </p>
+            ))}
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-            Single-page operations
-          </span>
-        </div>
+        </article>
 
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-          {MONITORING_AREAS.map((area) => (
-            <article
-              key={area.key}
-              className="rounded border border-white/10 bg-black/30 p-4"
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[19px] text-slate-300">
+        <article className="rounded border border-slate-700/70 bg-[#191919] p-6">
+          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+            Monitoring Areas
+          </h3>
+          <div className="mt-5 space-y-4">
+            {MONITORING_AREAS.map((area) => (
+              <div key={area.key} className="rounded border border-white/10 bg-black/30 p-4">
+                <div className="flex items-center justify-between gap-4">
+                  <span className="flex items-center gap-2 text-sm font-semibold text-slate-200">
+                    <span className="material-symbols-outlined text-[16px] text-slate-400">
                       {area.icon}
                     </span>
-                    <h4 className="text-sm font-semibold text-white">
-                      {area.title}
-                    </h4>
-                  </div>
-                  <p className="mt-2 text-xs text-slate-400">{area.summary}</p>
+                    {area.title}
+                  </span>
+                  <span className={`text-sm font-bold ${area.status === 'Healthy' ? 'text-emerald-300' : area.status === 'Watch' ? 'text-amber-300' : 'text-rose-300'}`}>
+                    {area.status}
+                  </span>
                 </div>
-                <span
-                  className={`inline-flex h-fit rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${getStatusClasses(area.status)}`}
-                >
-                  {area.status}
-                </span>
+                <div className="mt-2 flex items-center justify-between gap-4">
+                  <p className="text-xs text-slate-400">{area.summary}</p>
+                  <p className="text-xs font-bold text-white whitespace-nowrap">
+                    {area.metricLabel}: <span className="text-slate-300 font-normal">{area.metricValue}</span>
+                  </p>
+                </div>
               </div>
-
-              <div className="mt-4 flex items-center justify-between rounded border border-white/10 bg-white/5 px-3 py-2">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-                  {area.metricLabel}
-                </span>
-                <span className="text-base font-black text-white">
-                  {area.metricValue}
-                </span>
-              </div>
-            </article>
-          ))}
-        </div>
+            ))}
+          </div>
+        </article>
       </section>
 
       <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
@@ -287,6 +244,55 @@ const SecurityMonitoringPage: React.FC = () => {
                   </td>
                 </tr>
               ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
+        <div className="mb-4 flex items-center justify-between gap-4">
+          <div>
+            <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+              User Activity Logs
+            </h3>
+            <p className="mt-2 text-sm text-slate-400">
+              Recent user actions and system changes across the platform.
+            </p>
+          </div>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+            {ACTIVITY_LOGS.length} entries
+          </span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="min-w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-widest text-slate-500">
+                <th className="px-3 py-3 font-semibold">User</th>
+                <th className="px-3 py-3 font-semibold">Action</th>
+                <th className="px-3 py-3 font-semibold">Entity</th>
+                <th className="px-3 py-3 font-semibold">Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              {ACTIVITY_LOGS.map((log) => (
+                <tr
+                  key={log.id}
+                  className="border-b border-white/5"
+                >
+                  <td className="px-3 py-3 text-slate-200">{log.user_email}</td>
+                  <td className="px-3 py-3 text-slate-300">{log.action}</td>
+                  <td className="px-3 py-3 text-slate-400">{log.entity || "-"}</td>
+                  <td className="px-3 py-3 text-slate-400">{log.timestamp}</td>
+                </tr>
+              ))}
+              {ACTIVITY_LOGS.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-3 py-8 text-center text-slate-500">
+                    No recent activity logs found.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
