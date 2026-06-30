@@ -148,7 +148,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="flex h-[min(82vh,calc(100vh-3rem))] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-[#191919] text-zinc-100 shadow-2xl sm:h-[min(82vh,calc(100vh-4rem))]"
+        className="flex h-auto max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-[#191919] text-zinc-100 shadow-2xl"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"

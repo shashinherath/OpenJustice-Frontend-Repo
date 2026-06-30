@@ -24,6 +24,12 @@ const translation = {
           "disclaimer": "Important Disclaimer:",
           "disclaimerText": "OpenJustice is an AI-powered educational tool. We provide legal information, not legal advice or representation. Consult a qualified attorney for your specific situation.",
           "readPrivacyPolicy": "Read Privacy Policy",
+          "whatsAppIntegration": "WhatsApp Integration",
+          "whatsAppDesc": "Access legal knowledge directly from your phone. Send voice notes or text messages to our dedicated WhatsApp number and receive instant, plain-language legal answers anywhere, anytime.",
+          "connectOnWhatsApp": "Connect on WhatsApp",
+          "immersiveWebChat": "Immersive Web Chat",
+          "immersiveWebChatDesc": "Dive deep into complex legal topics using our powerful web interface. Enjoy rich text formatting, voice dictation, citation tracking, and comprehensive document references in a focused environment.",
+          "startWebChat": "Start Web Chat",
           
           // Chat Examples
           "isMyDataShared": "Is my personal information shared with third parties?",
