@@ -42,6 +42,37 @@ const SettingsPage: React.FC = () => {
   const tr = (en: string, si: string, ta: string) =>
     currentLang === "si" ? si : currentLang === "ta" ? ta : en;
 
+  const appearanceOptions = useMemo(
+    () => [
+      { value: "system", label: tr("System", "පද්ධතිය", "முறைமை") },
+      { value: "light", label: tr("Light", "ලා පැහැති", "வெளிச்சம்") },
+      { value: "dark", label: tr("Dark", "අඳුරු", "இருள்") },
+    ],
+    [currentLang],
+  );
+
+  const accentColorOptions = useMemo(
+    () => [
+      { value: "default", label: "⚫ " + tr("Default", "පෙරනිමිය", "இயல்புநிலை") },
+      { value: "blue", label: "🔵 " + tr("Blue", "නිල්", "நீலம்") },
+      { value: "emerald", label: "🟢 " + tr("Emerald", "මරකත", "எமரால்டு") },
+      { value: "amber", label: "🟠 " + tr("Amber", "ඇම්බර්", "அம்பர்") },
+      { value: "rose", label: "🔴 " + tr("Rose", "රෝස", "ரோஸ்") },
+    ],
+    [currentLang],
+  );
+
+  const voiceOptions = useMemo(
+    () => [
+      { value: "alloy", label: "Alloy" },
+      { value: "nova", label: "Nova" },
+      { value: "echo", label: "Echo" },
+    ],
+    [],
+  );
+
+
+
   const sectionItems: Array<{
     id: SettingsSection;
     label: string;
@@ -281,38 +312,34 @@ const SettingsPage: React.FC = () => {
               <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">
                 {tr("Appearance", "පෙනුම", "தோற்றம்")}
               </p>
-              <select
-                className="max-w-56 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs font-semibold capitalize text-zinc-100"
+              <LanguageSelect
                 value={appearance}
-                onChange={(event) =>
-                  setAppearance(
-                    event.target.value as "system" | "light" | "dark",
-                  )
-                }
-              >
-                <option value="system">System</option>
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-              </select>
+                onChange={(v) => setAppearance(v as "system" | "light" | "dark")}
+                options={appearanceOptions}
+                ariaLabel={tr(
+                  "Select interface appearance",
+                  "අතුරුමුහුණත් පෙනුම තෝරන්න",
+                  "இணைமுக தோற்றத்தை தேர்ந்தெடுக்கவும்",
+                )}
+                className="w-full max-w-56"
+              />
             </div>
 
             <div className="space-y-2">
               <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">
                 {tr("Accent Color", "ඇක්සන්ට් වර්ණය", "உச்ச நிறம்")}
               </p>
-              <select
-                className="max-w-64 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs font-semibold text-zinc-100"
+              <LanguageSelect
                 value={accentColor}
-                onChange={(event) =>
-                  setAccentColor(event.target.value as AccentColor)
-                }
-              >
-                <option value="default">⚫ Default</option>
-                <option value="blue">🔵 Blue</option>
-                <option value="emerald">🟢 Emerald</option>
-                <option value="amber">🟠 Amber</option>
-                <option value="rose">🔴 Rose</option>
-              </select>
+                onChange={(v) => setAccentColor(v as AccentColor)}
+                options={accentColorOptions}
+                ariaLabel={tr(
+                  "Select interface accent color",
+                  "අතුරුමුහුණත් ඇක්සන්ට් වර්ණය තෝරන්න",
+                  "இணைமுக உச்ச நிறத்தை தேர்ந்தெடுக்கவும்",
+                )}
+                className="w-full max-w-64"
+              />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
@@ -380,17 +407,17 @@ const SettingsPage: React.FC = () => {
                 {tr("Voice", "හඬ", "குரல்")}
               </label>
               <div className="flex flex-wrap items-center gap-2">
-                <select
-                  className="min-w-45 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100"
+                <LanguageSelect
                   value={voice}
-                  onChange={(event) =>
-                    setVoice(event.target.value as VoiceOption)
-                  }
-                >
-                  <option value="alloy">Alloy</option>
-                  <option value="nova">Nova</option>
-                  <option value="echo">Echo</option>
-                </select>
+                  onChange={(v) => setVoice(v as VoiceOption)}
+                  options={voiceOptions}
+                  ariaLabel={tr(
+                    "Select interface voice",
+                    "හඬ තෝරන්න",
+                    "குரலை தேர்ந்தெடுக்கவும்",
+                  )}
+                  className="w-full max-w-56"
+                />
                 <button
                   className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 px-3 py-2 text-xs font-semibold text-zinc-200 transition-colors hover:bg-zinc-800"
                   type="button"
