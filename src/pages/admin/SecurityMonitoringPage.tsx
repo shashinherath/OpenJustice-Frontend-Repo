@@ -83,8 +83,8 @@ const SecurityMonitoringPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center p-8">
-        <div className="text-rose-400">Loading security monitoring data...</div>
+      <div className="flex h-64 items-center justify-center p-8">
+        <div className="text-cyan-400">Loading security monitoring data...</div>
       </div>
     );
   }
