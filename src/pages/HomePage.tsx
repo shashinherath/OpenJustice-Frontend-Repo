@@ -391,13 +391,10 @@ const HomePage: React.FC = () => {
                   </span>
                 </div>
                 <h2 className="mb-3 text-2xl font-black tracking-tight text-green-950 dark:text-green-50">
-                  WhatsApp Integration
+                  {t("whatsAppIntegration")}
                 </h2>
                 <p className="text-base leading-relaxed text-green-800/80 dark:text-green-200/70 mb-8">
-                  Access legal knowledge directly from your phone. Send voice
-                  notes or text messages to our dedicated WhatsApp number and
-                  receive instant, plain-language legal answers anywhere,
-                  anytime.
+                  {t("whatsAppDesc")}
                 </p>
                 <button
                   onClick={handleGetStarted}
@@ -406,7 +403,7 @@ const HomePage: React.FC = () => {
                   <span className="material-symbols-outlined text-[18px]">
                     qr_code_scanner
                   </span>
-                  Connect on WhatsApp
+                  {t("connectOnWhatsApp")}
                 </button>
               </div>
             </div>
@@ -424,13 +421,10 @@ const HomePage: React.FC = () => {
                   </span>
                 </div>
                 <h2 className="mb-3 text-2xl font-black tracking-tight text-blue-950 dark:text-blue-50">
-                  Immersive Web Chat
+                  {t("immersiveWebChat")}
                 </h2>
                 <p className="text-base leading-relaxed text-blue-800/80 dark:text-blue-200/70 mb-8">
-                  Dive deep into complex legal topics using our powerful web
-                  interface. Enjoy rich text formatting, voice dictation,
-                  citation tracking, and comprehensive document references in a
-                  focused environment.
+                  {t("immersiveWebChatDesc")}
                 </p>
                 <button
                   onClick={handleGetStarted}
@@ -439,7 +433,7 @@ const HomePage: React.FC = () => {
                   <span className="material-symbols-outlined text-[18px]">
                     chat_bubble
                   </span>
-                  Start Web Chat
+                  {t("startWebChat")}
                 </button>
               </div>
             </div>
