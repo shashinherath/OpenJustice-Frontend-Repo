@@ -1,5 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useAdminStore } from "@/stores/adminStore";
+import { adminService } from "@/services/adminService";
 
 const trendColorMap: Record<string, string> = {
   up: "text-emerald-300",
@@ -15,10 +16,53 @@ const statusStyleMap: Record<string, string> = {
 
 const ResearchMetricsPage: React.FC = () => {
   const { researchMetricsData, isLoading, error, fetchResearchMetrics } = useAdminStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     fetchResearchMetrics();
   }, [fetchResearchMetrics]);
+
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      await adminService.uploadEvaluationDataset(file);
+      await fetchResearchMetrics();
+    } catch (e) {
+      console.error("Failed to upload dataset", e);
+      alert("Failed to upload dataset. Ensure it is a valid CSV or JSON file.");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
+  const handleEvaluate = async (datasetId: string) => {
+    try {
+      await adminService.evaluateDataset(datasetId);
+      // Wait a bit to let status update, then refresh
+      setTimeout(fetchResearchMetrics, 1000);
+    } catch (e) {
+      console.error("Failed to start evaluation", e);
+      alert("Failed to start evaluation");
+    }
+  };
+
+  const handleDelete = async (datasetId: string) => {
+    if (!confirm("Are you sure you want to delete this dataset?")) return;
+    try {
+      await adminService.deleteDataset(datasetId);
+      await fetchResearchMetrics();
+    } catch (e) {
+      console.error("Failed to delete dataset", e);
+      alert("Failed to delete dataset");
+    }
+  };
 
   if (isLoading) {
     return <div className="p-8 text-white">Loading research metrics...</div>;
@@ -74,9 +118,27 @@ const ResearchMetricsPage: React.FC = () => {
         ))}
       </section>
       <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
-        <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
-          Evaluation Datasets
-        </h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+            Evaluation Datasets
+          </h3>
+          <div>
+            <input
+              type="file"
+              accept=".csv,.json,.jsonl"
+              ref={fileInputRef}
+              className="hidden"
+              onChange={handleFileSelect}
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              className="rounded bg-cyan-600 px-4 py-2 text-xs font-semibold text-white hover:bg-cyan-500 disabled:opacity-50"
+            >
+              {isUploading ? "Uploading..." : "Upload Dataset"}
+            </button>
+          </div>
+        </div>
         <div className="mt-4 overflow-hidden rounded border border-white/10">
           <table className="w-full text-left text-sm text-slate-300">
             <thead className="border-b border-white/10 bg-black/40 text-xs uppercase text-slate-500">
@@ -87,12 +149,13 @@ const ResearchMetricsPage: React.FC = () => {
                 <th className="px-4 py-3 font-semibold">Split (Train/Val/Test)</th>
                 <th className="px-4 py-3 font-semibold">Last Run</th>
                 <th className="px-4 py-3 font-semibold">Status</th>
+                <th className="px-4 py-3 font-semibold text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 bg-[#191919]">
               {datasets.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-4 text-center text-slate-500">
+                  <td colSpan={7} className="px-4 py-4 text-center text-slate-500">
                     No datasets available.
                   </td>
                 </tr>
@@ -110,6 +173,25 @@ const ResearchMetricsPage: React.FC = () => {
                       >
                         {ds.status}
                       </span>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      {ds.id && (
+                        <div className="flex justify-end space-x-2">
+                          <button
+                            onClick={() => handleEvaluate(ds.id)}
+                            disabled={ds.status === "Running"}
+                            className="rounded border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-300 hover:bg-cyan-500/20 disabled:opacity-50"
+                          >
+                            Run
+                          </button>
+                          <button
+                            onClick={() => handleDelete(ds.id)}
+                            className="rounded border border-rose-400/30 bg-rose-500/10 px-3 py-1 text-xs text-rose-300 hover:bg-rose-500/20"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))

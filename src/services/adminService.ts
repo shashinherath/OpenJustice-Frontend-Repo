@@ -188,6 +188,27 @@ export const adminService = {
     return response.data;
   },
 
+  async uploadEvaluationDataset(file: File): Promise<{ status: string; dataset_id: string }> {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await apiClient.post('/admin/research/datasets/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  async evaluateDataset(datasetId: string): Promise<{ status: string; message: string }> {
+    const response = await apiClient.post(`/admin/research/datasets/${datasetId}/evaluate`);
+    return response.data;
+  },
+
+  async deleteDataset(datasetId: string): Promise<{ status: string; message: string }> {
+    const response = await apiClient.delete(`/admin/research/datasets/${datasetId}`);
+    return response.data;
+  },
+
   async getLanguageSettings(): Promise<LanguageSettingsPayload> {
     const response = await apiClient.get<LanguageSettingsPayload>("/admin/settings/language");
     return response.data;
@@ -469,6 +490,7 @@ export interface ResearchMetricItem {
 }
 
 export interface EvaluationDatasetItem {
+  id: string;
   name: string;
   version: string;
   samples: number;
