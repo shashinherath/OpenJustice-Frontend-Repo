@@ -15,6 +15,7 @@ export interface ActivityItem {
   timeAgo: string;
   icon: string;
   iconColorClass: string;
+  userEmail?: string;
 }
 
 export interface ServiceStatusItem {
@@ -430,11 +431,20 @@ export interface SecurityEventRecord {
   timestamp: string;
 }
 
+export interface ActivityLogItem {
+  id: string;
+  user_email: string | null;
+  action: string;
+  entity: string | null;
+  timestamp: string;
+}
+
 export interface AdminSecurityMonitoringResponse {
   signals: SecuritySignal[];
   monitoring_areas: MonitoringArea[];
   priority_alerts: PriorityAlert[];
   recent_events: SecurityEventRecord[];
+  activity_logs: ActivityLogItem[];
 }
 
 export interface ModelRun {
