@@ -71,6 +71,7 @@ const AIEvaluationMetricsPage: React.FC = () => {
                 <p className="text-sm text-slate-200">Model: {run.model}</p>
                 <p className="text-xs text-slate-400">
                   Accuracy: {run.accuracy.toFixed(2)} · Tokens: {run.tokens}
+                  {run.date && ` · Date: ${new Date(run.date).toLocaleString()}`}
                 </p>
               </div>
             ))

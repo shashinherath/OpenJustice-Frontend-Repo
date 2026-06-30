@@ -73,6 +73,51 @@ const ResearchMetricsPage: React.FC = () => {
           </article>
         ))}
       </section>
+      <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
+        <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+          Evaluation Datasets
+        </h3>
+        <div className="mt-4 overflow-hidden rounded border border-white/10">
+          <table className="w-full text-left text-sm text-slate-300">
+            <thead className="border-b border-white/10 bg-black/40 text-xs uppercase text-slate-500">
+              <tr>
+                <th className="px-4 py-3 font-semibold">Dataset</th>
+                <th className="px-4 py-3 font-semibold">Version</th>
+                <th className="px-4 py-3 font-semibold">Samples</th>
+                <th className="px-4 py-3 font-semibold">Split (Train/Val/Test)</th>
+                <th className="px-4 py-3 font-semibold">Last Run</th>
+                <th className="px-4 py-3 font-semibold">Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5 bg-[#191919]">
+              {datasets.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="px-4 py-4 text-center text-slate-500">
+                    No datasets available.
+                  </td>
+                </tr>
+              ) : (
+                datasets.map((ds, idx) => (
+                  <tr key={idx} className="hover:bg-white/[0.02]">
+                    <td className="px-4 py-3 font-medium text-white">{ds.name}</td>
+                    <td className="px-4 py-3">{ds.version}</td>
+                    <td className="px-4 py-3">{ds.samples.toLocaleString()}</td>
+                    <td className="px-4 py-3">{ds.split}</td>
+                    <td className="px-4 py-3">{ds.lastRun}</td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-block rounded border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${statusStyleMap[ds.status] || "border-slate-400/30 bg-slate-500/10 text-slate-300"}`}
+                      >
+                        {ds.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
 
 
       <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
