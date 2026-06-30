@@ -148,7 +148,7 @@ const ChatPage: React.FC = () => {
           <nav className="flex items-center gap-6">
             <button
               onClick={() => handleTabChange("research")}
-              className={`py-1 text-sm font-semibold transition-colors ${
+              className={`cursor-pointer py-1 text-sm font-semibold transition-colors ${
                 activeTab === "research"
                   ? "border-b-2 border-slate-900 text-slate-900 dark:border-white dark:text-white"
                   : "border-b-2 border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
@@ -158,7 +158,7 @@ const ChatPage: React.FC = () => {
             </button>
             <button
               onClick={() => handleTabChange("library")}
-              className={`py-1 text-sm font-semibold transition-colors ${
+              className={`cursor-pointer py-1 text-sm font-semibold transition-colors ${
                 activeTab === "library"
                   ? "border-b-2 border-slate-900 text-slate-900 dark:border-white dark:text-white"
                   : "border-b-2 border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
@@ -168,7 +168,7 @@ const ChatPage: React.FC = () => {
             </button>
             <button
               onClick={() => handleTabChange("lawyers")}
-              className={`py-1 text-sm font-semibold transition-colors ${
+              className={`cursor-pointer py-1 text-sm font-semibold transition-colors ${
                 activeTab === "lawyers"
                   ? "border-b-2 border-slate-900 text-slate-900 dark:border-white dark:text-white"
                   : "border-b-2 border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
