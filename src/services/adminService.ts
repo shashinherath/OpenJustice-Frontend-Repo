@@ -451,6 +451,7 @@ export interface ModelRun {
   model: string;
   accuracy: number;
   tokens: number;
+  date?: string;
 }
 
 export interface AdminAIEvaluationResponse {
