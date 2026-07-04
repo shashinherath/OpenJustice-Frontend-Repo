@@ -8,11 +8,22 @@ import {
 
 const AdminLogsPage: React.FC = () => {
   const [logs, setLogs] = useState<TraceLog[]>([]);
+  const [totalLogs, setTotalLogs] = useState<number>(0);
+  const [globalStats, setGlobalStats] = useState({
+    completed: 0,
+    reviewed: 0,
+    pending: 0,
+    failed: 0,
+    tokens: 0,
+    latency: 0
+  });
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<TraceStatus | "All">("All");
   const [eventFilter, setEventFilter] = useState<EventType | "All">("All");
   const [modelFilter, setModelFilter] = useState<string>("All");
   const [selectedLogId, setSelectedLogId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 25;
 
   const filteredLogs = useMemo(() => {
     return logs.filter((log) => {
@@ -28,29 +39,19 @@ const AdminLogsPage: React.FC = () => {
     });
   }, [logs, searchTerm, statusFilter, eventFilter, modelFilter]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, eventFilter, modelFilter]);
+
+  const totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
+  const paginatedLogs = filteredLogs.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
   const selectedLog = logs.find((log) => log.id === selectedLogId) ?? null;
 
-  const completedCount = logs.filter(
-    (log) => log.status === "Completed",
-  ).length;
-  const reviewedCount = logs.filter((log) => log.status === "Reviewed").length;
-  const failedCount = logs.filter((log) => log.status === "Failed").length;
-  const pendingCount = logs.filter((log) => log.status === "Pending").length;
 
-  const avgLatency = useMemo(() => {
-    const valid = logs.filter((log) => log.latencyMs > 0);
-    const total = valid.reduce((sum, log) => sum + log.latencyMs, 0);
-    return Math.round(total / Math.max(valid.length, 1));
-  }, [logs]);
-
-  const totalTokens = useMemo(
-    () =>
-      logs.reduce(
-        (sum, log) => sum + log.promptTokens + log.completionTokens,
-        0,
-      ),
-    [logs],
-  );
 
   useEffect(() => {
     fetchLogs();
@@ -60,6 +61,15 @@ const AdminLogsPage: React.FC = () => {
     try {
       const res = await adminService.getLogs(0, 100);
       setLogs(res.logs);
+      setTotalLogs(res.total);
+      setGlobalStats({
+        completed: res.total_completed || 0,
+        reviewed: res.total_reviewed || 0,
+        pending: res.total_pending || 0,
+        failed: res.total_failed || 0,
+        tokens: res.total_tokens || 0,
+        latency: res.avg_latency || 0
+      });
     } catch (error) {
       console.error("Failed to fetch logs", error);
     }
@@ -86,23 +96,7 @@ const AdminLogsPage: React.FC = () => {
     }
   };
 
-  const retryFailed = async () => {
-    try {
-      const failedLogs = logs.filter((log) => log.status === "Failed");
-      await Promise.all(
-        failedLogs.map((log) =>
-          adminService.updateLogStatus(log.id, "Pending"),
-        ),
-      );
-      setLogs((previous) =>
-        previous.map((log) =>
-          log.status === "Failed" ? { ...log, status: "Pending" } : log,
-        ),
-      );
-    } catch (error) {
-      console.error("Failed to retry failed logs", error);
-    }
-  };
+
 
   const deleteLog = async (id: string) => {
     try {
@@ -147,44 +141,44 @@ const AdminLogsPage: React.FC = () => {
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-6">
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
             Total AI Logs
           </p>
-          <p className="mt-3 text-2xl font-black text-white">{logs.length}</p>
+          <p className="mt-3 text-2xl font-black text-white">{totalLogs}</p>
         </article>
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
             Completed
           </p>
-          <p className="mt-3 text-2xl font-black text-white">
-            {completedCount}
+          <p className="mt-3 text-2xl font-black text-emerald-300">
+            {globalStats.completed}
           </p>
         </article>
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
             Reviewed
           </p>
-          <p className="mt-3 text-2xl font-black text-white">{reviewedCount}</p>
+          <p className="mt-3 text-2xl font-black text-indigo-300">{globalStats.reviewed}</p>
         </article>
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
             Pending
           </p>
-          <p className="mt-3 text-2xl font-black text-white">{pendingCount}</p>
+          <p className="mt-3 text-2xl font-black text-amber-300">{globalStats.pending}</p>
         </article>
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
             Failed
           </p>
-          <p className="mt-3 text-2xl font-black text-white">{failedCount}</p>
+          <p className="mt-3 text-2xl font-black text-red-300">{globalStats.failed}</p>
         </article>
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
             Token Volume
           </p>
-          <p className="mt-3 text-2xl font-black text-white">{totalTokens}</p>
-          <p className="mt-1 text-[10px] text-slate-500">
-            Avg latency: {avgLatency} ms
+          <p className="mt-3 text-2xl font-black text-white">{globalStats.tokens}</p>
+          <p className="mt-1 text-[10px] text-slate-400">
+            Avg latency: {globalStats.latency} ms
           </p>
         </article>
       </section>
@@ -195,15 +189,15 @@ const AdminLogsPage: React.FC = () => {
             type="text"
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
-            placeholder="Search by log ID, correlation ID, prompt version, or model"
-            className="rounded border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-300 placeholder:text-slate-500"
+            placeholder="Search by log ID, correlation ID, or model"
+            className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
           />
           <select
             value={statusFilter}
             onChange={(event) =>
               setStatusFilter(event.target.value as TraceStatus | "All")
             }
-            className="rounded border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-300"
+            className="w-full rounded border border-cyan-400/20 bg-[#191919] px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
           >
             <option value="All">All Statuses</option>
             <option value="Completed">Completed</option>
@@ -216,30 +210,26 @@ const AdminLogsPage: React.FC = () => {
             onChange={(event) =>
               setEventFilter(event.target.value as EventType | "All")
             }
-            className="rounded border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-300"
+            className="w-full rounded border border-cyan-400/20 bg-[#191919] px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
           >
             <option value="All">All Event Types</option>
             <option value="llm_request">llm_request</option>
             <option value="llm_response">llm_response</option>
             <option value="retrieval_results">retrieval_results</option>
             <option value="llm_error">llm_error</option>
+            <option value="stt_request">stt_request</option>
+            <option value="tts_request">tts_request</option>
           </select>
           <select
             value={modelFilter}
             onChange={(event) => setModelFilter(event.target.value)}
-            className="rounded border border-white/10 bg-black/30 px-3 py-2 text-sm text-slate-300"
+            className="w-full rounded border border-cyan-400/20 bg-[#191919] px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
           >
             <option value="All">All Models</option>
             <option value="gpt-4o">gpt-4o</option>
             <option value="gpt-4o-mini">gpt-4o-mini</option>
           </select>
-          <button
-            type="button"
-            onClick={retryFailed}
-            className="rounded border border-white/10 bg-white/10 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-white transition-colors hover:bg-white/20"
-          >
-            Retry Failed
-          </button>
+
           <button
             type="button"
             onClick={() => {
@@ -273,19 +263,16 @@ const AdminLogsPage: React.FC = () => {
                 <th className="px-3 py-3 font-semibold">Correlation ID</th>
                 <th className="px-3 py-3 font-semibold">Event</th>
                 <th className="px-3 py-3 font-semibold">Model</th>
-                <th className="px-3 py-3 font-semibold">Prompt Ver.</th>
                 <th className="px-3 py-3 font-semibold">Language</th>
                 <th className="px-3 py-3 font-semibold">Tokens (P/C)</th>
                 <th className="px-3 py-3 font-semibold">Latency</th>
-                <th className="px-3 py-3 font-semibold">Retrieval</th>
-                <th className="px-3 py-3 font-semibold">Citations</th>
                 <th className="px-3 py-3 font-semibold">Status</th>
                 <th className="px-3 py-3 font-semibold">Timestamp</th>
                 <th className="px-3 py-3 font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredLogs.map((log) => (
+              {paginatedLogs.map((log) => (
                 <tr key={log.id} className="border-b border-white/5">
                   <td className="px-3 py-3 text-slate-200">{log.id}</td>
                   <td className="px-3 py-3 text-slate-300">
@@ -293,21 +280,14 @@ const AdminLogsPage: React.FC = () => {
                   </td>
                   <td className="px-3 py-3 text-slate-300">{log.eventType}</td>
                   <td className="px-3 py-3 text-slate-300">{log.model}</td>
-                  <td className="px-3 py-3 text-slate-300">
-                    {log.promptVersion}
-                  </td>
                   <td className="px-3 py-3 text-slate-300">{log.language}</td>
                   <td className="px-3 py-3 text-slate-300">
-                    {log.promptTokens} / {log.completionTokens}
+                    {["stt_request", "tts_request", "retrieval_results"].includes(log.eventType) || ["retrieval-engine", "embeddings"].some(m => log.model?.includes(m))
+                      ? "N/A"
+                      : `${log.promptTokens} / ${log.completionTokens}`}
                   </td>
                   <td className="px-3 py-3 text-slate-400">
                     {log.latencyMs > 0 ? `${log.latencyMs} ms` : "-"}
-                  </td>
-                  <td className="px-3 py-3 text-slate-400">
-                    {log.retrievalCount}
-                  </td>
-                  <td className="px-3 py-3 text-slate-400">
-                    {log.citationCount}
                   </td>
                   <td className="px-3 py-3">
                     <span
@@ -362,6 +342,48 @@ const AdminLogsPage: React.FC = () => {
             </tbody>
           </table>
         </div>
+
+        {totalPages > 1 && (
+          <div className="mt-4 flex items-center justify-between text-xs text-slate-400">
+            <span>
+              Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+              {Math.min(currentPage * itemsPerPage, filteredLogs.length)} of{" "}
+              {filteredLogs.length} entries
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="rounded border border-white/10 px-2 py-1 transition-colors hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent"
+              >
+                &lt;
+              </button>
+              {Array.from({ length: totalPages }).map((_, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setCurrentPage(idx + 1)}
+                  className={`rounded border px-2.5 py-1 transition-colors ${
+                    currentPage === idx + 1
+                      ? "border-cyan-400 text-cyan-400"
+                      : "border-white/10 hover:bg-white/10"
+                  }`}
+                >
+                  {idx + 1}
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="rounded border border-white/10 px-2 py-1 transition-colors hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent"
+              >
+                &gt;
+              </button>
+            </div>
+          </div>
+        )}
       </section>
 
       {selectedLog && (
