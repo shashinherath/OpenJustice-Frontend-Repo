@@ -184,6 +184,11 @@ export const adminService = {
     return response.data;
   },
 
+  async getErrorMonitoring(skip = 0, limit = 100): Promise<AdminErrorMonitoringResponse> {
+    const response = await apiClient.get<AdminErrorMonitoringResponse>(`/admin/error-monitoring?skip=${skip}&limit=${limit}`);
+    return response.data;
+  },
+
   async getAIEvaluationMetrics(): Promise<AdminAIEvaluationResponse> {
     const response = await apiClient.get<AdminAIEvaluationResponse>("/admin/analytics/ai-evaluation");
     return response.data;
@@ -481,6 +486,24 @@ export interface AdminSecurityMonitoringResponse {
   priority_alerts: PriorityAlert[];
   recent_events: SecurityEventRecord[];
   activity_logs: ActivityLogItem[];
+}
+
+export interface ErrorRecord {
+  id: string;
+  type: string;
+  message: string;
+  timestamp: string;
+  details: string;
+}
+
+export interface AdminErrorMonitoringResponse {
+  errors: ErrorRecord[];
+  total_errors: number;
+  total_llm: number;
+  total_db: number;
+  total_api: number;
+  total_auth: number;
+  total_system: number;
 }
 
 export interface ModelRun {
