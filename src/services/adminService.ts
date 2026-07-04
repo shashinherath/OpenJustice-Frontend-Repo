@@ -75,7 +75,7 @@ export interface AdminUserListResponse {
 }
 
 export type TraceStatus = "Completed" | "Pending" | "Failed" | "Reviewed";
-export type EventType = "llm_request" | "llm_response" | "retrieval_results" | "llm_error";
+export type EventType = "llm_request" | "llm_response" | "retrieval_results" | "llm_error" | "stt_request" | "tts_request";
 
 export interface TraceLog {
   id: string;
@@ -93,9 +93,15 @@ export interface TraceLog {
   timestamp: string;
 }
 
-export interface AdminLogListResponse {
+export interface LogListResponse {
   logs: TraceLog[];
   total: number;
+  total_completed: number;
+  total_reviewed: number;
+  total_pending: number;
+  total_failed: number;
+  total_tokens: number;
+  avg_latency: number;
 }
 
 export const adminService = {
