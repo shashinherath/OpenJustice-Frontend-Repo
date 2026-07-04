@@ -319,10 +319,19 @@ export interface DailyCostPoint {
   twilio: number;
 }
 
+export interface DailyModelCostPoint {
+  day: string;
+  llm: number;
+  embedding: number;
+  stt: number;
+  tts: number;
+}
+
 export interface AdminCostAnalyticsResponse {
   cost_drivers: CostDriver[];
   twilio_items: TwilioItem[];
   daily_costs: DailyCostPoint[];
+  daily_model_costs: DailyModelCostPoint[];
 }
 
 export interface UsageDailyStat {

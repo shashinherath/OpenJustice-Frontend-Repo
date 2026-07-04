@@ -1,11 +1,16 @@
 import React, { useMemo, useEffect, useState } from "react";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { adminService, type AdminCostAnalyticsResponse } from "@/services/adminService";
 
-const currencyFormatter = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-  maximumFractionDigits: 1,
-});
+const currencyFormatter = {
+  format: (usdAmount: number) => {
+    const rsAmount = usdAmount * 335.28;
+    return `Rs. ${rsAmount.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+  }
+};
 
 const integerFormatter = new Intl.NumberFormat("en-US");
 
@@ -33,24 +38,24 @@ const CostAnalyticsPage: React.FC = () => {
     () => data?.cost_drivers.reduce((sum, driver) => sum + driver.estimatedCost, 0) || 0,
     [data]
   );
-  
+
   const totalTwilioCost = useMemo(
     () => data?.twilio_items.reduce((sum, item) => sum + item.cost, 0) || 0,
     [data]
   );
-  
+
   const totalCost = totalOpenAiCost + totalTwilioCost;
-  
+
   const totalUsage = useMemo(
     () => data?.cost_drivers.reduce((sum, driver) => sum + driver.usage, 0) || 0,
     [data]
   );
-  
+
   const maxDriverCost = useMemo(
     () => Math.max(1, ...(data?.cost_drivers.map((driver) => driver.estimatedCost) || [1])),
     [data]
   );
-  
+
   const maxDailyTotal = useMemo(
     () => Math.max(1, ...(data?.daily_costs.map((entry) => entry.openAi + entry.twilio) || [1])),
     [data]
@@ -59,31 +64,39 @@ const CostAnalyticsPage: React.FC = () => {
   const projectedMonthlyCost = totalCost * 4.3;
   const openAiShare = totalCost > 0 ? Math.round((totalOpenAiCost / totalCost) * 100) : 0;
 
-  const costSegments = useMemo(() => {
+  const aggregatedCategories = useMemo(() => {
     if (!data) return [];
-    let cursor = 0;
+
+    let languageModelsCost = 0;
+    let embeddingModelsCost = 0;
+    let sttCost = 0;
+    let ttsCost = 0;
+
+    data.cost_drivers.forEach(driver => {
+      if (driver.title === "Language Models") languageModelsCost += driver.estimatedCost;
+      else if (driver.title === "Vector Embeddings") embeddingModelsCost += driver.estimatedCost;
+      else if (driver.title === "Speech-to-Text") sttCost += driver.estimatedCost;
+      else if (driver.title === "Text-to-Speech") ttsCost += driver.estimatedCost;
+    });
 
     return [
-      ...data.cost_drivers.map((driver) => ({
-        label: driver.title,
-        color: driver.colorClass.includes("cyan")
-          ? "rgba(34, 211, 238, 0.9)"
-          : driver.colorClass.includes("emerald")
-            ? "rgba(52, 211, 153, 0.9)"
-            : driver.colorClass.includes("amber")
-              ? "rgba(251, 191, 36, 0.9)"
-              : "rgba(251, 113, 133, 0.9)",
-        start: cursor,
-        end: (cursor += totalCost > 0 ? (driver.estimatedCost / totalCost) * 360 : 0),
-      })),
-      {
-        label: "Twilio",
-        color: "rgba(96, 165, 250, 0.9)",
-        start: cursor,
-        end: 360,
-      },
-    ];
-  }, [data, totalCost]);
+      { id: 'lm', label: "Language models", cost: languageModelsCost, colorClass: "bg-cyan-400", hex: "rgba(34, 211, 238, 0.9)" },
+      { id: 'em', label: "Embedding Models", cost: embeddingModelsCost, colorClass: "bg-emerald-400", hex: "rgba(52, 211, 153, 0.9)" },
+      { id: 'stt', label: "Speech-to-Text", cost: sttCost, colorClass: "bg-amber-400", hex: "rgba(251, 191, 36, 0.9)" },
+      { id: 'tts', label: "Text-to-Speech", cost: ttsCost, colorClass: "bg-rose-400", hex: "rgba(251, 113, 133, 0.9)" },
+      { id: 'tw', label: "Twilio", cost: totalTwilioCost, colorClass: "bg-blue-400", hex: "rgba(96, 165, 250, 0.9)" }
+    ].filter(cat => cat.cost > 0).sort((a, b) => b.cost - a.cost);
+  }, [data, totalTwilioCost]);
+
+  const costSegments = useMemo(() => {
+    let cursor = 0;
+    return aggregatedCategories.map(cat => ({
+      label: cat.label,
+      color: cat.hex,
+      start: cursor,
+      end: (cursor += totalCost > 0 ? (cat.cost / totalCost) * 360 : 0)
+    }));
+  }, [aggregatedCategories, totalCost]);
 
   if (loading) {
     return (
@@ -129,7 +142,7 @@ const CostAnalyticsPage: React.FC = () => {
       </section>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
+        <article className="rounded border border-white/10 bg-[#191919] p-5">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
             Estimated Cost (7d)
           </p>
@@ -140,29 +153,29 @@ const CostAnalyticsPage: React.FC = () => {
             OpenAI and Twilio combined
           </p>
         </article>
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
+        <article className="rounded border border-white/10 bg-[#191919] p-5">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
-            OpenAI Share
+            OpenAI Cost
           </p>
           <p className="mt-3 text-2xl font-black text-rose-300">
-            {openAiShare}%
+            {currencyFormatter.format(totalOpenAiCost)}
           </p>
           <p className="mt-2 text-xs text-slate-400">
-            Primary cost driver across all AI features
+            Models, embeddings, STT, and TTS
           </p>
         </article>
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
+        <article className="rounded border border-white/10 bg-[#191919] p-5">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
-            Tracked Usage Units
+            Twilio Cost
           </p>
-          <p className="mt-3 text-2xl font-black text-white">
-            {integerFormatter.format(totalUsage)}
+          <p className="mt-3 text-2xl font-black text-blue-400">
+            {currencyFormatter.format(totalTwilioCost)}
           </p>
           <p className="mt-2 text-xs text-slate-400">
-            Tokens, minutes, and characters measured
+            WhatsApp messaging and numbers
           </p>
         </article>
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
+        <article className="rounded border border-white/10 bg-[#191919] p-5">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
             Highest Daily Cost
           </p>
@@ -176,7 +189,7 @@ const CostAnalyticsPage: React.FC = () => {
       </section>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1.35fr_0.95fr]">
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-6">
+        <article className="rounded border border-white/10 bg-[#191919] p-6">
           <div className="flex items-center justify-between gap-4">
             <div>
               <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
@@ -205,7 +218,7 @@ const CostAnalyticsPage: React.FC = () => {
 
               return (
                 <div key={`${entry.day}-${idx}`} className="space-y-2 text-center">
-                  <div className="flex h-44 items-end rounded border border-white/10 bg-black/20 p-2">
+                  <div className="flex h-44 items-end rounded border border-white/10 bg-black/30 p-2">
                     <div className="flex h-full w-full items-end gap-1">
                       <div
                         className="w-1/2 rounded-sm bg-rose-400/80 transition-all duration-500 ease-in-out"
@@ -238,9 +251,58 @@ const CostAnalyticsPage: React.FC = () => {
               Twilio
             </span>
           </div>
+
+          {data.daily_model_costs && data.daily_model_costs.length > 0 && (
+            <div className="mt-8 border-t border-white/10 pt-6">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
+                    OpenAI Model Trending
+                  </h4>
+                  <p className="mt-1 text-[11px] text-slate-500">
+                    Daily cost split across language models, embeddings, and audio generation.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 h-48 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={data.daily_model_costs} margin={{ top: 5, right: 10, bottom: 0, left: -20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                    <XAxis 
+                      dataKey="day" 
+                      stroke="#64748b" 
+                      fontSize={10} 
+                      tickLine={false} 
+                      axisLine={false} 
+                      dy={5} 
+                    />
+                    <YAxis 
+                      stroke="#64748b" 
+                      fontSize={10} 
+                      tickLine={false} 
+                      axisLine={false} 
+                      tickFormatter={(value) => `$${value}`}
+                    />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: '#191919', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '4px' }}
+                      itemStyle={{ fontSize: '11px' }}
+                      labelStyle={{ color: '#cbd5e1', marginBottom: '4px', fontSize: '11px', fontWeight: 'bold' }}
+                      formatter={(value: number) => [currencyFormatter.format(value)]}
+                    />
+                    <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', paddingTop: '5px' }} />
+                    <Line type="monotone" name="Language Models" dataKey="llm" stroke="#22d3ee" strokeWidth={2} dot={{ r: 2.5, fill: '#191919', strokeWidth: 2 }} activeDot={{ r: 4 }} />
+                    <Line type="monotone" name="Embeddings" dataKey="embedding" stroke="#34d399" strokeWidth={2} dot={{ r: 2.5, fill: '#191919', strokeWidth: 2 }} activeDot={{ r: 4 }} />
+                    <Line type="monotone" name="Speech-to-Text" dataKey="stt" stroke="#fbbf24" strokeWidth={2} dot={{ r: 2.5, fill: '#191919', strokeWidth: 2 }} activeDot={{ r: 4 }} />
+                    <Line type="monotone" name="Text-to-Speech" dataKey="tts" stroke="#fb7185" strokeWidth={2} dot={{ r: 2.5, fill: '#191919', strokeWidth: 2 }} activeDot={{ r: 4 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          )}
         </article>
 
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-6">
+        <article className="rounded border border-white/10 bg-[#191919] p-6">
           <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
             Spend Mix
           </h3>
@@ -271,30 +333,31 @@ const CostAnalyticsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="mt-6 space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-            {data.cost_drivers.map((driver) => {
+          <div className="mt-6 space-y-3">
+            {aggregatedCategories.map((cat) => {
               const share = totalCost > 0 ? Math.round(
-                (driver.estimatedCost / totalCost) * 100,
+                (cat.cost / totalCost) * 100,
               ) : 0;
+              const maxCategoryCost = Math.max(1, ...aggregatedCategories.map(c => c.cost));
+
               return (
                 <div
-                  key={driver.key}
-                  className="rounded border border-white/10 bg-black/20 p-4"
+                  key={cat.id}
+                  className="rounded border border-white/10 bg-black/30 p-4"
                 >
                   <div className="mb-2 flex items-center justify-between gap-4">
                     <p className="text-sm font-semibold text-slate-200">
-                      {driver.title}
+                      {cat.label}
                     </p>
                     <p className="text-xs text-slate-400">
-                      {currencyFormatter.format(driver.estimatedCost)} · {share}
-                      %
+                      {currencyFormatter.format(cat.cost)} · {share}%
                     </p>
                   </div>
                   <div className="h-2 overflow-hidden rounded bg-white/10">
                     <div
-                      className={`${driver.colorClass} h-full transition-all duration-700 ease-in-out`}
+                      className={`${cat.colorClass} h-full transition-all duration-700 ease-in-out`}
                       style={{
-                        width: `${Math.max(2, Math.round((driver.estimatedCost / maxDriverCost) * 100))}%`,
+                        width: `${Math.max(2, Math.round((cat.cost / maxCategoryCost) * 100))}%`,
                       }}
                     />
                   </div>
@@ -305,7 +368,8 @@ const CostAnalyticsPage: React.FC = () => {
         </article>
       </section>
 
-      <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
+
+      <section className="rounded border border-white/10 bg-[#191919] p-6">
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
             <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
@@ -321,61 +385,62 @@ const CostAnalyticsPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {data.cost_drivers.map((driver) => (
-            <article
-              key={driver.key}
-              className="rounded border border-white/10 bg-black/20 p-4"
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
-                    {driver.title}
-                  </p>
-                  <h4 className="mt-2 text-base font-semibold text-white">
-                    {driver.model}
-                  </h4>
-                </div>
-                <span
-                  className={`rounded-full px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-white ${driver.colorClass}`}
-                >
-                  {driver.trend}
-                </span>
-              </div>
-
-              <p className="mt-3 text-sm text-slate-400">{driver.detail}</p>
-
-              <div className="mt-4 space-y-3">
-                <div>
-                  <div className="mb-1 flex items-center justify-between text-xs text-slate-400">
-                    <span>Usage</span>
-                    <span>{driver.unit}</span>
-                  </div>
-                  <p className="text-lg font-black text-white">
-                    {integerFormatter.format(driver.usage)}
-                  </p>
-                </div>
-                <div className="h-2 overflow-hidden rounded bg-white/10">
-                  <div
-                    className={`${driver.colorClass} h-full transition-all duration-700 ease-in-out`}
-                    style={{
-                      width: `${Math.max(4, Math.round((driver.estimatedCost / maxDriverCost) * 100))}%`,
-                    }}
-                  />
-                </div>
-                <div className="flex items-center justify-between text-xs text-slate-400">
-                  <span>Estimated spend</span>
-                  <span className="font-semibold text-white">
+        <div className="mt-6 overflow-x-auto">
+          <table className="min-w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-widest text-slate-500">
+                <th className="px-3 py-3 font-semibold">Driver</th>
+                <th className="px-3 py-3 font-semibold">Model</th>
+                <th className="px-3 py-3 font-semibold">Usage</th>
+                <th className="px-3 py-3 font-semibold">Trend</th>
+                <th className="px-3 py-3 font-semibold text-right">Estimated Spend</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[...data.cost_drivers].sort((a, b) => b.estimatedCost - a.estimatedCost).map((driver) => (
+                <tr key={driver.key} className="border-b border-white/5">
+                  <td className="px-3 py-3 text-slate-200">
+                    <div>
+                      <p className="font-semibold">{driver.title}</p>
+                      <p className="mt-1 text-xs text-slate-400">{driver.detail}</p>
+                    </div>
+                  </td>
+                  <td className="px-3 py-3 text-slate-300">{driver.model}</td>
+                  <td className="px-3 py-3 text-slate-300">
+                    {integerFormatter.format(driver.usage)} <span className="text-xs text-slate-500">({driver.unit})</span>
+                  </td>
+                  <td className="px-3 py-3">
+                    <span className={`text-[10px] font-bold uppercase tracking-widest ${driver.colorClass.replace('bg-', 'text-')}`}>
+                      {driver.trend}
+                    </span>
+                  </td>
+                  <td className="px-3 py-3 text-right font-semibold text-white">
                     {currencyFormatter.format(driver.estimatedCost)}
-                  </span>
-                </div>
-              </div>
-            </article>
-          ))}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="mt-6 rounded border border-white/10 bg-white/5 p-4">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+                OpenAI subtotal
+              </p>
+              <p className="mt-2 text-xl font-black text-white">
+                {currencyFormatter.format(totalOpenAiCost)}
+              </p>
+            </div>
+            <p className="text-sm text-slate-400">
+              Includes text generation, embeddings, and audio processing fees.
+            </p>
+          </div>
         </div>
       </section>
 
-      <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
+      <section className="rounded border border-white/10 bg-[#191919] p-6">
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
             <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
@@ -391,39 +456,34 @@ const CostAnalyticsPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-          {data.twilio_items.map((item) => (
-            <article
-              key={item.label}
-              className="rounded border border-white/10 bg-black/20 p-4"
-            >
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
-                {item.label}
-              </p>
-              <p className="mt-3 text-2xl font-black text-white">
-                {currencyFormatter.format(item.cost)}
-              </p>
-              <p className="mt-2 text-sm text-slate-400">{item.note}</p>
-              <div className="mt-4 flex items-end justify-between gap-4">
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
-                    Usage
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-slate-200">
+        <div className="mt-6 overflow-x-auto">
+          <table className="min-w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-widest text-slate-500">
+                <th className="px-3 py-3 font-semibold">Item</th>
+                <th className="px-3 py-3 font-semibold">Usage</th>
+                <th className="px-3 py-3 font-semibold text-right">Estimated Spend</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.twilio_items.map((item) => (
+                <tr key={item.label} className="border-b border-white/5">
+                  <td className="px-3 py-3 text-slate-200">
+                    <div>
+                      <p className="font-semibold">{item.label}</p>
+                      <p className="mt-1 text-xs text-slate-400">{item.note}</p>
+                    </div>
+                  </td>
+                  <td className="px-3 py-3 text-slate-300">
                     {integerFormatter.format(item.value)}
-                  </p>
-                </div>
-                <div className="h-2 flex-1 overflow-hidden rounded bg-white/10">
-                  <div
-                    className="h-full bg-blue-400 transition-all duration-700 ease-in-out"
-                    style={{
-                      width: `${Math.max(4, Math.round((item.cost / Math.max(1, totalTwilioCost)) * 100))}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            </article>
-          ))}
+                  </td>
+                  <td className="px-3 py-3 text-right font-semibold text-blue-400">
+                    {currencyFormatter.format(item.cost)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
         <div className="mt-6 rounded border border-white/10 bg-white/5 p-4">
