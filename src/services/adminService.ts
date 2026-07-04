@@ -258,6 +258,16 @@ export const adminService = {
   async updateIntegrationSettings(payload: IntegrationSettingsPayload): Promise<IntegrationSettingsPayload> {
     const response = await apiClient.patch<IntegrationSettingsPayload>("/admin/settings/integration", payload);
     return response.data;
+  },
+
+  async getSecuritySettings(): Promise<SecuritySettingsPayload> {
+    const response = await apiClient.get<SecuritySettingsPayload>("/admin/settings/security");
+    return response.data;
+  },
+
+  async updateSecuritySettings(payload: SecuritySettingsPayload): Promise<SecuritySettingsPayload> {
+    const response = await apiClient.patch<SecuritySettingsPayload>("/admin/settings/security", payload);
+    return response.data;
   }
 };
 
@@ -284,13 +294,19 @@ export interface RetrievalSettingsPayload {
 }
 
 export interface IntegrationSettingsPayload {
-  openai_api_key: string | null;
-  twilio_account_sid: string | null;
-  twilio_auth_token: string | null;
-  whatsapp_phone_number: string | null;
-  web_socket_url: string | null;
+  openai_api_key?: string;
+  twilio_account_sid?: string;
+  twilio_auth_token?: string;
+  whatsapp_phone_number?: string;
+  web_socket_url?: string;
 }
 
+export interface SecuritySettingsPayload {
+  jwt_expiry_minutes: number;
+  rate_limit_per_minute: number;
+  prompt_validation_enabled: boolean;
+  account_lockout_threshold: number;
+}
 
 export interface LanguageStat {
   code: string;

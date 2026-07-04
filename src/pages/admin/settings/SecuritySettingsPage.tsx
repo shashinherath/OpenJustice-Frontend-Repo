@@ -1,35 +1,37 @@
-import React, { useState } from "react";
-
-interface SecuritySettings {
-  jwtExpiryMinutes: number;
-  rateLimitPerHour: number;
-  enablePromptValidation: boolean;
-  enableAuditLogging: boolean;
-  maxFailedAttempts: number;
-  lockoutDurationMinutes: number;
-}
+import React, { useState, useEffect } from "react";
+import { adminService, type SecuritySettingsPayload } from "@/services/adminService";
 
 const SecuritySettingsPage: React.FC = () => {
-  const [settings, setSettings] = useState<SecuritySettings>({
-    jwtExpiryMinutes: 1440,
-    rateLimitPerHour: 100,
-    enablePromptValidation: true,
-    enableAuditLogging: true,
-    maxFailedAttempts: 5,
-    lockoutDurationMinutes: 30,
+  const [settings, setSettings] = useState<SecuritySettingsPayload>({
+    jwt_expiry_minutes: 60,
+    rate_limit_per_minute: 100,
+    prompt_validation_enabled: true,
+    account_lockout_threshold: 5,
   });
 
   const [saveNotice, setSaveNotice] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
 
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const data = await adminService.getSecuritySettings();
+        setSettings(data);
+      } catch (error) {
+        console.error("Failed to fetch security settings", error);
+      }
+    };
+    fetchSettings();
+  }, []);
+
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await adminService.updateSecuritySettings(settings);
       setSaveNotice("Security settings saved successfully.");
       setTimeout(() => setSaveNotice(""), 3000);
     } catch (error) {
+      console.error(error);
       setSaveNotice("Failed to save security settings.");
     } finally {
       setIsLoading(false);
@@ -44,19 +46,19 @@ const SecuritySettingsPage: React.FC = () => {
             Security Settings
           </h2>
           <p className="mt-3 max-w-3xl text-sm text-slate-300">
-            Configure JWT expiry, rate limiting, prompt validation, and access
-            control policies.
+            Configure authentication, rate limiting, and prompt validation policies
+            for optimal system security.
           </p>
         </div>
       </section>
 
-      <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      <section className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
             JWT Expiry
           </p>
           <p className="mt-3 text-2xl font-black text-white">
-            {settings.jwtExpiryMinutes}m
+            {settings.jwt_expiry_minutes}m
           </p>
         </article>
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
@@ -64,23 +66,32 @@ const SecuritySettingsPage: React.FC = () => {
             Rate Limit
           </p>
           <p className="mt-3 text-2xl font-black text-cyan-400">
-            {settings.rateLimitPerHour}/hr
+            {settings.rate_limit_per_minute}/m
           </p>
         </article>
         <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
-            Audit Logging
+            Lockout Threshold
           </p>
-          <p className="mt-3 text-2xl font-black text-green-400">
-            {settings.enableAuditLogging ? "Enabled" : "Disabled"}
+          <p className="mt-3 text-2xl font-black text-white">
+            {settings.account_lockout_threshold}
+          </p>
+        </article>
+        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+            Prompt Validation
+          </p>
+          <p className="mt-3 text-2xl font-black text-white">
+            {settings.prompt_validation_enabled ? "Enabled" : "Disabled"}
           </p>
         </article>
       </section>
 
       <section className="space-y-6 rounded border border-slate-700/70 bg-[#191919] p-6">
+        
         <article className="rounded border border-white/10 bg-black/30 p-5">
           <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
-            JWT Token Expiry
+            JWT Token Expiry (Minutes)
           </h3>
           <p className="mt-2 text-[10px] text-slate-400">
             Session timeout in minutes. Users must re-authenticate after expiry.
@@ -88,22 +99,22 @@ const SecuritySettingsPage: React.FC = () => {
           <div className="mt-4 space-y-3 md:w-96">
             <input
               type="range"
-              min="15"
-              max="10080"
-              step="15"
-              value={settings.jwtExpiryMinutes}
+              min="5"
+              max="1440"
+              step="5"
+              value={settings.jwt_expiry_minutes}
               onChange={(e) =>
                 setSettings({
                   ...settings,
-                  jwtExpiryMinutes: parseInt(e.target.value, 10),
+                  jwt_expiry_minutes: parseInt(e.target.value, 10),
                 })
               }
               className="w-full"
             />
             <div className="flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-2">
-              <span className="text-xs text-slate-400">Range: 15m - 7d</span>
+              <span className="text-xs text-slate-400">Range: 5 - 1440</span>
               <span className="text-sm font-bold text-cyan-300">
-                {settings.jwtExpiryMinutes}m
+                {settings.jwt_expiry_minutes}
               </span>
             </div>
           </div>
@@ -111,10 +122,10 @@ const SecuritySettingsPage: React.FC = () => {
 
         <article className="rounded border border-white/10 bg-black/30 p-5">
           <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
-            Rate Limiting
+            Rate Limit Per Minute
           </h3>
           <p className="mt-2 text-[10px] text-slate-400">
-            Maximum API requests allowed per user per hour.
+            Maximum number of WebSocket messages a user can send per minute.
           </p>
           <div className="mt-4 space-y-3 md:w-96">
             <input
@@ -122,11 +133,11 @@ const SecuritySettingsPage: React.FC = () => {
               min="10"
               max="1000"
               step="10"
-              value={settings.rateLimitPerHour}
+              value={settings.rate_limit_per_minute}
               onChange={(e) =>
                 setSettings({
                   ...settings,
-                  rateLimitPerHour: parseInt(e.target.value, 10),
+                  rate_limit_per_minute: parseInt(e.target.value, 10),
                 })
               }
               className="w-full"
@@ -134,7 +145,7 @@ const SecuritySettingsPage: React.FC = () => {
             <div className="flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-2">
               <span className="text-xs text-slate-400">Range: 10 - 1000</span>
               <span className="text-sm font-bold text-cyan-300">
-                {settings.rateLimitPerHour}
+                {settings.rate_limit_per_minute}
               </span>
             </div>
           </div>
@@ -142,111 +153,55 @@ const SecuritySettingsPage: React.FC = () => {
 
         <article className="rounded border border-white/10 bg-black/30 p-5">
           <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
-            Failed Login Attempts
+            Account Lockout Threshold
           </h3>
           <p className="mt-2 text-[10px] text-slate-400">
-            Lock account after N failed authentication attempts.
+            Number of failed login attempts before an account is temporarily locked.
           </p>
           <div className="mt-4 space-y-3 md:w-96">
             <input
               type="range"
-              min="1"
-              max="10"
+              min="3"
+              max="20"
               step="1"
-              value={settings.maxFailedAttempts}
+              value={settings.account_lockout_threshold}
               onChange={(e) =>
                 setSettings({
                   ...settings,
-                  maxFailedAttempts: parseInt(e.target.value, 10),
+                  account_lockout_threshold: parseInt(e.target.value, 10),
                 })
               }
               className="w-full"
             />
             <div className="flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-2">
-              <span className="text-xs text-slate-400">Range: 1 - 10</span>
+              <span className="text-xs text-slate-400">Range: 3 - 20</span>
               <span className="text-sm font-bold text-cyan-300">
-                {settings.maxFailedAttempts}
+                {settings.account_lockout_threshold}
               </span>
             </div>
           </div>
         </article>
 
-        <article className="rounded border border-white/10 bg-black/30 p-5">
-          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
-            Account Lockout Duration
-          </h3>
-          <p className="mt-2 text-[10px] text-slate-400">
-            Duration to lock account after exceeding max failed attempts.
-          </p>
-          <div className="mt-4 space-y-3 md:w-96">
+        <article className="flex items-center justify-between rounded border border-white/10 bg-black/30 p-5">
+          <div className="pr-4">
+            <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+              Prompt Injection Validation
+            </h3>
+            <p className="mt-2 max-w-xl text-[10px] text-slate-400">
+              Enable the PromptSecurityValidator to intercept and sanitize prompt injection 
+              attempts before they reach the LLM.
+            </p>
+          </div>
+          <label className="relative inline-flex cursor-pointer items-center">
             <input
-              type="range"
-              min="5"
-              max="480"
-              step="5"
-              value={settings.lockoutDurationMinutes}
+              type="checkbox"
+              checked={settings.prompt_validation_enabled}
               onChange={(e) =>
-                setSettings({
-                  ...settings,
-                  lockoutDurationMinutes: parseInt(e.target.value, 10),
-                })
+                setSettings({ ...settings, prompt_validation_enabled: e.target.checked })
               }
-              className="w-full"
+              className="peer sr-only"
             />
-            <div className="flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-2">
-              <span className="text-xs text-slate-400">Range: 5m - 8h</span>
-              <span className="text-sm font-bold text-cyan-300">
-                {settings.lockoutDurationMinutes}m
-              </span>
-            </div>
-          </div>
-        </article>
-
-        <article className="rounded border border-white/10 bg-black/30 p-5">
-          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
-            Prompt Validation
-          </h3>
-          <p className="mt-2 text-[10px] text-slate-400">
-            Enable validation to detect and block prompt injection attempts.
-          </p>
-          <label className="mt-4 flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-3">
-            <span className="text-sm text-slate-200">
-              Prompt Injection Protection
-            </span>
-            <input
-              type="checkbox"
-              checked={settings.enablePromptValidation}
-              onChange={() =>
-                setSettings({
-                  ...settings,
-                  enablePromptValidation: !settings.enablePromptValidation,
-                })
-              }
-              className="h-4 w-4 rounded border-white/20 bg-black/40"
-            />
-          </label>
-        </article>
-
-        <article className="rounded border border-white/10 bg-black/30 p-5">
-          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
-            Audit Logging
-          </h3>
-          <p className="mt-2 text-[10px] text-slate-400">
-            Enable detailed logging of all admin actions and security events.
-          </p>
-          <label className="mt-4 flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-3">
-            <span className="text-sm text-slate-200">Audit Trail</span>
-            <input
-              type="checkbox"
-              checked={settings.enableAuditLogging}
-              onChange={() =>
-                setSettings({
-                  ...settings,
-                  enableAuditLogging: !settings.enableAuditLogging,
-                })
-              }
-              className="h-4 w-4 rounded border-white/20 bg-black/40"
-            />
+            <div className="peer h-6 w-11 rounded-full bg-slate-700 after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:bg-cyan-500 peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-cyan-500/50"></div>
           </label>
         </article>
 
