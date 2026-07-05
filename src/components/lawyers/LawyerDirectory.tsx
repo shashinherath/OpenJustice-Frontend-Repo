@@ -320,9 +320,9 @@ const LawyerDirectory: React.FC = () => {
             </p>
             <button 
               onClick={() => setViewingBookings(false)}
-              className="bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-bold px-6 py-2 rounded transition-colors"
+              className="bg-slate-900 dark:bg-slate-200 text-white dark:text-black hover:bg-slate-800 dark:hover:bg-white text-sm font-bold px-6 py-2 rounded transition-colors"
             >
-              Browse Lawyers
+              BROWSE LAWYERS
             </button>
           </div>
         ) : (
@@ -403,19 +403,25 @@ const LawyerDirectory: React.FC = () => {
                 {lawyer.location} • {lawyer.experience}
               </div>
             </div>
-            <div className="flex gap-2 mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-              <button 
-                onClick={(e) => { e.stopPropagation(); setSelectedLawyer(lawyer); }}
-                className="flex-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white text-xs font-bold py-2 rounded transition-colors text-center"
-              >
-                VIEW PROFILE
-              </button>
-              <button 
-                onClick={(e) => { e.stopPropagation(); setBookingLawyer(lawyer); }}
-                className="flex-1 bg-cyan-600 hover:bg-cyan-700 text-white text-xs font-bold py-2 rounded transition-colors text-center"
-              >
-                BOOK NOW
-              </button>
+            <div className="flex justify-between items-center border-t border-slate-100 dark:border-slate-800 pt-3 mt-4">
+              <span className="text-[11px] font-mono text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                {lawyer.rating} RATING
+              </span>
+              <div className="flex gap-3">
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setSelectedLawyer(lawyer); }}
+                  className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+                >
+                  PROFILE
+                </button>
+                <button 
+                  onClick={(e) => { e.stopPropagation(); setBookingLawyer(lawyer); }}
+                  className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 dark:text-cyan-400 group-hover:text-cyan-500 transition-colors"
+                >
+                  BOOK &rarr;
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -484,9 +490,9 @@ const LawyerDirectory: React.FC = () => {
               </div>
               <button 
                 onClick={() => setBookingLawyer(selectedLawyer)}
-                className="bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-bold px-6 py-2 rounded transition-colors inline-block"
+                className="bg-slate-900 dark:bg-slate-200 text-white dark:text-black hover:bg-slate-800 dark:hover:bg-white text-sm font-bold px-6 py-2.5 rounded transition-colors inline-block"
               >
-                Book Appointment
+                BOOK APPOINTMENT
               </button>
             </div>
           </div>
@@ -619,9 +625,9 @@ const LawyerDirectory: React.FC = () => {
                 <button 
                   onClick={handleBookAppointment}
                   disabled={!selectedSlot}
-                  className={`w-full py-3 rounded font-bold transition-colors ${
+                  className={`w-full py-3 rounded font-bold transition-colors uppercase ${
                     selectedSlot 
-                      ? 'bg-cyan-600 hover:bg-cyan-700 text-white' 
+                      ? 'bg-slate-900 dark:bg-slate-200 text-white dark:text-black hover:bg-slate-800 dark:hover:bg-white' 
                       : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'
                   }`}
                 >
