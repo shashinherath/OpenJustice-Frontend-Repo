@@ -10,6 +10,7 @@ import ConversationComposer from "@/components/chat/ConversationComposer";
 import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
 import VoiceMessagePlayer from "@/components/ui/VoiceMessagePlayer";
 import MarkdownText from "@/components/common/MarkdownText";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 const AnswerPage: React.FC = () => {
   const { t } = useTranslation();
@@ -212,9 +213,7 @@ const AnswerPage: React.FC = () => {
           {showTypingIndicator ? (
             <div className="mr-auto max-w-[88%] rounded-xl border border-slate-200 bg-white p-3 px-4 text-sm text-slate-700 shadow-sm dark:border-border-dark dark:bg-surface-dark dark:text-slate-200">
               <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-[16px] text-slate-400 dark:text-slate-500">
-                  smart_toy
-                </span>
+                <BrandLogo containerClassName="flex items-center justify-center size-5" iconClassName="text-xl" />
                 <div
                   className="flex items-center gap-1.5"
                   aria-live="polite"
@@ -260,9 +259,7 @@ const AnswerPage: React.FC = () => {
                   />
                 ) : (
                   <div className="flex items-center gap-2 py-1 text-slate-500 dark:text-slate-400">
-                    <span className="material-symbols-outlined text-[16px]">
-                      smart_toy
-                    </span>
+                    <BrandLogo containerClassName="flex items-center justify-center size-5" iconClassName="text-xl" />
                     <div
                       className="flex items-center gap-1.5"
                       aria-live="polite"
@@ -274,6 +271,34 @@ const AnswerPage: React.FC = () => {
                     </div>
                   </div>
                 )
+              ) : (() => {
+                  try {
+                    const data = JSON.parse(message.content);
+                    return data && data.intent === "document_analysis";
+                  } catch { return false; }
+                })() ? (
+                (() => {
+                  const data = JSON.parse(message.content);
+                  const filename = data.filename || "Document";
+                  const ext = data.file_extension || "pdf";
+                  const docType = data.document_type || "Document";
+                  const analysisType = data.analysis_type || "Analysis";
+                  const isPdf = ext.toLowerCase() === 'pdf';
+                  
+                  return (
+                    <div className="flex flex-col gap-2 min-w-[200px]">
+                      <div className="flex items-center gap-3 bg-white/10 dark:bg-black/5 p-3 rounded-lg border border-white/20 dark:border-black/10">
+                        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${isPdf ? 'bg-red-500/20 text-red-200 dark:bg-red-100 dark:text-red-600' : 'bg-blue-500/20 text-blue-200 dark:bg-blue-100 dark:text-blue-600'}`}>
+                          <span className="material-symbols-outlined">{isPdf ? 'picture_as_pdf' : 'description'}</span>
+                        </div>
+                        <div className="min-w-0 flex-1 text-left">
+                          <p className="truncate text-sm font-bold text-white dark:text-slate-900">{filename}</p>
+                          <p className="text-xs text-slate-300 dark:text-slate-600">{docType} • {analysisType}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()
               ) : (
                 <p className="whitespace-pre-wrap leading-6">
                   {message.content}

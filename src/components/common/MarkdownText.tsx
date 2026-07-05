@@ -8,10 +8,11 @@ interface MarkdownTextProps {
 type Block =
   | { type: "paragraph"; lines: string[] }
   | { type: "ordered-list"; items: string[] }
-  | { type: "unordered-list"; items: string[] };
+  | { type: "unordered-list"; items: string[] }
+  | { type: "heading"; level: number; text: string };
 
 const INLINE_PATTERN =
-  /(\*\*[^*]+\*\*|__[^_]+__|\*[^*\n]+\*|_[^_\n]+_|\[[^\]]+\]\([^)]+\))/g;
+  /(\*\*[^*]+\*\*|__[^_]+__|\*[^*\n]+\*|_[^_\n]+_|\[[^\]]+\]\([^)]+\)|\[Source:[^\]]+\])/g;
 
 const renderInline = (text: string): React.ReactNode[] => {
   const nodes: React.ReactNode[] = [];
@@ -33,6 +34,13 @@ const renderInline = (text: string): React.ReactNode[] => {
       nodes.push(<em key={`${index}-italic`}>{token.slice(1, -1)}</em>);
     } else if (token.startsWith("_") && token.endsWith("_")) {
       nodes.push(<em key={`${index}-italic`}>{token.slice(1, -1)}</em>);
+    } else if (token.startsWith("[Source:") && token.endsWith("]")) {
+      nodes.push(
+        <span key={`${index}-source`} className="inline-flex items-center gap-1 rounded-md bg-slate-200/60 px-2 py-0.5 text-xs font-semibold text-slate-700 dark:bg-slate-700/60 dark:text-slate-300 mx-1 border border-slate-300/50 dark:border-slate-600/50">
+          <span className="material-symbols-outlined text-[12px]">library_books</span>
+          {token.slice(8, -1).trim()}
+        </span>
+      );
     } else {
       const linkMatch = token.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
       if (linkMatch) {
@@ -105,6 +113,17 @@ const parseBlocks = (content: string): Block[] => {
       continue;
     }
 
+    const headingMatch = line.match(/^(#{1,6})\s+(.*)$/);
+    if (headingMatch) {
+      blocks.push({
+        type: "heading",
+        level: headingMatch[1].length,
+        text: headingMatch[2].trim(),
+      });
+      index += 1;
+      continue;
+    }
+
     if (isOrderedItem(line)) {
       consumeList("ordered-list");
       continue;
@@ -121,7 +140,7 @@ const parseBlocks = (content: string): Block[] => {
       if (!currentLine.trim()) {
         break;
       }
-      if (isOrderedItem(currentLine) || isUnorderedItem(currentLine)) {
+      if (isOrderedItem(currentLine) || isUnorderedItem(currentLine) || /^#{1,6}\s+/.test(currentLine)) {
         break;
       }
       paragraphLines.push(currentLine.trim());
@@ -140,6 +159,21 @@ const MarkdownText: React.FC<MarkdownTextProps> = ({ content, className }) => {
   return (
     <div className={className ? `${className} space-y-3` : "space-y-3"}>
       {blocks.map((block, blockIndex) => {
+        if (block.type === "heading") {
+          const HeadingTag = `h${block.level}` as keyof JSX.IntrinsicElements;
+          let headingClass = "font-bold text-slate-900 dark:text-white mt-6 mb-2";
+          if (block.level === 1) headingClass += " text-2xl";
+          else if (block.level === 2) headingClass += " text-xl";
+          else if (block.level === 3) headingClass += " text-lg";
+          else headingClass += " text-base";
+          
+          return (
+            <HeadingTag key={blockIndex} className={headingClass}>
+              {renderInline(block.text)}
+            </HeadingTag>
+          );
+        }
+
         if (block.type === "ordered-list") {
           return (
             <ol key={blockIndex} className="ml-5 list-decimal space-y-2 pl-5">

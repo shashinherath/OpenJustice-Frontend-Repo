@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 interface VoiceMessagePlayerProps {
   audioUrl: string;
@@ -129,7 +130,7 @@ const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({ audioUrl, sende
           </div>
         ) : (
           <div className="absolute inset-0 bg-blue-100 flex items-center justify-center text-blue-600">
-            <span className="material-symbols-outlined text-[24px]">smart_toy</span>
+            <BrandLogo containerClassName="flex items-center justify-center size-6" iconClassName="text-xl" />
           </div>
         )}
       </div>
