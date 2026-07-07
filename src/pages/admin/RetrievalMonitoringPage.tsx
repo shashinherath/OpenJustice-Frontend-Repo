@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { adminService, AdminRetrievalMonitoringResponse, RetrievalMetric, RetrievalCheck } from "@/services/adminService";
+import { adminService } from "@/services/adminService";
+import type { AdminRetrievalMonitoringResponse, RetrievalMetric, RetrievalCheck } from "@/services/adminService";
 
 const getToneClasses = (tone: RetrievalMetric["tone"]) => {
   const tones: Record<RetrievalMetric["tone"], string> = {
@@ -15,11 +16,11 @@ const getToneClasses = (tone: RetrievalMetric["tone"]) => {
 };
 
 const getStatusClasses = (status: RetrievalCheck["status"]) => {
-  if (status === "Healthy") {
+  if (status === "Pass") {
     return "bg-emerald-500/15 text-emerald-300";
   }
 
-  if (status === "Review") {
+  if (status === "Warn") {
     return "bg-amber-500/15 text-amber-300";
   }
 

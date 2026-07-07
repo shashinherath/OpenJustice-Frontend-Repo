@@ -1,6 +1,4 @@
 import React, { createContext, useCallback, useState } from "react";
-import SettingsModal from "@/components/settings/SettingsModal";
-import ProfileModal from "@/components/profile/ProfileModal";
 
 export interface SettingsModalContextType {
   isSettingsOpen: boolean;

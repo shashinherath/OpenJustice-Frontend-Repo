@@ -89,14 +89,29 @@ export const chatService = {
     onChunk: (chunk: string) => void,
   ): Promise<void> {
     const baseUrl = apiClient.defaults.baseURL || "";
+
+    // Inject Bearer token for cross-origin Azure deployment
+    // (SameSite=strict cookies are blocked cross-origin but Bearer headers are not)
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    try {
+      const raw = sessionStorage.getItem("oj-auth-store");
+      if (raw) {
+        const parsed = JSON.parse(raw) as { state?: { token?: string } };
+        const token = parsed?.state?.token;
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+      }
+    } catch {
+      // fall back to cookie auth
+    }
+
     const response = await fetch(
       `${baseUrl}/chats/${conversationId}/messages/complete`,
       {
         method: "POST",
         credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify(payload),
       },
     );

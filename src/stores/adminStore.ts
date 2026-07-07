@@ -15,6 +15,8 @@ interface AdminState {
 
 export const useAdminStore = create<AdminState>((set) => ({
   overviewData: null,
+  aiEvaluationData: null,
+  researchMetricsData: null,
   isLoading: true,
   error: null,
   

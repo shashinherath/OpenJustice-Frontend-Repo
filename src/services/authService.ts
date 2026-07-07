@@ -5,7 +5,6 @@ import type {
   LoginResponse,
   RegisterResponse,
 } from "@/types/auth.types";
-import type { User } from "@/types/user.types";
 
 export interface UserProfileResponse {
   uuid: string;

@@ -64,7 +64,7 @@ const COLLECTION_META: Record<string, { code: string; title: string; description
   }
 };
 
-export const useLibraryStore = create<LibraryState>((set, get) => ({
+export const useLibraryStore = create<LibraryState>((set) => ({
   collections: [],
   letters: [],
   documents: [],

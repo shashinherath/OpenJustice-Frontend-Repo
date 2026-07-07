@@ -46,23 +46,12 @@ const CostAnalyticsPage: React.FC = () => {
 
   const totalCost = totalOpenAiCost + totalTwilioCost;
 
-  const totalUsage = useMemo(
-    () => data?.cost_drivers.reduce((sum, driver) => sum + driver.usage, 0) || 0,
-    [data]
-  );
-
-  const maxDriverCost = useMemo(
-    () => Math.max(1, ...(data?.cost_drivers.map((driver) => driver.estimatedCost) || [1])),
-    [data]
-  );
-
   const maxDailyTotal = useMemo(
     () => Math.max(1, ...(data?.daily_costs.map((entry) => entry.openAi + entry.twilio) || [1])),
     [data]
   );
 
   const projectedMonthlyCost = totalCost * 4.3;
-  const openAiShare = totalCost > 0 ? Math.round((totalOpenAiCost / totalCost) * 100) : 0;
 
   const aggregatedCategories = useMemo(() => {
     if (!data) return [];
@@ -288,7 +277,7 @@ const CostAnalyticsPage: React.FC = () => {
                       contentStyle={{ backgroundColor: '#191919', borderColor: 'rgba(255,255,255,0.1)', borderRadius: '4px' }}
                       itemStyle={{ fontSize: '11px' }}
                       labelStyle={{ color: '#cbd5e1', marginBottom: '4px', fontSize: '11px', fontWeight: 'bold' }}
-                      formatter={(value: number) => [currencyFormatter.format(value)]}
+                      formatter={(value: any) => [currencyFormatter.format(Number(value))]}
                     />
                     <Legend iconType="circle" wrapperStyle={{ fontSize: '10px', paddingTop: '5px' }} />
                     <Line type="monotone" name="Language Models" dataKey="llm" stroke="#22d3ee" strokeWidth={2} dot={{ r: 2.5, fill: '#191919', strokeWidth: 2 }} activeDot={{ r: 4 }} />
