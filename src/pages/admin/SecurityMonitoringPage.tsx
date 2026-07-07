@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { adminService } from "@/services/adminService";
-import type { SecuritySignal, MonitoringArea, PriorityAlert, SecurityEventRecord, AdminSecurityMonitoringResponse } from "@/services/adminService";
+import type { AdminSecurityMonitoringResponse } from "@/services/adminService";
+
 
 
 
@@ -34,17 +35,7 @@ const getSeverityClasses = (severity: string) => {
   return "bg-emerald-500/15 text-emerald-300";
 };
 
-const getStatusClasses = (status: MonitoringArea["status"]) => {
-  if (status === "Healthy") {
-    return "bg-emerald-500/15 text-emerald-300";
-  }
 
-  if (status === "Watch") {
-    return "bg-amber-500/15 text-amber-300";
-  }
-
-  return "bg-rose-500/15 text-rose-300";
-};
 
 const SecurityMonitoringPage: React.FC = () => {
   const [data, setData] = useState<AdminSecurityMonitoringResponse | null>(null);

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import type {
   ApiConversationResponse,
   ApiMessageResponse,
@@ -68,9 +68,6 @@ const mapApiMessage = (message: ApiMessageResponse): ChatMessage => {
     audioUrl: message.audio_url || undefined,
   };
 };
-
-const isBlobAudioUrl = (url?: string): boolean =>
-  typeof url === "string" && url.startsWith("blob:");
 
 const mergeAudioUrl = (
   existingMessage: ChatMessage | undefined,
@@ -514,10 +511,10 @@ export const useChatStore = create<ChatStore>()(
     }),
     {
       name: CHAT_STORAGE_KEY,
+      storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({
         activeConversationId: state.activeConversationId,
         sidebarChats: state.sidebarChats,
-        chatMessagesById: state.chatMessagesById,
       }),
       onRehydrateStorage: () => (state) => {
         if (!state) {

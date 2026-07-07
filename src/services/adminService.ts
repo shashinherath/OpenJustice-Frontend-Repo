@@ -136,8 +136,8 @@ export const adminService = {
     return response.data;
   },
 
-  async getLogs(skip = 0, limit = 100): Promise<AdminLogListResponse> {
-    const response = await apiClient.get<AdminLogListResponse>(`/admin/logs?skip=${skip}&limit=${limit}`);
+  async getLogs(skip = 0, limit = 100): Promise<LogListResponse> {
+    const response = await apiClient.get<LogListResponse>(`/admin/logs?skip=${skip}&limit=${limit}`);
     return response.data;
   },
 

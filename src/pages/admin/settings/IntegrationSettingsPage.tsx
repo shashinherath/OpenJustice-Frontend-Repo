@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { adminService, IntegrationSettingsPayload } from "../../../services/adminService";
+import { adminService } from "../../../services/adminService";
+import type { IntegrationSettingsPayload } from "../../../services/adminService";
 
 interface IntegrationSettings {
   openaiApiKey: string;

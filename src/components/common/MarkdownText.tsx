@@ -160,7 +160,7 @@ const MarkdownText: React.FC<MarkdownTextProps> = ({ content, className }) => {
     <div className={className ? `${className} space-y-3` : "space-y-3"}>
       {blocks.map((block, blockIndex) => {
         if (block.type === "heading") {
-          const HeadingTag = `h${block.level}` as keyof JSX.IntrinsicElements;
+          const HeadingTag = `h${block.level}` as React.ElementType;
           let headingClass = "font-bold text-slate-900 dark:text-white mt-6 mb-2";
           if (block.level === 1) headingClass += " text-2xl";
           else if (block.level === 2) headingClass += " text-xl";

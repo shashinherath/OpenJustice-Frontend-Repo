@@ -6,6 +6,15 @@ import ChatLayout from "@/layout/ChatLayout";
 import AdminLayout from "@/layout/AdminLayout";
 import { useAuthStore } from "@/stores/authStore";
 
+const PageLoader: React.FC = () => (
+  <div className="min-h-screen flex flex-col items-center justify-center bg-background-light dark:bg-background-dark gap-4">
+    <div className="w-8 h-8 border-2 border-slate-300 dark:border-slate-600 border-t-slate-700 dark:border-t-slate-200 rounded-full animate-spin" />
+    <span className="text-xs text-slate-400 dark:text-slate-500 tracking-wide">
+      Loading…
+    </span>
+  </div>
+);
+
 const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const location = useLocation();
@@ -69,6 +78,14 @@ const withLayout = (path: string, content: React.ReactNode) => {
     );
   }
 
+  if (path === "/developers") {
+    return (
+      <RequireAuth>
+        <MainLayout>{content}</MainLayout>
+      </RequireAuth>
+    );
+  }
+
   return content;
 };
 
@@ -81,14 +98,11 @@ export const renderRoutes = (routes: RouteConfig[]) =>
         key={path}
         path={path}
         element={
-          <Suspense
-            fallback={
-              <div className="p-4 text-sm text-slate-500">Loading...</div>
-            }
-          >
+          <Suspense fallback={<PageLoader />}>
             {page}
           </Suspense>
         }
       />
     );
   });
+

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import type { User } from "@/types/user.types";
 import { authService } from "@/services/authService";
 import i18n from "@/config/i18n.config";
@@ -25,7 +25,7 @@ interface AuthStore {
 
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       user: null,
       isAuthenticated: false,
       token: null,
@@ -159,6 +159,7 @@ export const useAuthStore = create<AuthStore>()(
     }),
     {
       name: "oj-auth-store",
+      storage: createJSONStorage(() => sessionStorage),
     },
   ),
 );

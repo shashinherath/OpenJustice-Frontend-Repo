@@ -6,7 +6,6 @@ interface VoiceRecordingUIProps {
   isPaused: boolean;
   isPreview: boolean;
   isActive: boolean;
-  isProcessing?: boolean;
   onPauseResume: () => void;
   onStop: () => void;
   onPlay: () => void;
@@ -19,7 +18,6 @@ const VoiceRecordingUI: React.FC<VoiceRecordingUIProps> = ({
   isPaused,
   isPreview,
   isActive,
-  isProcessing = false,
   onPauseResume,
   onStop,
   onPlay,

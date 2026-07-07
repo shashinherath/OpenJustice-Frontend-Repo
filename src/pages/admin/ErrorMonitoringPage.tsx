@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from "react";
-import { adminService, ErrorRecord } from "@/services/adminService";
+import { adminService } from "@/services/adminService";
+import type { ErrorRecord } from "@/services/adminService";
 
 const ErrorMonitoringPage: React.FC = () => {
   const [errors, setErrors] = useState<ErrorRecord[]>([]);
