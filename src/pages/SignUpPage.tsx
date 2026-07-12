@@ -5,6 +5,7 @@ import BrandLogo from "@/components/ui/BrandLogo";
 import { authService } from "@/services/authService";
 import { useAuthStore } from "@/stores/authStore";
 import { LANGUAGE_OPTIONS } from "@/constants/languages";
+import { useRecaptcha } from "@/hooks/useRecaptcha";
 
 const SignUpPage: React.FC = () => {
   const { t } = useTranslation();
@@ -23,6 +24,7 @@ const SignUpPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const { executeRecaptcha } = useRecaptcha();
 
   const login = useAuthStore((state) => state.login);
 
@@ -97,6 +99,8 @@ const SignUpPage: React.FC = () => {
 
     setIsLoading(true);
     try {
+      const recaptchaToken = await executeRecaptcha('signup');
+
       const response = await authService.register({
         first_name: formData.firstName.trim(),
         last_name: formData.lastName.trim(),
@@ -104,6 +108,7 @@ const SignUpPage: React.FC = () => {
         phone_number: formData.phone.trim(),
         password: formData.password,
         preferred_language: formData.preferredLanguage,
+        recaptcha_token: recaptchaToken,
       });
 
       const { data } = response;

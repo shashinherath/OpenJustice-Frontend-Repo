@@ -9,6 +9,7 @@ export interface LoginRequest {
   email?: string;
   phone_number?: string;
   password: string;
+  recaptcha_token?: string;
 }
 
 export interface RegisterRequest {
@@ -18,6 +19,7 @@ export interface RegisterRequest {
   phone_number?: string;
   password: string;
   preferred_language?: string;
+  recaptcha_token?: string;
 }
 
 export interface AuthResponseData {
