@@ -22,6 +22,7 @@ const SignUpPage: React.FC = () => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { executeRecaptcha } = useRecaptcha();
@@ -111,30 +112,8 @@ const SignUpPage: React.FC = () => {
         recaptcha_token: recaptchaToken,
       });
 
-      const { data } = response;
-      const fallbackName = data.first_name
-        ? `${data.first_name} ${data.last_name || ""}`.trim()
-        : formData.email.split("@")[0] || "User";
-
-      // If backend returns token inside data, we log them in immediately.
-      // Otherwise, you may redirect them to a login prompt or automatically set token.
-      if (data.access_token) {
-        login(
-          {
-            id: data.uuid,
-            name: fallbackName,
-            email: formData.email,
-            preferences: {
-              language: data.preferred_language,
-            },
-          },
-          data.access_token,
-        );
-        navigate("/chat");
-      } else {
-        // Fallback or login flow
-        navigate("/?login=true");
-      }
+      const { data, message } = response;
+      setIsSuccess(true);
     } catch (error: any) {
       console.error("Sign up failed:", error);
       setErrors({
@@ -171,27 +150,53 @@ const SignUpPage: React.FC = () => {
         <div className="w-full max-w-2xl">
           <div className="rounded-2xl border border-slate-200 bg-white shadow-xl dark:border-zinc-800 dark:bg-zinc-700/50 p-8 md:p-12">
             {/* Form Header */}
-            <div className="mb-8 text-center">
-              <div className="mx-auto mb-4 inline-flex items-center justify-center rounded-4xl border dark:border-zinc-700">
-                <BrandLogo
-                  containerClassName="flex h-15 w-15 items-center justify-center rounded-full bg-primary text-white dark:bg-white dark:text-primary"
-                  iconClassName="text-2xl"
-                />
-              </div>
-              <h1 className="mb-2 text-3xl font-black text-slate-900 dark:text-white">
-                {t("createAccount")}
-              </h1>
-              <p className="text-slate-600 dark:text-slate-400">
-                {t("signupSubtitle")}
-              </p>
-            </div>
-
-            {/* Error Message */}
-            {errors.form && (
-              <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-900/20 dark:text-red-400">
-                {errors.form}
+            {!isSuccess && (
+              <div className="mb-8 text-center">
+                <div className="mx-auto mb-4 inline-flex items-center justify-center rounded-4xl border dark:border-zinc-700">
+                  <BrandLogo
+                    containerClassName="flex h-15 w-15 items-center justify-center rounded-full bg-primary text-white dark:bg-white dark:text-primary"
+                    iconClassName="text-2xl"
+                  />
+                </div>
+                <h1 className="mb-2 text-3xl font-black text-slate-900 dark:text-white">
+                  {t("createAccount")}
+                </h1>
+                <p className="text-slate-600 dark:text-slate-400">
+                  {t("signupSubtitle")}
+                </p>
               </div>
             )}
+
+            {isSuccess ? (
+              <div className="text-center py-8 space-y-6">
+                <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400">
+                  <span className="material-symbols-outlined text-4xl">mark_email_read</span>
+                </div>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+                  Check your email
+                </h2>
+                <p className="text-slate-600 dark:text-slate-400 max-w-md mx-auto">
+                  We've sent a verification link to <span className="font-semibold text-slate-900 dark:text-white">{formData.email}</span>. 
+                  Please verify your email address to activate your account.
+                </p>
+                <div className="pt-4">
+                  <Link
+                    to="/?login=true"
+                    className="inline-flex w-full sm:w-auto items-center justify-center rounded-lg bg-blue-600 px-6 py-3 font-semibold text-white transition-colors hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+                  >
+                    Go to Login
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Error Message */}
+                {errors.form && (
+                  <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900 dark:bg-red-900/20 dark:text-red-400">
+                    {errors.form}
+                  </div>
+                )}
+
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* First & Last Name */}
@@ -449,6 +454,7 @@ const SignUpPage: React.FC = () => {
                 <strong>{t("disclaimer")}</strong> {t("disclaimerText")}
               </div>
             </form>
+            </>}
           </div>
         </div>
       </main>
