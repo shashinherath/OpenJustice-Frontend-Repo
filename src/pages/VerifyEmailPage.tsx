@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { Link, useSearchParams } from "react-router-dom";
 import BrandLogo from "@/components/ui/BrandLogo";
 import { authService } from "@/services/authService";
 
 const VerifyEmailPage: React.FC = () => {
-  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   
   const token = searchParams.get("token");
   
