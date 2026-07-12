@@ -1,15 +1,13 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import BrandLogo from "@/components/ui/BrandLogo";
 import { authService } from "@/services/authService";
-import { useAuthStore } from "@/stores/authStore";
 import { LANGUAGE_OPTIONS } from "@/constants/languages";
 import { useRecaptcha } from "@/hooks/useRecaptcha";
 
 const SignUpPage: React.FC = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -26,8 +24,6 @@ const SignUpPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { executeRecaptcha } = useRecaptcha();
-
-  const login = useAuthStore((state) => state.login);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -102,7 +98,7 @@ const SignUpPage: React.FC = () => {
     try {
       const recaptchaToken = await executeRecaptcha('signup');
 
-      const response = await authService.register({
+      await authService.register({
         first_name: formData.firstName.trim(),
         last_name: formData.lastName.trim(),
         email: formData.email.trim(),
@@ -112,7 +108,6 @@ const SignUpPage: React.FC = () => {
         recaptcha_token: recaptchaToken,
       });
 
-      const { data, message } = response;
       setIsSuccess(true);
     } catch (error: any) {
       console.error("Sign up failed:", error);
@@ -454,7 +449,8 @@ const SignUpPage: React.FC = () => {
                 <strong>{t("disclaimer")}</strong> {t("disclaimerText")}
               </div>
             </form>
-            </>}
+            </>
+            )}
           </div>
         </div>
       </main>
