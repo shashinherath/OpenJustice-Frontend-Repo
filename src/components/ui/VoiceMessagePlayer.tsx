@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import BrandLogo from "@/components/ui/BrandLogo";
+import { useAuthStore } from "@/stores/authStore";
 
 interface VoiceMessagePlayerProps {
   audioUrl: string;
@@ -11,6 +12,15 @@ const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({ audioUrl, sende
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  
+  const token = useAuthStore((state) => state.token);
+  
+  const finalAudioUrl = useMemo(() => {
+    if (!audioUrl) return audioUrl;
+    if (audioUrl.startsWith("blob:") || audioUrl.startsWith("data:")) return audioUrl;
+    if (audioUrl.includes("?token=")) return audioUrl;
+    return token ? `${audioUrl}${audioUrl.includes("?") ? "&" : "?"}token=${token}` : audioUrl;
+  }, [audioUrl, token]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -89,7 +99,7 @@ const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({ audioUrl, sende
     <div className={`flex items-center gap-3 ${isUser ? "flex-row" : "flex-row-reverse"}`}>
       {/* The "Box" part */}
       <div className="flex-1 flex items-center gap-3 px-3 py-2 rounded-xl bg-slate-800 dark:bg-slate-900 min-w-[240px] md:min-w-[300px] text-white">
-        <audio ref={audioRef} src={audioUrl} preload="metadata" />
+        <audio ref={audioRef} src={finalAudioUrl} preload="metadata" />
         
         <button 
           onClick={togglePlay}
