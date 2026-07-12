@@ -92,4 +92,22 @@ export const authService = {
       throw error;
     }
   },
+
+  verifyEmail: async (token: string): Promise<void> => {
+    try {
+      await apiClient.post("/auth/verify-email", { token });
+    } catch (error) {
+      console.error("Failed to verify email:", error);
+      throw error;
+    }
+  },
+
+  resendVerification: async (email: string): Promise<void> => {
+    try {
+      await apiClient.post("/auth/resend-verification", { email });
+    } catch (error) {
+      console.error("Failed to resend verification:", error);
+      throw error;
+    }
+  },
 };
