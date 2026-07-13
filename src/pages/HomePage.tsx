@@ -11,114 +11,105 @@ type HeroMotion = {
   active: boolean;
 };
 
-const heroParticles = [
+const lawIcons = [
   {
-    left: "8%",
-    top: "18%",
-    size: 18,
-    depthX: 28,
-    depthY: 16,
-    depthZ: 120,
-    className: "bg-sky-400/60 dark:bg-sky-300/35",
-  },
-  {
-    left: "16%",
-    top: "72%",
-    size: 12,
-    depthX: 18,
-    depthY: 22,
-    depthZ: -70,
-    className: "bg-blue-300/70 dark:bg-blue-200/40",
-  },
-  {
-    left: "30%",
-    top: "14%",
-    size: 10,
-    depthX: 12,
-    depthY: 10,
-    depthZ: 160,
-    className: "bg-white/80 dark:bg-slate-100/60",
-  },
-  {
-    left: "42%",
-    top: "28%",
-    size: 22,
-    depthX: 20,
-    depthY: 14,
-    depthZ: 48,
-    className: "bg-cyan-300/45 dark:bg-cyan-200/25",
-  },
-  {
-    left: "52%",
-    top: "64%",
-    size: 14,
-    depthX: 16,
-    depthY: 24,
-    depthZ: -130,
-    className: "bg-slate-400/60 dark:bg-slate-200/30",
-  },
-  {
-    left: "64%",
-    top: "20%",
-    size: 28,
-    depthX: -20,
-    depthY: 18,
-    depthZ: 22,
-    className: "bg-blue-500/20 dark:bg-blue-300/10",
-  },
-  {
-    left: "72%",
-    top: "46%",
-    size: 11,
-    depthX: -14,
-    depthY: 12,
-    depthZ: 200,
-    className: "bg-white/70 dark:bg-white/45",
-  },
-  {
-    left: "81%",
-    top: "18%",
-    size: 16,
-    depthX: -24,
-    depthY: 14,
-    depthZ: 90,
-    className: "bg-sky-300/55 dark:bg-sky-200/30",
-  },
-  {
-    left: "86%",
-    top: "68%",
-    size: 20,
-    depthX: -18,
-    depthY: 20,
-    depthZ: -90,
-    className: "bg-blue-400/45 dark:bg-blue-300/25",
-  },
-  {
-    left: "22%",
-    top: "46%",
-    size: 8,
-    depthX: 10,
-    depthY: 16,
-    depthZ: 260,
-    className: "bg-white/70 dark:bg-slate-200/45",
-  },
-  {
-    left: "58%",
-    top: "82%",
-    size: 9,
+    icon: "gavel",
+    left: "6%",
+    top: "10vh",
+    size: 76,
+    rotation: -18,
+    colorClass: "text-slate-800/40 dark:text-slate-100/25",
+    backgroundClass: "bg-white/25 dark:bg-slate-950/20",
     depthX: 14,
-    depthY: -18,
-    depthZ: -180,
-    className: "bg-sky-200/70 dark:bg-sky-100/40",
+    depthY: 10,
   },
   {
-    left: "38%",
-    top: "78%",
-    size: 14,
-    depthX: 22,
-    depthY: -16,
-    depthZ: 72,
-    className: "bg-cyan-200/55 dark:bg-cyan-100/30",
+    icon: "balance",
+    left: "12%",
+    top: "26vh",
+    size: 62,
+    rotation: 12,
+    colorClass: "text-blue-700/40 dark:text-blue-200/25",
+    backgroundClass: "bg-white/25 dark:bg-slate-900/20",
+    depthX: -10,
+    depthY: 18,
+  },
+  {
+    icon: "scale",
+    left: "84%",
+    top: "16vh",
+    size: 68,
+    rotation: 22,
+    colorClass: "text-slate-800/40 dark:text-slate-100/25",
+    backgroundClass: "bg-white/25 dark:bg-slate-950/20",
+    depthX: -16,
+    depthY: 12,
+  },
+  {
+    icon: "policy",
+    left: "88%",
+    top: "40vh",
+    size: 82,
+    rotation: -14,
+    colorClass: "text-blue-800/35 dark:text-blue-100/25",
+    backgroundClass: "bg-white/22 dark:bg-slate-900/20",
+    depthX: -12,
+    depthY: -8,
+  },
+  {
+    icon: "description",
+    left: "8%",
+    top: "62vh",
+    size: 66,
+    rotation: 28,
+    colorClass: "text-slate-800/40 dark:text-slate-100/25",
+    backgroundClass: "bg-white/25 dark:bg-slate-950/20",
+    depthX: 18,
+    depthY: -12,
+  },
+  {
+    icon: "fact_check",
+    left: "50%",
+    top: "72vh",
+    size: 88,
+    rotation: -8,
+    colorClass: "text-blue-900/35 dark:text-blue-100/25",
+    backgroundClass: "bg-white/22 dark:bg-slate-900/20",
+    depthX: 0,
+    depthY: -18,
+  },
+  {
+    icon: "account_balance",
+    left: "82%",
+    top: "82vh",
+    size: 64,
+    rotation: -26,
+    colorClass: "text-slate-800/40 dark:text-slate-100/25",
+    backgroundClass: "bg-white/25 dark:bg-slate-950/20",
+    depthX: 16,
+    depthY: -14,
+  },
+  {
+    icon: "fingerprint",
+    left: "20%",
+    top: "40vh",
+    size: 62,
+    rotation: 14,
+    colorClass: "text-emerald-800/35 dark:text-emerald-100/20",
+    backgroundClass: "bg-white/20 dark:bg-slate-900/18",
+    depthX: -8,
+    depthY: 10,
+  },
+  {
+    icon: "verified_user",
+    left: "72%",
+    top: "58vh",
+    size: 70,
+    rotation: 10,
+    colorClass: "text-emerald-700/35 dark:text-emerald-100/20",
+    backgroundClass: "bg-white/20 dark:bg-slate-900/18",
+    depthX: 10,
+    depthY: -10,
   },
 ];
 
@@ -272,38 +263,27 @@ const HomePage: React.FC = () => {
           className="pointer-events-none absolute inset-0 overflow-hidden"
           style={{ transformStyle: "preserve-3d" }}
         >
-          <div
-            className="absolute left-1/2 top-24 h-176 w-176 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(59,130,246,0.18)_0%,rgba(14,165,233,0.10)_30%,rgba(255,255,255,0)_72%)] blur-3xl transition-transform duration-200 ease-out dark:bg-[radial-gradient(circle,rgba(96,165,250,0.14)_0%,rgba(34,211,238,0.08)_30%,rgba(255,255,255,0)_72%)] md:h-216 md:w-216"
-            style={{
-              transform: `translate3d(calc(-50% + ${heroMotion.x * 48}px), ${heroMotion.y * 24}px, 120px) rotateX(${heroMotion.y * -2}deg) rotateY(${heroMotion.x * 3}deg)`,
-            }}
-          />
-          <div
-            className="absolute -left-32 top-0 h-72 w-72 rounded-full bg-sky-400/15 blur-3xl transition-transform duration-200 ease-out dark:bg-sky-300/10"
-            style={{
-              transform: `translate3d(${heroMotion.x * -26}px, ${heroMotion.y * -16}px, 60px)`,
-            }}
-          />
-          <div
-            className="absolute -right-28 top-1/3 h-80 w-80 rounded-full bg-blue-500/10 blur-3xl transition-transform duration-200 ease-out dark:bg-blue-400/10"
-            style={{
-              transform: `translate3d(${heroMotion.x * 20}px, ${heroMotion.y * 22}px, -40px)`,
-            }}
-          />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(15,23,42,0.03)_0,transparent_1px)] bg-size-[28px_28px] opacity-45 dark:bg-[radial-gradient(circle_at_center,rgba(226,232,240,0.10)_0,transparent_1px)]" />
-          {heroParticles.map((particle, index) => (
+          {lawIcons.map((lawIcon, index) => (
             <span
-              key={`${particle.left}-${particle.top}-${index}`}
-              className={`absolute rounded-full shadow-[0_0_30px_rgba(59,130,246,0.18)] transition-transform duration-200 ease-out will-change-transform ${particle.className}`}
+              key={`${lawIcon.icon}-${lawIcon.left}-${lawIcon.top}-${index}`}
+              className={`absolute flex items-center justify-center rounded-2xl shadow-[0_24px_50px_rgba(15,23,42,0.12)] backdrop-blur-[1px] transition-transform duration-200 ease-out will-change-transform ${lawIcon.backgroundClass}`}
               style={{
-                left: particle.left,
-                top: particle.top,
-                width: `${particle.size}px`,
-                height: `${particle.size}px`,
-                transform: `translate3d(calc(-50% + ${heroMotion.x * particle.depthX}px), calc(-50% + ${heroMotion.y * particle.depthY}px), ${particle.depthZ}px)`,
-                opacity: heroMotion.active ? 1 : 0.8,
+                left: lawIcon.left,
+                top: lawIcon.top,
+                width: `${lawIcon.size}px`,
+                height: `${lawIcon.size}px`,
+                transform: `translate3d(calc(-50% + ${heroMotion.x * lawIcon.depthX}px), calc(-50% + ${heroMotion.y * lawIcon.depthY}px), ${80 - index * 10}px) rotate(${lawIcon.rotation}deg)`,
+                opacity: heroMotion.active ? 0.92 : 0.8,
               }}
-            />
+            >
+              <span
+                className={`material-symbols-outlined leading-none ${lawIcon.colorClass}`}
+                style={{ fontSize: `${Math.round(lawIcon.size * 0.68)}px` }}
+              >
+                {lawIcon.icon}
+              </span>
+            </span>
           ))}
           <div
             className="absolute left-1/2 top-1/2 h-168 w-2xl -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/30 opacity-30 transition-transform duration-200 ease-out dark:border-white/10 md:h-208 md:w-208"
