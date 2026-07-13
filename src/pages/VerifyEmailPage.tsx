@@ -10,6 +10,28 @@ const VerifyEmailPage: React.FC = () => {
   
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [errorMessage, setErrorMessage] = useState("");
+  const [resendEmail, setResendEmail] = useState("");
+  const [resendStatus, setResendStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [resendMessage, setResendMessage] = useState("");
+
+  const handleResend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resendEmail.trim()) return;
+
+    setResendStatus("loading");
+    try {
+      await authService.resendVerification(resendEmail.trim());
+      setResendStatus("success");
+      setResendMessage("Verification email sent! Please check your inbox.");
+    } catch (error: any) {
+      setResendStatus("error");
+      setResendMessage(
+        error.response?.data?.message ||
+        error.response?.data?.detail ||
+        "Failed to resend verification email."
+      );
+    }
+  };
 
   useEffect(() => {
     if (!token) {
@@ -106,7 +128,51 @@ const VerifyEmailPage: React.FC = () => {
                   <p className="text-slate-600 dark:text-slate-400">
                     {errorMessage}
                   </p>
-                  <div className="pt-4">
+
+                  <div className="pt-6 border-t border-slate-200 dark:border-zinc-700">
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+                      Need a new link?
+                    </h3>
+                    
+                    {resendStatus === "success" ? (
+                      <div className="rounded-lg bg-green-50 p-4 text-sm text-green-700 dark:bg-green-900/20 dark:text-green-400">
+                        {resendMessage}
+                      </div>
+                    ) : (
+                      <form onSubmit={handleResend} className="space-y-4 text-left">
+                        <div>
+                          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                            Email Address
+                          </label>
+                          <input
+                            type="email"
+                            value={resendEmail}
+                            onChange={(e) => setResendEmail(e.target.value)}
+                            placeholder="Enter your email"
+                            required
+                            className="w-full rounded-lg border border-slate-300 dark:border-slate-600 bg-white px-4 py-2.5 text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white"
+                          />
+                        </div>
+                        {resendStatus === "error" && (
+                          <p className="text-sm text-red-600 dark:text-red-400">
+                            {resendMessage}
+                          </p>
+                        )}
+                        <button
+                          type="submit"
+                          disabled={resendStatus === "loading" || !resendEmail.trim()}
+                          className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-6 py-2.5 font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50 dark:bg-blue-500 dark:hover:bg-blue-600"
+                        >
+                          {resendStatus === "loading" && (
+                            <span className="animate-spin h-4 w-4 rounded-full border-2 border-white border-r-transparent" />
+                          )}
+                          Resend Verification Link
+                        </button>
+                      </form>
+                    )}
+                  </div>
+
+                  <div className="pt-2">
                     <Link
                       to="/?login=true"
                       className="inline-flex w-full items-center justify-center rounded-lg border border-slate-300 bg-white px-6 py-3 font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-zinc-800 dark:text-white dark:hover:bg-zinc-700"
