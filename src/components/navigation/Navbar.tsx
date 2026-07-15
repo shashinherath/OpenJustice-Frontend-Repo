@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import BrandLogo from "@/components/ui/BrandLogo";
 import LoginModal from "@/components/ui/LoginModal";
 import LanguageSwitcherButton from "@/components/ui/LanguageSwitcherButton";
+import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
 
 const Navbar: React.FC = () => {
   const { t } = useTranslation();
@@ -25,6 +26,7 @@ const Navbar: React.FC = () => {
 
           {/* Right side actions */}
           <div className="flex items-center gap-3">
+            <ThemeToggleButton />
             <LanguageSwitcherButton />
 
             {/* Login Button */}

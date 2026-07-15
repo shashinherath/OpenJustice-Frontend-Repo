@@ -7,6 +7,7 @@ import { useVoiceRecording } from "@/hooks/useVoiceRecording";
 import ConversationComposer from "@/components/chat/ConversationComposer";
 import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
 import LanguageSwitcherButton from "@/components/ui/LanguageSwitcherButton";
+import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
 import LegalLibrary from "@/components/library/LegalLibrary";
 import LawyerDirectory from "@/components/lawyers/LawyerDirectory";
 import DocumentAnalyzer from "@/components/analyzer/DocumentAnalyzer";
@@ -196,6 +197,7 @@ const ChatPage: React.FC = () => {
           </nav>
         </div>
         <div className="flex h-full items-center gap-3">
+          <ThemeToggleButton />
           <LanguageSwitcherButton />
         </div>
       </header>
