@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BRAND_LOGO_ALT, BRAND_LOGO_SRC } from "@/config/branding";
+import { BRAND_LOGO_ALT, BRAND_LOGO_SRC_DARK, BRAND_LOGO_SRC_LIGHT } from "@/config/branding";
 
 interface BrandLogoProps {
   containerClassName?: string;
@@ -17,12 +17,20 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
   return (
     <div className={containerClassName}>
       {!imageError ? (
-        <img
-          alt={BRAND_LOGO_ALT}
-          className={imageClassName}
-          src={BRAND_LOGO_SRC}
-          onError={() => setImageError(true)}
-        />
+        <>
+          <img
+            alt={BRAND_LOGO_ALT}
+            className={`hidden dark:block ${imageClassName}`}
+            src={BRAND_LOGO_SRC_DARK}
+            onError={() => setImageError(true)}
+          />
+          <img
+            alt={BRAND_LOGO_ALT}
+            className={`block dark:hidden ${imageClassName}`}
+            src={BRAND_LOGO_SRC_LIGHT}
+            onError={() => setImageError(true)}
+          />
+        </>
       ) : (
         <span className={`material-symbols-outlined ${iconClassName}`}>balance</span>
       )}

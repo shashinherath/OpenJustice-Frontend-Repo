@@ -58,7 +58,7 @@ const ConstellationBackground: React.FC<ConstellationBackgroundProps> = ({
       // Theme-adaptive colors based on the requested tech aesthetic
       const dotColor = isDark
         ? "rgba(125, 211, 252, 0.6)" // sky-300
-        : "rgba(14, 165, 233, 0.4)"; // sky-500
+        : "rgba(37, 99, 235, 0.65)"; // blue-600, more visible in light mode
         
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
@@ -89,7 +89,7 @@ const ConstellationBackground: React.FC<ConstellationBackgroundProps> = ({
             const opacity = 1 - dist / 120;
             ctx.strokeStyle = isDark
               ? `rgba(125, 211, 252, ${opacity * 0.25})`
-              : `rgba(14, 165, 233, ${opacity * 0.2})`;
+              : `rgba(37, 99, 235, ${opacity * 0.35})`; // enhanced line opacity
             ctx.lineWidth = 1;
             ctx.stroke();
           }
@@ -107,7 +107,7 @@ const ConstellationBackground: React.FC<ConstellationBackgroundProps> = ({
           const opacity = 1 - distMouse / 180;
           ctx.strokeStyle = isDark
             ? `rgba(125, 211, 252, ${opacity * 0.5})`
-            : `rgba(14, 165, 233, ${opacity * 0.4})`;
+            : `rgba(37, 99, 235, ${opacity * 0.6})`; // enhanced mouse line opacity
           ctx.lineWidth = 1.5;
           ctx.stroke();
           

@@ -167,7 +167,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-4">
         <div className="flex-none">
           <button
-            className={`mb-4 flex w-full items-center rounded-lg bg-slate-900 py-2.5 text-white transition-colors hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white cursor-pointer ${
+            className={`mb-4 flex w-full items-center rounded-lg border border-slate-200 bg-white py-2.5 text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:text-slate-900 dark:border-transparent dark:bg-slate-200 dark:text-black dark:hover:bg-white cursor-pointer ${
               isCollapsed ? "justify-center px-2" : "gap-3 px-3"
             }`}
             type="button"
@@ -176,13 +176,12 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
             }}
           >
             <span
-              className="material-symbols-outlined text-[20px]"
-              style={{ color: "var(--oj-accent-color)" }}
+              className="material-symbols-outlined text-[20px] text-slate-400 dark:text-slate-600 transition-colors group-hover:text-slate-600"
             >
               add
             </span>
             {!isCollapsed && (
-              <span className="text-sm font-medium">New Question</span>
+              <span className="text-sm font-semibold">New Question</span>
             )}
           </button>
 
