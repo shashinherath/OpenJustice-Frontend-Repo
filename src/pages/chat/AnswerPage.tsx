@@ -11,6 +11,8 @@ import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
 import VoiceMessagePlayer from "@/components/ui/VoiceMessagePlayer";
 import MarkdownText from "@/components/common/MarkdownText";
 import BrandLogo from "@/components/ui/BrandLogo";
+import { useAuthStore } from "@/stores/authStore";
+import { getMediaUrl } from "@/utils/urlUtils";
 
 const AnswerPage: React.FC = () => {
   const { t } = useTranslation();
@@ -18,6 +20,7 @@ const AnswerPage: React.FC = () => {
   const { chatId = "" } = useParams<{ chatId: string }>();
   const [question, setQuestion] = useState("");
   const [isVoicePreview, setIsVoicePreview] = useState(false);
+  const user = useAuthStore((state) => state.user);
 
   const {
     sidebarChats,
@@ -44,6 +47,16 @@ const AnswerPage: React.FC = () => {
     () => chatMessagesById[chatId] || [],
     [chatMessagesById, chatId],
   );
+
+  const { lastUserIndex, lastAiIndex } = useMemo(() => {
+    let uIdx = -1;
+    let aIdx = -1;
+    messages.forEach((m, i) => {
+      if (m.sender === "user") uIdx = i;
+      if (m.sender === "ai") aIdx = i;
+    });
+    return { lastUserIndex: uIdx, lastAiIndex: aIdx };
+  }, [messages]);
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const [shouldAutoScrollToBottom, setShouldAutoScrollToBottom] =
     useState(false);
@@ -231,92 +244,115 @@ const AnswerPage: React.FC = () => {
             </div>
           ) : null}
 
-          {messages.map((message: ChatMessage) => (
+          {messages.map((message: ChatMessage, index: number) => {
+            const isUser = message.sender === "user";
+            const showAvatar = isUser ? index === lastUserIndex : index === lastAiIndex;
+            
+            return (
             <div
               key={message.id}
-              className={`max-w-[88%] rounded-xl text-sm ${
-                message.sender === "user" ? "ml-auto" : "mr-auto"
-              } ${
-                message.audioUrl
-                  ? ""
-                  : `shadow-sm p-3 px-4 ${
-                      message.sender === "user"
-                        ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
-                        : "border border-slate-200 bg-white text-slate-700 dark:border-border-dark dark:bg-surface-dark dark:text-slate-200"
-                    }`
-              }`}
+              className={`flex gap-3 items-end max-w-[88%] ${isUser ? "ml-auto flex-row" : "mr-auto flex-row-reverse"}`}
             >
-              {message.audioUrl ? (
-                <VoiceMessagePlayer
-                  audioUrl={message.audioUrl}
-                  sender={message.sender}
-                />
-              ) : message.sender === "ai" ? (
-                message.content.trim() ? (
-                  <MarkdownText
-                    className="text-inherit"
-                    content={message.content}
+              <div
+                className={`text-sm ${
+                  message.audioUrl
+                    ? "flex-1"
+                    : `rounded-xl shadow-sm p-3 px-4 flex-1 ${
+                        isUser
+                          ? "bg-slate-900 text-white dark:bg-slate-100 dark:text-slate-900"
+                          : "border border-slate-200 bg-white text-slate-700 dark:border-border-dark dark:bg-surface-dark dark:text-slate-200"
+                      }`
+                }`}
+              >
+                {message.audioUrl ? (
+                  <VoiceMessagePlayer
+                    audioUrl={message.audioUrl}
+                    sender={message.sender}
                   />
-                ) : (
-                  <div className="flex items-center gap-2 py-1 text-slate-500 dark:text-slate-400">
-                    <BrandLogo containerClassName="flex items-center justify-center size-5 overflow-hidden rounded-full" iconClassName="text-xl" imageClassName="h-full w-full object-cover scale-[1.15]" />
-                    <div
-                      className="flex items-center gap-1.5"
-                      aria-live="polite"
-                      aria-label="OpenJustice AI is typing"
-                    >
-                      <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.25s]" />
-                      <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.15s]" />
-                      <span className="h-2 w-2 animate-bounce rounded-full bg-current" />
+                ) : message.sender === "ai" ? (
+                  message.content.trim() ? (
+                    <MarkdownText
+                      className="text-inherit"
+                      content={message.content}
+                    />
+                  ) : (
+                    <div className="flex items-center gap-2 py-1 text-slate-500 dark:text-slate-400">
+                      <BrandLogo containerClassName="flex items-center justify-center size-5 overflow-hidden rounded-full" iconClassName="text-xl" imageClassName="h-full w-full object-cover scale-[1.15]" />
+                      <div
+                        className="flex items-center gap-1.5"
+                        aria-live="polite"
+                        aria-label="OpenJustice AI is typing"
+                      >
+                        <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.25s]" />
+                        <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.15s]" />
+                        <span className="h-2 w-2 animate-bounce rounded-full bg-current" />
+                      </div>
+
                     </div>
-                  </div>
-                )
-              ) : (() => {
-                  try {
+                  )
+                ) : (() => {
+                    try {
+                      const data = JSON.parse(message.content);
+                      return data && data.intent === "document_analysis";
+                    } catch { return false; }
+                  })() ? (
+                  (() => {
                     const data = JSON.parse(message.content);
-                    return data && data.intent === "document_analysis";
-                  } catch { return false; }
-                })() ? (
-                (() => {
-                  const data = JSON.parse(message.content);
-                  const filename = data.filename || "Document";
-                  const ext = data.file_extension || "pdf";
-                  const docType = data.document_type || "Document";
-                  const analysisType = data.analysis_type || "Analysis";
-                  const isPdf = ext.toLowerCase() === 'pdf';
-                  
-                  return (
-                    <div className="flex flex-col gap-2 min-w-[200px]">
-                      <div className="flex items-center gap-3 bg-white/10 dark:bg-black/5 p-3 rounded-lg border border-white/20 dark:border-black/10">
-                        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${isPdf ? 'bg-red-500/20 text-red-200 dark:bg-red-100 dark:text-red-600' : 'bg-blue-500/20 text-blue-200 dark:bg-blue-100 dark:text-blue-600'}`}>
-                          <span className="material-symbols-outlined">{isPdf ? 'picture_as_pdf' : 'description'}</span>
-                        </div>
-                        <div className="min-w-0 flex-1 text-left">
-                          <p className="truncate text-sm font-bold text-white dark:text-slate-900">{filename}</p>
-                          <p className="text-xs text-slate-300 dark:text-slate-600">{docType} • {analysisType}</p>
+                    const filename = data.filename || "Document";
+                    const ext = data.file_extension || "pdf";
+                    const docType = data.document_type || "Document";
+                    const analysisType = data.analysis_type || "Analysis";
+                    const isPdf = ext.toLowerCase() === 'pdf';
+                    
+                    return (
+                      <div className="flex flex-col gap-2 min-w-[200px]">
+                        <div className="flex items-center gap-3 bg-white/10 dark:bg-black/5 p-3 rounded-lg border border-white/20 dark:border-black/10">
+                          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${isPdf ? 'bg-red-500/20 text-red-200 dark:bg-red-100 dark:text-red-600' : 'bg-blue-500/20 text-blue-200 dark:bg-blue-100 dark:text-blue-600'}`}>
+                            <span className="material-symbols-outlined">{isPdf ? 'picture_as_pdf' : 'description'}</span>
+                          </div>
+                          <div className="min-w-0 flex-1 text-left">
+                            <p className="truncate text-sm font-bold text-white dark:text-slate-900">{filename}</p>
+                            <p className="text-xs text-slate-300 dark:text-slate-600">{docType} • {analysisType}</p>
+                          </div>
                         </div>
                       </div>
+                    );
+                  })()
+                ) : (
+                  <p className="whitespace-pre-wrap leading-6">
+                    {message.content}
+                  </p>
+                )}
+                {!message.audioUrl && (
+                  <p
+                    className={`mt-2 text-[10px] font-semibold uppercase tracking-wide ${
+                      isUser
+                        ? "text-slate-300 dark:text-slate-600"
+                        : "text-slate-400"
+                    }`}
+                  >
+                    {isUser ? t("you") : t("openJusticeAi")}
+                  </p>
+                )}
+              </div>
+              
+              <div className={`shrink-0 flex items-center justify-center size-10 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden relative border-2 border-white/10 shadow-sm ${!showAvatar ? 'invisible opacity-0' : ''}`}>
+                {isUser ? (
+                  user?.avatarUrl ? (
+                    <img src={getMediaUrl(user.avatarUrl)} alt="User avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="absolute inset-0 bg-slate-400 flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[24px] text-white">person</span>
                     </div>
-                  );
-                })()
-              ) : (
-                <p className="whitespace-pre-wrap leading-6">
-                  {message.content}
-                </p>
-              )}
-              {!message.audioUrl && (
-                <p
-                  className={`mt-2 text-[10px] font-semibold uppercase tracking-wide ${
-                    message.sender === "user"
-                      ? "text-slate-300 dark:text-slate-600"
-                      : "text-slate-400"
-                  }`}
-                >
-                  {message.sender === "user" ? t("you") : t("openJusticeAi")}
-                </p>
-              )}
+                  )
+                ) : (
+                  <div className="absolute inset-0 bg-blue-100 flex items-center justify-center text-blue-600">
+                    <BrandLogo containerClassName="flex items-center justify-center size-6" iconClassName="text-xl" />
+                  </div>
+                )}
+              </div>
             </div>
-          ))}
+          )})}
         </div>
       </div>
 

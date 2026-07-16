@@ -89,6 +89,7 @@ const TopicBrowserPage = React.lazy(
 const ResearchPage = React.lazy(() => import("@/pages/ResearchPage"));
 const DeveloperPage = React.lazy(() => import("@/pages/DeveloperPage"));
 const SignUpPage = React.lazy(() => import("@/pages/SignUpPage"));
+const VerifyEmailPage = React.lazy(() => import("@/pages/VerifyEmailPage"));
 const NotFoundPage = React.lazy(() => import("@/pages/NotFoundPage"));
 
 export const APP_ROUTES: RouteConfig[] = [
@@ -143,5 +144,6 @@ export const APP_ROUTES: RouteConfig[] = [
   { path: "/research", component: ResearchPage },
   { path: "/developers", component: DeveloperPage },
   { path: "/signup", component: SignUpPage },
+  { path: "/verify-email", component: VerifyEmailPage },
   { path: "*", component: NotFoundPage },
 ];

@@ -82,6 +82,27 @@ export const authService = {
     }
   },
 
+  uploadAvatar: async (file: File): Promise<UserProfileResponse> => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      
+      const response = await apiClient.post<{ data: UserProfileResponse }>(
+        "/auth/users/me/avatar",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      console.error("Failed to upload avatar:", error);
+      throw error;
+    }
+  },
+
   changePassword: async (
     passwordData: ChangePasswordRequest,
   ): Promise<void> => {
@@ -89,6 +110,24 @@ export const authService = {
       await apiClient.post("/auth/change-password", passwordData);
     } catch (error) {
       console.error("Failed to change password:", error);
+      throw error;
+    }
+  },
+
+  verifyEmail: async (token: string): Promise<void> => {
+    try {
+      await apiClient.post("/auth/verify-email", { token });
+    } catch (error) {
+      console.error("Failed to verify email:", error);
+      throw error;
+    }
+  },
+
+  resendVerification: async (email: string): Promise<void> => {
+    try {
+      await apiClient.post("/auth/resend-verification", { email });
+    } catch (error) {
+      console.error("Failed to resend verification:", error);
       throw error;
     }
   },

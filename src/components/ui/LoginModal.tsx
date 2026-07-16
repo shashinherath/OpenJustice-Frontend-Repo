@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import BrandLogo from "@/components/ui/BrandLogo";
 import { useAuthStore } from "@/stores/authStore";
 import { authService } from "@/services/authService";
+import { useRecaptcha } from "@/hooks/useRecaptcha";
 
 interface LoginModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { executeRecaptcha } = useRecaptcha();
 
   // Prevent rendering if already authenticated
   if (isAuthenticated) {
@@ -47,9 +49,12 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
     setError(null);
 
     try {
+      const recaptchaToken = await executeRecaptcha('login');
+
       const response = await authService.login({
         email: email.trim().toLowerCase(),
         password,
+        recaptcha_token: recaptchaToken,
       });
 
       const { data } = response;

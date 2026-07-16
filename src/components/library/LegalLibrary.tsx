@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLibraryStore } from "@/stores/libraryStore";
+import { useAuthStore } from "@/stores/authStore";
 import { API_CONFIG } from "@/config/api.config";
 import { useTranslation } from "react-i18next";
 
@@ -267,10 +268,11 @@ const LegalLibrary: React.FC = () => {
     if (!activeDocument) return null;
     const meta = collectionMeta[activeDocument.collection_id || ''] || { title: "Collection", code: activeDocument.collection_id };
 
-    const baseUrl = API_CONFIG.baseURL.replace(/\/api\/?$/, '');
-
+    const token = useAuthStore.getState().token;
+    
+    // We now route through the backend to get a secure SAS token or file
     const pdfUrl = activeDocument.storage_path
-      ? `${baseUrl}/${activeDocument.storage_path.replace(/\\/g, '/')}`
+      ? `${API_CONFIG.baseURL}/documents/${activeDocument.id}/access?token=${token}`
       : "";
 
     return (

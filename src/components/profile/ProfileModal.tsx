@@ -1,5 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { useAuthStore } from "@/stores/authStore";
+import { getMediaUrl } from "@/utils/urlUtils";
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -24,6 +25,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   const [saved, setSaved] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const uploadAvatar = useAuthStore((state) => state.uploadAvatar);
 
   useEffect(() => {
     if (!isOpen) {
@@ -138,6 +142,37 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleAvatarClick = () => {
+    if (isUploading) return;
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploading(true);
+      setErrorMessage("");
+      await uploadAvatar(file);
+      setSaved(true);
+      window.setTimeout(() => setSaved(false), 1600);
+    } catch (error: any) {
+      const errorMsg =
+        error.response?.data?.detail ||
+        error.response?.data?.message ||
+        error.message ||
+        "Failed to upload avatar";
+      setErrorMessage(errorMsg);
+      console.error("Avatar upload error:", error);
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
   if (!isOpen) {
     return null;
   }
@@ -190,17 +225,36 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
 
             <section className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-black/30">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-slate-100 text-sm font-bold text-slate-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">
+                <div 
+                  className="group relative flex h-12 w-12 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-slate-100 text-sm font-bold text-slate-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300"
+                  onClick={handleAvatarClick}
+                >
+
                   {user?.avatarUrl ? (
                     <img
-                      src={user.avatarUrl}
+                      src={getMediaUrl(user.avatarUrl)}
                       alt="User avatar"
-                      className="h-full w-full object-cover"
+                      className={`h-full w-full object-cover transition-opacity ${isUploading ? 'opacity-50' : 'group-hover:opacity-50'}`}
                     />
                   ) : (
-                    <span>{initials || "AU"}</span>
+                    <span className={`transition-opacity ${isUploading ? 'opacity-50' : 'group-hover:opacity-50'}`}>{initials || "AU"}</span>
                   )}
+                  
+                  <div className={`absolute inset-0 flex items-center justify-center bg-black/40 transition-opacity ${isUploading ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+                    {isUploading ? (
+                      <span className="material-symbols-outlined animate-spin text-sm text-white">progress_activity</span>
+                    ) : (
+                      <span className="material-symbols-outlined text-sm text-white">upload</span>
+                    )}
+                  </div>
                 </div>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
                 <div>
                   <p className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
                     {`${firstName} ${lastName}`.trim() || "Anonymous User"}
