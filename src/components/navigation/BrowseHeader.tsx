@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import BrandLogo from "@/components/ui/BrandLogo";
+import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
 
 const BrowseHeader: React.FC = () => {
   return (
@@ -22,6 +23,7 @@ const BrowseHeader: React.FC = () => {
             type="text"
           />
         </label>
+        <ThemeToggleButton />
       </div>
     </header>
   );

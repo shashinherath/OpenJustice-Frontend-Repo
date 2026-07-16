@@ -105,7 +105,7 @@ const LegalLibrary: React.FC = () => {
         />
         <button 
           onClick={handleGlobalSearch}
-          className="bg-slate-900 dark:bg-slate-200 text-white dark:text-black font-bold text-sm px-6 rounded-r-lg hover:bg-slate-800 dark:hover:bg-white transition-colors"
+          className="bg-cyan-600 dark:bg-cyan-500 text-white dark:text-slate-900 font-bold text-sm px-6 rounded-r-lg hover:bg-cyan-700 dark:hover:bg-cyan-400 transition-colors"
         >
           {t("librarySearchButton")}
         </button>

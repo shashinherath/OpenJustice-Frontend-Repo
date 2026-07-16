@@ -39,7 +39,7 @@ const VoiceRecordingUI: React.FC<VoiceRecordingUIProps> = ({
             isActive ? "opacity-100" : "opacity-0"
           }`}
         />
-        <div className="relative z-10 flex w-full items-center gap-2 rounded-[28px] border border-white/10 bg-[#111111] px-3 py-2.5 shadow-[0_16px_50px_rgba(0,0,0,0.45)] backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-[#111111]">
+        <div className="relative z-10 flex w-full items-center gap-2 rounded-[28px] border border-slate-200 bg-white px-3 py-2.5 shadow-[0_16px_50px_rgba(0,0,0,0.08)] backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-[#111111] dark:shadow-[0_16px_50px_rgba(0,0,0,0.45)]">
           <div className="flex items-center justify-center gap-1">
             {[...Array(5)].map((_, i) => {
               const baseHeight = 8;
@@ -62,10 +62,10 @@ const VoiceRecordingUI: React.FC<VoiceRecordingUIProps> = ({
 
           <div className="flex items-center gap-1.5 min-w-15">
             <div
-              className={`size-2 rounded-full ${isPaused ? "bg-slate-400" : "animate-pulse bg-rose-400"}`}
+              className={`size-2 rounded-full ${isPaused ? "bg-slate-400" : "animate-pulse bg-rose-500 dark:bg-rose-400"}`}
             />
             <span
-              className={`font-mono text-sm font-semibold ${isPaused ? "text-slate-500" : "text-slate-100"}`}
+              className={`font-mono text-sm font-semibold ${isPaused ? "text-slate-500" : "text-slate-900 dark:text-slate-100"}`}
             >
               {durationLabel}
             </span>
@@ -77,7 +77,7 @@ const VoiceRecordingUI: React.FC<VoiceRecordingUIProps> = ({
             <button
               type="button"
               onClick={onPauseResume}
-              className="flex size-8 items-center justify-center rounded-full text-slate-300 transition-colors hover:text-white hover:bg-white/10 cursor-pointer"
+              className="flex size-8 items-center justify-center rounded-full text-slate-500 transition-colors hover:text-slate-900 hover:bg-slate-100 cursor-pointer dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10"
               title={isPaused ? "Resume recording" : "Pause recording"}
             >
               <span className="material-symbols-outlined text-[20px]">
@@ -90,7 +90,7 @@ const VoiceRecordingUI: React.FC<VoiceRecordingUIProps> = ({
             <button
               type="button"
               onClick={onStop}
-              className="flex size-8 items-center justify-center rounded-full text-rose-400 transition-colors hover:bg-rose-500/10 hover:text-rose-300 cursor-pointer"
+              className="flex size-8 items-center justify-center rounded-full text-rose-500 transition-colors hover:bg-rose-100 hover:text-rose-700 cursor-pointer dark:text-rose-400 dark:hover:bg-rose-500/10 dark:hover:text-rose-300"
               title="Stop recording"
             >
               <span className="material-symbols-outlined text-[20px]">
@@ -103,7 +103,7 @@ const VoiceRecordingUI: React.FC<VoiceRecordingUIProps> = ({
             <button
               type="button"
               onClick={onPlay}
-              className="flex size-8 items-center justify-center rounded-full text-slate-300 transition-colors hover:bg-white/10 hover:text-white cursor-pointer"
+              className="flex size-8 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 cursor-pointer dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-white"
               title="Play recording"
             >
               <span className="material-symbols-outlined text-[20px]">
@@ -115,7 +115,7 @@ const VoiceRecordingUI: React.FC<VoiceRecordingUIProps> = ({
           <button
             type="button"
             onClick={onCancel}
-            className="flex size-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-white/10 hover:text-slate-200 cursor-pointer"
+            className="flex size-8 items-center justify-center rounded-full text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 cursor-pointer dark:text-slate-400 dark:hover:bg-white/10 dark:hover:text-slate-200"
             title="Delete recording"
           >
             <span className="material-symbols-outlined text-[20px]">close</span>

@@ -2,6 +2,8 @@ import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import BrandLogo from "@/components/ui/BrandLogo";
+import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
+import LanguageSwitcherButton from "@/components/ui/LanguageSwitcherButton";
 
 const PrivacyPolicyPage: React.FC = () => {
   const { t } = useTranslation();
@@ -105,13 +107,17 @@ const PrivacyPolicyPage: React.FC = () => {
             </nav>
           </div>
 
-          <Link
-            className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-bold text-slate-900 shadow-lg transition-all hover:bg-slate-100"
-            to="/chat"
-          >
-            {t("tryOpenJustice")}
-            <span className="material-symbols-outlined text-sm">north_east</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <ThemeToggleButton />
+            <LanguageSwitcherButton />
+            <Link
+              className="inline-flex items-center gap-2 rounded-lg bg-primary text-white dark:bg-white dark:text-primary px-4 py-2 text-sm font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors"
+              to="/chat"
+            >
+              <span className="material-symbols-outlined text-sm">chat</span>
+              {t("tryOpenJustice")}
+            </Link>
+          </div>
         </div>
       </header>
 

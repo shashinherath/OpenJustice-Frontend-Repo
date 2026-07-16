@@ -40,23 +40,23 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="h-[82vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-zinc-800 bg-[#191919] text-zinc-100 shadow-2xl"
+        className="h-[82vh] w-full max-w-4xl overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-2xl dark:border-zinc-800 dark:bg-[#191919] dark:text-zinc-100"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-label="Account Settings"
       >
-        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-zinc-800 bg-[#121212] px-4 py-3 sm:px-6">
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-3 sm:px-6 dark:border-zinc-800 dark:bg-[#121212]">
           <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-zinc-300">
+            <span className="material-symbols-outlined text-slate-500 dark:text-zinc-300">
               settings
             </span>
-            <h2 className="text-base font-bold tracking-tight text-zinc-100 sm:text-lg">
+            <h2 className="text-base font-bold tracking-tight text-slate-900 sm:text-lg dark:text-zinc-100">
               Account Settings
             </h2>
           </div>
           <button
-            className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-zinc-900 hover:text-zinc-100"
+            className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-600 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100"
             type="button"
             onClick={onClose}
             aria-label="Close settings"

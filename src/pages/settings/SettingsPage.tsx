@@ -273,8 +273,8 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="grid h-full grid-cols-1 gap-5 lg:grid-cols-12">
       <div ref={contentTopRef} className="sr-only" aria-hidden="true" />
-      <aside className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-3 lg:col-span-3">
-        <p className="px-2 pb-2 text-[11px] font-bold uppercase tracking-widest text-zinc-500">
+      <aside className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-zinc-800 dark:bg-zinc-900/40 lg:col-span-3">
+        <p className="px-2 pb-2 text-[11px] font-bold uppercase tracking-widest text-slate-500 dark:text-zinc-500">
           {tr("Settings", "සැකසුම්", "அமைப்புகள்")}
         </p>
         <div className="space-y-1.5">
@@ -285,8 +285,8 @@ const SettingsPage: React.FC = () => {
                 key={item.id}
                 className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium transition-colors ${
                   active
-                    ? "bg-zinc-100 text-zinc-950"
-                    : "text-zinc-300 hover:bg-zinc-800/80 hover:text-zinc-100"
+                    ? "bg-blue-50 text-blue-700 dark:bg-zinc-100 dark:text-zinc-950"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-300 dark:hover:bg-zinc-800/80 dark:hover:text-zinc-100"
                 }`}
                 type="button"
                 onClick={() => setActiveSection(item.id)}
@@ -303,13 +303,13 @@ const SettingsPage: React.FC = () => {
 
       <div className="space-y-4 lg:col-span-9">
         {activeSection === "general" && (
-          <section className="space-y-4 rounded-xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <h3 className="text-lg font-semibold text-zinc-100">
+          <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/50 dark:shadow-none">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-zinc-100">
               {tr("General", "සාමාන්‍ය", "பொது")}
             </h3>
 
             <div className="space-y-2">
-              <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-500">
                 {tr("Appearance", "පෙනුම", "தோற்றம்")}
               </p>
               <LanguageSelect
@@ -326,7 +326,7 @@ const SettingsPage: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-500">
                 {tr("Accent Color", "ඇක්සන්ට් වර්ණය", "உச்ச நிறம்")}
               </p>
               <LanguageSelect
@@ -344,7 +344,7 @@ const SettingsPage: React.FC = () => {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-500">
                   {tr("Language", "භාෂාව", "மொழி")}
                 </label>
                 <div className="flex items-center gap-2">
@@ -363,7 +363,7 @@ const SettingsPage: React.FC = () => {
                     className="w-full"
                   />
                   <button
-                    className="rounded-lg border border-zinc-700 px-3 py-2 text-xs font-semibold text-zinc-300 hover:bg-zinc-800"
+                    className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-300 dark:hover:bg-zinc-800"
                     type="button"
                     onClick={autoDetectInterfaceLanguage}
                   >
@@ -373,7 +373,7 @@ const SettingsPage: React.FC = () => {
               </div>
 
               <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-500">
                   {tr("Spoken Language", "කථන භාෂාව", "பேச்சு மொழி")}
                 </label>
                 <div className="flex items-center gap-2">
@@ -392,7 +392,7 @@ const SettingsPage: React.FC = () => {
                     className="w-full"
                   />
                   <button
-                    className="rounded-lg border border-zinc-700 px-3 py-2 text-xs font-semibold text-zinc-300 hover:bg-zinc-800"
+                    className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-300 dark:hover:bg-zinc-800"
                     type="button"
                     onClick={autoDetectSpokenLanguage}
                   >
@@ -403,7 +403,7 @@ const SettingsPage: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-500">
                 {tr("Voice", "හඬ", "குரல்")}
               </label>
               <div className="flex flex-wrap items-center gap-2">
@@ -419,7 +419,7 @@ const SettingsPage: React.FC = () => {
                   className="w-full max-w-56"
                 />
                 <button
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 px-3 py-2 text-xs font-semibold text-zinc-200 transition-colors hover:bg-zinc-800"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition-colors hover:bg-slate-50 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-200 dark:hover:bg-zinc-800"
                   type="button"
                   onClick={playVoiceSample}
                 >
@@ -438,21 +438,21 @@ const SettingsPage: React.FC = () => {
         )}
 
         {activeSection === "data-controls" && (
-          <section className="space-y-4 rounded-xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <h3 className="text-lg font-semibold text-zinc-100">
+          <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/50 dark:shadow-none">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-zinc-100">
               {tr("Data Controls", "දත්ත පාලන", "தரவு கட்டுப்பாடுகள்")}
             </h3>
 
-            <div className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-950/50 px-4 py-3">
+            <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-950/50">
               <div>
-                <p className="text-sm font-medium text-zinc-100">
+                <p className="text-sm font-medium text-slate-900 dark:text-zinc-100">
                   {tr(
                     "Improve the model for everyone",
                     "සියලු දෙනා සඳහා මොඩලය වැඩිදියුණු කරන්න",
                     "அனைவருக்கும் மாதிரியை மேம்படுத்தவும்",
                   )}
                 </p>
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-slate-500 dark:text-zinc-500">
                   {tr(
                     "Allow anonymized conversations to improve quality.",
                     "නිර්නාමික සංවාද ගුණාත්මකභාවය වැඩිදියුණු කිරීමට ඉඩ දෙන්න.",
@@ -461,20 +461,20 @@ const SettingsPage: React.FC = () => {
                 </p>
               </div>
               <button
-                className={`flex h-6 w-12 items-center rounded-full px-1 transition-colors ${improveModel ? "justify-end bg-zinc-100" : "justify-start bg-zinc-700"}`}
+                className={`flex h-6 w-12 items-center rounded-full px-1 transition-colors ${improveModel ? "justify-end bg-blue-600 dark:bg-zinc-100" : "justify-start bg-slate-300 dark:bg-zinc-700"}`}
                 type="button"
                 onClick={() => setImproveModel((value) => !value)}
                 aria-label="Toggle improve model"
               >
                 <span
-                  className={`h-4 w-4 rounded-full ${improveModel ? "bg-zinc-950" : "bg-zinc-300"}`}
+                  className={`h-4 w-4 rounded-full ${improveModel ? "bg-white dark:bg-zinc-950" : "bg-white dark:bg-zinc-300"}`}
                 />
               </button>
             </div>
 
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               <button
-                className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-200 dark:hover:bg-zinc-800"
                 type="button"
                 onClick={archiveAllChats}
               >
@@ -485,20 +485,20 @@ const SettingsPage: React.FC = () => {
                 )}
               </button>
               <button
-                className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-200 dark:hover:bg-zinc-800"
                 type="button"
                 onClick={handleExportData}
               >
                 {tr("Export data", "දත්ත අපනයනය", "தரவை ஏற்றுமதி செய்")}
               </button>
               <button
-                className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-200 dark:hover:bg-zinc-800"
                 type="button"
               >
                 {tr("Shared links", "බෙදාගත් සබැඳි", "பகிரப்பட்ட இணைப்புகள்")}
               </button>
               <button
-                className="rounded-lg border border-red-700/50 px-3 py-2 text-sm font-semibold text-red-300 hover:bg-red-900/20 disabled:cursor-not-allowed disabled:opacity-50"
+                className="rounded-lg border border-red-200 bg-white px-3 py-2 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-red-700/50 dark:bg-transparent dark:text-red-300 dark:hover:bg-red-900/20"
                 type="button"
                 onClick={handleDeleteAllChats}
                 disabled={sidebarChats.length === 0}
@@ -511,8 +511,8 @@ const SettingsPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="space-y-2 rounded-lg border border-zinc-800 bg-zinc-950/50 p-4">
-              <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+            <div className="space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-zinc-800 dark:bg-zinc-950/50">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-zinc-500">
                 {tr(
                   "Manage archived chats",
                   "සංරක්ෂිත චැට් කළමනාකරණය",
@@ -521,7 +521,7 @@ const SettingsPage: React.FC = () => {
               </p>
 
               {archivedChats.length === 0 ? (
-                <p className="text-sm text-zinc-400">
+                <p className="text-sm text-slate-500 dark:text-zinc-400">
                   {tr(
                     "No archived chats available.",
                     "සංරක්ෂිත චැට් නොමැත.",
@@ -533,17 +533,17 @@ const SettingsPage: React.FC = () => {
                   {archivedChats.map((chat) => (
                     <div
                       key={chat.id}
-                      className="flex items-center justify-between gap-2 rounded-md border border-zinc-800 bg-zinc-900/60 px-3 py-2"
+                      className="flex items-center justify-between gap-2 rounded-md border border-slate-200 bg-white px-3 py-2 dark:border-zinc-800 dark:bg-zinc-900/60"
                     >
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-medium text-zinc-200">
+                        <p className="truncate text-sm font-medium text-slate-900 dark:text-zinc-200">
                           {chat.title}
                         </p>
                       </div>
 
                       <div className="flex items-center gap-1">
                         <button
-                          className="rounded-md p-1.5 text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-zinc-100"
+                          className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-zinc-100"
                           type="button"
                           aria-label={`Unarchive ${chat.title}`}
                           onClick={() => unarchiveChat(chat.id)}
@@ -553,7 +553,7 @@ const SettingsPage: React.FC = () => {
                           </span>
                         </button>
                         <button
-                          className="rounded-md p-1.5 text-red-300 transition-colors hover:bg-red-900/30 hover:text-red-200"
+                          className="rounded-md p-1.5 text-red-500 transition-colors hover:bg-red-50 hover:text-red-700 dark:text-red-300 dark:hover:bg-red-900/30 dark:hover:text-red-200"
                           type="button"
                           aria-label={`Delete ${chat.title}`}
                           onClick={() =>
@@ -608,30 +608,30 @@ const SettingsPage: React.FC = () => {
         />
 
         {activeSection === "security" && (
-          <section className="space-y-4 rounded-xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <h3 className="text-lg font-semibold text-zinc-100">Security</h3>
+          <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/50 dark:shadow-none">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-zinc-100">Security</h3>
 
-            <div className="rounded-lg border border-zinc-800 bg-zinc-950/50 p-4">
-              <h4 className="mb-3 text-sm font-semibold text-zinc-200">
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-zinc-800 dark:bg-zinc-950/50">
+              <h4 className="mb-3 text-sm font-semibold text-slate-900 dark:text-zinc-200">
                 Password
               </h4>
               <div className="grid gap-3 md:grid-cols-3">
                 <input
-                  className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100"
+                  className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100"
                   type="password"
                   placeholder="Current password"
                   value={currentPassword}
                   onChange={(event) => setCurrentPassword(event.target.value)}
                 />
                 <input
-                  className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100"
+                  className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100"
                   type="password"
                   placeholder="New password"
                   value={newPassword}
                   onChange={(event) => setNewPassword(event.target.value)}
                 />
                 <input
-                  className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100"
+                  className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-blue-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100"
                   type="password"
                   placeholder="Confirm new password"
                   value={confirmPassword}
@@ -640,21 +640,21 @@ const SettingsPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="rounded-lg border border-zinc-800 bg-zinc-950/50 p-4">
-              <h4 className="mb-3 text-sm font-semibold text-zinc-200">MFA</h4>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-zinc-800 dark:bg-zinc-950/50">
+              <h4 className="mb-3 text-sm font-semibold text-slate-900 dark:text-zinc-200">MFA</h4>
 
               <div className="space-y-3">
-                <div className="flex items-center justify-between rounded-md border border-zinc-800 px-3 py-2">
+                <div className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 dark:border-zinc-800 dark:bg-transparent">
                   <div>
-                    <p className="text-sm font-medium text-zinc-100">
+                    <p className="text-sm font-medium text-slate-900 dark:text-zinc-100">
                       Authenticator app
                     </p>
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-xs text-slate-500 dark:text-zinc-500">
                       Use TOTP app for secure sign-in.
                     </p>
                   </div>
                   <button
-                    className={`flex h-6 w-12 items-center rounded-full px-1 transition-colors ${authenticatorEnabled ? "justify-end bg-zinc-100" : "justify-start bg-zinc-700"}`}
+                    className={`flex h-6 w-12 items-center rounded-full px-1 transition-colors ${authenticatorEnabled ? "justify-end bg-blue-600 dark:bg-zinc-100" : "justify-start bg-slate-300 dark:bg-zinc-700"}`}
                     type="button"
                     onClick={() => {
                       setAuthenticatorEnabled((value) => {
@@ -666,22 +666,22 @@ const SettingsPage: React.FC = () => {
                     aria-label="Toggle authenticator app"
                   >
                     <span
-                      className={`h-4 w-4 rounded-full ${authenticatorEnabled ? "bg-zinc-950" : "bg-zinc-300"}`}
+                      className={`h-4 w-4 rounded-full ${authenticatorEnabled ? "bg-white dark:bg-zinc-950" : "bg-white dark:bg-zinc-300"}`}
                     />
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between rounded-md border border-zinc-800 px-3 py-2">
+                <div className="flex items-center justify-between rounded-md border border-slate-200 bg-white px-3 py-2 dark:border-zinc-800 dark:bg-transparent">
                   <div>
-                    <p className="text-sm font-medium text-zinc-100">
+                    <p className="text-sm font-medium text-slate-900 dark:text-zinc-100">
                       Push notifications
                     </p>
-                    <p className="text-xs text-zinc-500">
+                    <p className="text-xs text-slate-500 dark:text-zinc-500">
                       Approve sign-in from your trusted device.
                     </p>
                   </div>
                   <button
-                    className={`flex h-6 w-12 items-center rounded-full px-1 transition-colors ${pushNotificationsEnabled ? "justify-end bg-zinc-100" : "justify-start bg-zinc-700"}`}
+                    className={`flex h-6 w-12 items-center rounded-full px-1 transition-colors ${pushNotificationsEnabled ? "justify-end bg-blue-600 dark:bg-zinc-100" : "justify-start bg-slate-300 dark:bg-zinc-700"}`}
                     type="button"
                     onClick={() =>
                       setPushNotificationsEnabled((value) => !value)
@@ -689,18 +689,18 @@ const SettingsPage: React.FC = () => {
                     aria-label="Toggle push notifications"
                   >
                     <span
-                      className={`h-4 w-4 rounded-full ${pushNotificationsEnabled ? "bg-zinc-950" : "bg-zinc-300"}`}
+                      className={`h-4 w-4 rounded-full ${pushNotificationsEnabled ? "bg-white dark:bg-zinc-950" : "bg-white dark:bg-zinc-300"}`}
                     />
                   </button>
                 </div>
               </div>
 
               {showQrPanel && (
-                <div className="mt-4 rounded-lg border border-zinc-700 bg-zinc-900 p-4">
-                  <p className="mb-2 text-sm font-semibold text-zinc-100">
+                <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-zinc-700 dark:bg-zinc-900">
+                  <p className="mb-2 text-sm font-semibold text-slate-900 dark:text-zinc-100">
                     Scan QR code in your authenticator app
                   </p>
-                  <ol className="mb-3 list-decimal space-y-1 pl-4 text-xs text-zinc-400">
+                  <ol className="mb-3 list-decimal space-y-1 pl-4 text-xs text-slate-600 dark:text-zinc-400">
                     <li>
                       Open Google Authenticator, Microsoft Authenticator, or
                       Authy.
@@ -723,21 +723,21 @@ const SettingsPage: React.FC = () => {
         )}
 
         {activeSection === "account" && (
-          <section className="space-y-4 rounded-xl border border-zinc-800 bg-zinc-900/50 p-5">
-            <h3 className="text-lg font-semibold text-zinc-100">Account</h3>
-            <div className="space-y-2 text-sm text-zinc-300">
+          <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/50 dark:shadow-none">
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-zinc-100">Account</h3>
+            <div className="space-y-2 text-sm text-slate-600 dark:text-zinc-300">
               <p>Email: {user?.email || "Not available"}</p>
               <p>Plan: Research Prototype</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <button
-                className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-200 dark:hover:bg-zinc-800"
                 type="button"
               >
                 Manage linked devices
               </button>
               <button
-                className="rounded-lg border border-zinc-700 px-3 py-2 text-sm font-semibold text-zinc-200 hover:bg-zinc-800"
+                className="rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-200 dark:hover:bg-zinc-800"
                 type="button"
               >
                 Download account report
