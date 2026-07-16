@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
-import BrandLogo from "@/components/ui/BrandLogo";
 import { useAuthStore } from "@/stores/authStore";
 
 interface VoiceMessagePlayerProps {
@@ -7,7 +6,7 @@ interface VoiceMessagePlayerProps {
   sender: "user" | "ai";
 }
 
-const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({ audioUrl, sender }) => {
+const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({ audioUrl }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
