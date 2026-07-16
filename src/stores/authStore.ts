@@ -21,6 +21,7 @@ interface AuthStore {
     currentPassword: string,
     newPassword: string,
   ) => Promise<void>;
+  uploadAvatar: (file: File) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthStore>()(
@@ -153,6 +154,33 @@ export const useAuthStore = create<AuthStore>()(
           });
         } catch (error) {
           console.error("Failed to change password:", error);
+          throw error;
+        }
+      },
+      uploadAvatar: async (file: File) => {
+        try {
+          const response = await authService.uploadAvatar(file);
+          
+          const userData: User = {
+            id: response.uuid,
+            name: response.first_name
+              ? `${response.first_name} ${response.last_name || ""}`.trim()
+              : "User",
+            email: response.email || "",
+            role: response.role,
+            avatarUrl: response.avatar_url,
+            preferences: {
+              language: response.preferred_language,
+            },
+          };
+
+          if (response.preferred_language) {
+            void i18n.changeLanguage(response.preferred_language);
+          }
+
+          set({ user: userData });
+        } catch (error) {
+          console.error("Failed to upload avatar:", error);
           throw error;
         }
       },

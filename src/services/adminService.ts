@@ -66,6 +66,7 @@ export interface AdminUserItem {
   role: string;
   status: "Active" | "Blocked";
   createdDate: string;
+  avatar_url?: string;
 }
 
 export interface AdminUserListResponse {

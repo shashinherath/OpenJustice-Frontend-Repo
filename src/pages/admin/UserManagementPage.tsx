@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useAdminUsersStore } from "@/stores/adminUsersStore";
 import type { AdminUserItem } from "@/services/adminService";
+import { getMediaUrl } from "@/utils/urlUtils";
 
 const maskEmail = (email: string): string => {
   const [localPart, domain] = email.split("@");
@@ -426,6 +427,30 @@ const UserManagementPage: React.FC = () => {
               </button>
             </div>
             
+            <div className="flex items-center gap-4 mb-6">
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-700 bg-slate-800">
+                {selectedViewUser.avatar_url ? (
+                  <img
+                    src={getMediaUrl(selectedViewUser.avatar_url)}
+                    alt={`${selectedViewUser.first_name || ""} ${selectedViewUser.last_name || ""}`}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <span className="material-symbols-outlined text-3xl text-slate-400">
+                    person
+                  </span>
+                )}
+              </div>
+              <div>
+                <h4 className="text-xl font-bold text-white">
+                  {selectedViewUser.first_name} {selectedViewUser.last_name}
+                </h4>
+                <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+                  {selectedViewUser.role}
+                </p>
+              </div>
+            </div>
+
             <div className="space-y-4">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">User ID</p>

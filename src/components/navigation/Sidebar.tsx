@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { getMediaUrl } from "@/utils/urlUtils";
 import { useSettingsModal } from "@/hooks/common/useSettingsModal";
 import { useChatStore } from "@/stores/chatStore";
 import { useAuthStore } from "@/stores/authStore";
@@ -436,7 +437,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
             <div className="size-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden border border-slate-300 dark:border-slate-600 shrink-0">
               {user?.avatarUrl ? (
                 <img
-                  src={user.avatarUrl}
+                  src={getMediaUrl(user.avatarUrl)}
                   alt="User avatar"
                   className="w-full h-full object-cover"
                 />

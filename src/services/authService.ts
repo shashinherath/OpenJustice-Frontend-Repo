@@ -82,6 +82,27 @@ export const authService = {
     }
   },
 
+  uploadAvatar: async (file: File): Promise<UserProfileResponse> => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      
+      const response = await apiClient.post<{ data: UserProfileResponse }>(
+        "/auth/users/me/avatar",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      return response.data.data;
+    } catch (error) {
+      console.error("Failed to upload avatar:", error);
+      throw error;
+    }
+  },
+
   changePassword: async (
     passwordData: ChangePasswordRequest,
   ): Promise<void> => {
