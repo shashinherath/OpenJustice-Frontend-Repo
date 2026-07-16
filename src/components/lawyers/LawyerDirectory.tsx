@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface Lawyer {
   id: string;
@@ -232,6 +233,7 @@ const MOCK_LAWYERS: Lawyer[] = [
 ];
 
 const LawyerDirectory: React.FC = () => {
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedLawyer, setSelectedLawyer] = useState<Lawyer | null>(null);
   const [bookingLawyer, setBookingLawyer] = useState<Lawyer | null>(null);
@@ -274,10 +276,10 @@ const LawyerDirectory: React.FC = () => {
 
   const renderHeader = () => (
     <div className="mb-6 flex flex-col items-center">
-      <div className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-2">Connect with Legal Professionals</div>
-      <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-2 font-serif">Lawyer Directory</h1>
+      <div className="text-[11px] font-bold uppercase tracking-widest text-slate-500 mb-2">{t("directoryHeaderSub")}</div>
+      <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-2 font-serif">{t("directoryHeaderTitle")}</h1>
       <span className="text-sm font-mono text-cyan-600 dark:text-cyan-400">
-        Find and book experienced lawyers in Sri Lanka
+        {t("directoryHeaderDesc")}
       </span>
       
       {!selectedLawyer && (
@@ -286,13 +288,13 @@ const LawyerDirectory: React.FC = () => {
             onClick={() => setViewingBookings(false)} 
             className={`px-6 py-2.5 rounded-md text-sm font-bold transition-all ${!viewingBookings ? 'bg-white dark:bg-slate-700 shadow-sm text-cyan-600 dark:text-cyan-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
           >
-            All Lawyers
+            {t("directoryAllLawyersBtn")}
           </button>
           <button 
             onClick={() => setViewingBookings(true)} 
             className={`px-6 py-2.5 rounded-md text-sm font-bold transition-all flex items-center gap-2 ${viewingBookings ? 'bg-white dark:bg-slate-700 shadow-sm text-cyan-600 dark:text-cyan-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'}`}
           >
-            My Bookings 
+            {t("directoryMyBookingsBtn")} 
             {bookedAppointments.length > 0 && (
               <span className={`text-[10px] px-2 py-0.5 rounded-full ${viewingBookings ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/50 dark:text-cyan-300' : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300'}`}>
                 {bookedAppointments.length}
@@ -314,15 +316,15 @@ const LawyerDirectory: React.FC = () => {
             <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
             </div>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">No Bookings Yet</h3>
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">{t("directoryNoBookingsTitle")}</h3>
             <p className="text-slate-500 dark:text-slate-400 text-sm max-w-sm mx-auto mb-6">
-              You haven't booked any appointments. Switch back to the directory to find a lawyer.
+              {t("directoryNoBookingsDesc")}
             </p>
             <button 
               onClick={() => setViewingBookings(false)}
               className="bg-slate-900 dark:bg-slate-200 text-white dark:text-black hover:bg-slate-800 dark:hover:bg-white text-sm font-bold px-6 py-2 rounded transition-colors"
             >
-              BROWSE LAWYERS
+              {t("directoryBrowseLawyersBtn")}
             </button>
           </div>
         ) : (
@@ -333,7 +335,7 @@ const LawyerDirectory: React.FC = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/><path d="M8 18h.01"/><path d="M12 18h.01"/><path d="M16 18h.01"/></svg>
                   <span className="text-sm font-bold">{apt.slot}</span>
                 </div>
-                <div className="text-[10px] uppercase font-bold text-slate-400">Booked {apt.dateBooked}</div>
+                <div className="text-[10px] uppercase font-bold text-slate-400">{t("directoryBookedOn")} {apt.dateBooked}</div>
               </div>
               <div className="flex items-center gap-4 mb-4">
                 <img src={apt.lawyer.imageUrl} alt={apt.lawyer.name} className="w-16 h-16 rounded-full object-cover border-2 border-slate-100 dark:border-slate-800" />
@@ -352,7 +354,7 @@ const LawyerDirectory: React.FC = () => {
                   className="text-xs font-bold text-red-500 hover:text-red-700 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 px-4 py-2 rounded transition-colors flex items-center gap-2"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
-                  CANCEL BOOKING
+                  {t("directoryCancelBookingBtn")}
                 </button>
               </div>
             </div>
@@ -369,7 +371,7 @@ const LawyerDirectory: React.FC = () => {
       <div className="mb-10 w-full max-w-2xl mx-auto flex">
         <input
           type="text"
-          placeholder="Search by name, specialization, or location..."
+          placeholder={t("directorySearchPlaceholder")}
           className="w-full rounded-l-lg border border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-black/50 px-4 py-3 text-sm text-slate-900 dark:text-white focus:border-cyan-500 focus:outline-none"
           value={searchQuery}
           onChange={(e) => {
@@ -377,8 +379,8 @@ const LawyerDirectory: React.FC = () => {
             setCurrentPage(1);
           }}
         />
-        <button className="bg-cyan-600 dark:bg-cyan-500 text-white dark:text-slate-900 font-bold text-sm px-6 rounded-r-lg hover:bg-cyan-700 dark:hover:bg-cyan-400 transition-colors">
-          SEARCH
+        <button className="bg-slate-900 dark:bg-slate-200 text-white dark:text-black font-bold text-sm px-6 rounded-r-lg hover:bg-slate-800 dark:hover:bg-white transition-colors">
+          {t("directorySearchBtn")}
         </button>
       </div>
 
@@ -406,20 +408,20 @@ const LawyerDirectory: React.FC = () => {
             <div className="flex justify-between items-center border-t border-slate-100 dark:border-slate-800 pt-3 mt-4">
               <span className="text-[11px] font-mono text-slate-400 dark:text-slate-500 flex items-center gap-1">
                 <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                {lawyer.rating} RATING
+                {lawyer.rating} {t("directoryRating")}
               </span>
               <div className="flex gap-3">
                 <button 
                   onClick={(e) => { e.stopPropagation(); setSelectedLawyer(lawyer); }}
                   className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
                 >
-                  PROFILE
+                  {t("directoryProfileBtn")}
                 </button>
                 <button 
                   onClick={(e) => { e.stopPropagation(); setBookingLawyer(lawyer); }}
                   className="text-[10px] font-bold uppercase tracking-widest text-cyan-600 dark:text-cyan-400 group-hover:text-cyan-500 transition-colors"
                 >
-                  BOOK &rarr;
+                  {t("directoryBookBtn")} &rarr;
                 </button>
               </div>
             </div>
@@ -429,7 +431,7 @@ const LawyerDirectory: React.FC = () => {
       
       {filteredLawyers.length === 0 ? (
         <div className="text-center py-10 text-slate-500 dark:text-slate-400">
-          No lawyers found matching your search.
+          {t("directoryNoLawyersFound")}
         </div>
       ) : totalPages > 1 ? (
         <div className="flex justify-center items-center gap-2 mb-10">
@@ -438,7 +440,7 @@ const LawyerDirectory: React.FC = () => {
             disabled={currentPage === 1}
             className="px-4 py-2 rounded border border-slate-200 dark:border-slate-800 text-sm font-bold text-slate-600 dark:text-slate-400 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
-            Prev
+            {t("directoryPrevPage")}
           </button>
           
           {[...Array(totalPages)].map((_, i) => (
@@ -460,7 +462,7 @@ const LawyerDirectory: React.FC = () => {
             disabled={currentPage === totalPages}
             className="px-4 py-2 rounded border border-slate-200 dark:border-slate-800 text-sm font-bold text-slate-600 dark:text-slate-400 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
-            Next
+            {t("directoryNextPage")}
           </button>
         </div>
       ) : null}
@@ -472,7 +474,7 @@ const LawyerDirectory: React.FC = () => {
     return (
       <div className="w-full max-w-4xl pb-10">
         <button onClick={() => setSelectedLawyer(null)} className="mb-6 text-cyan-500 hover:text-cyan-400 font-bold text-sm flex items-center gap-2">
-          &larr; Back to Directory
+          &larr; {t("directoryBackToDirectory")}
         </button>
         
         <div className="bg-white dark:bg-[#121212] border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
@@ -492,63 +494,63 @@ const LawyerDirectory: React.FC = () => {
                 onClick={() => setBookingLawyer(selectedLawyer)}
                 className="bg-slate-900 dark:bg-slate-200 text-white dark:text-black hover:bg-slate-800 dark:hover:bg-white text-sm font-bold px-6 py-2.5 rounded transition-colors inline-block"
               >
-                BOOK APPOINTMENT
+                {t("directoryBookAppointmentBtn")}
               </button>
             </div>
           </div>
           
           <div className="p-8">
-            <h2 className="text-xl font-bold font-serif text-slate-900 dark:text-white mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">Overview</h2>
+            <h2 className="text-xl font-bold font-serif text-slate-900 dark:text-white mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">{t("directoryOverviewTitle")}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 mb-8">
               <div>
-                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">Name</div>
+                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">{t("directoryNameLabel")}</div>
                 <div className="text-sm font-semibold text-slate-900 dark:text-white">{selectedLawyer.name}</div>
               </div>
               <div>
-                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">Gender</div>
+                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">{t("directoryGenderLabel")}</div>
                 <div className="text-sm font-semibold text-slate-900 dark:text-white">{selectedLawyer.gender}</div>
               </div>
               <div>
-                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">Experience</div>
+                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">{t("directoryExperienceLabel")}</div>
                 <div className="text-sm font-semibold text-slate-900 dark:text-white">{selectedLawyer.experience}</div>
               </div>
               <div>
-                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">Rating</div>
+                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">{t("directoryRatingLabel")}</div>
                 <div className="text-sm font-semibold text-slate-900 dark:text-white flex items-center gap-1">
                   {selectedLawyer.rating} <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="#eab308" stroke="#eab308" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                 </div>
               </div>
               <div className="md:col-span-2">
-                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">Specialization</div>
+                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">{t("directorySpecializationLabel")}</div>
                 <div className="text-sm font-semibold text-slate-900 dark:text-white">{selectedLawyer.specialization}</div>
               </div>
               <div className="md:col-span-2">
-                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">Education</div>
+                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">{t("directoryEducationLabel")}</div>
                 <div className="text-sm font-semibold text-slate-900 dark:text-white">{selectedLawyer.education}</div>
               </div>
               <div>
-                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">Languages Known</div>
+                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">{t("directoryLanguagesLabel")}</div>
                 <div className="text-sm font-semibold text-slate-900 dark:text-white">{selectedLawyer.languages.join(", ")}</div>
               </div>
               <div>
-                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">Practice Courts</div>
+                <div className="text-[10px] font-bold uppercase text-slate-500 mb-1">{t("directoryPracticeCourtsLabel")}</div>
                 <div className="text-sm font-semibold text-slate-900 dark:text-white">{selectedLawyer.practiceCourts.join(", ")}</div>
               </div>
             </div>
 
-            <h2 className="text-xl font-bold font-serif text-slate-900 dark:text-white mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">About</h2>
+            <h2 className="text-xl font-bold font-serif text-slate-900 dark:text-white mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">{t("directoryAboutTitle")}</h2>
             <p className="text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
               {selectedLawyer.bio}
             </p>
             
-            <h2 className="text-xl font-bold font-serif text-slate-900 dark:text-white mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">Contact Information</h2>
+            <h2 className="text-xl font-bold font-serif text-slate-900 dark:text-white mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">{t("directoryContactInfoTitle")}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center gap-3 text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
                 <div className="bg-slate-200 dark:bg-slate-800 p-2 rounded-full">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                 </div>
                 <div>
-                  <div className="text-[10px] font-bold uppercase text-slate-500">Phone</div>
+                  <div className="text-[10px] font-bold uppercase text-slate-500">{t("directoryPhoneLabel")}</div>
                   <div className="text-sm font-semibold text-slate-900 dark:text-white">{selectedLawyer.contact}</div>
                 </div>
               </div>
@@ -557,7 +559,7 @@ const LawyerDirectory: React.FC = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                 </div>
                 <div>
-                  <div className="text-[10px] font-bold uppercase text-slate-500">Email</div>
+                  <div className="text-[10px] font-bold uppercase text-slate-500">{t("directoryEmailLabel")}</div>
                   <div className="text-sm font-semibold text-slate-900 dark:text-white">{selectedLawyer.email}</div>
                 </div>
               </div>
@@ -575,7 +577,7 @@ const LawyerDirectory: React.FC = () => {
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
         <div className="bg-white dark:bg-[#121212] border border-slate-200 dark:border-slate-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in duration-200">
           <div className="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-800">
-            <h2 className="text-xl font-bold font-serif text-slate-900 dark:text-white">Book Appointment</h2>
+            <h2 className="text-xl font-bold font-serif text-slate-900 dark:text-white">{t("directoryBookAppointmentTitle")}</h2>
             <button onClick={() => { setBookingLawyer(null); setBookingSuccess(false); setSelectedSlot(""); }} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
             </button>
@@ -587,9 +589,9 @@ const LawyerDirectory: React.FC = () => {
                 <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
                   <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Booking Confirmed!</h3>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{t("directoryBookingConfirmedTitle")}</h3>
                 <p className="text-slate-500 dark:text-slate-400 text-sm">
-                  Your appointment with {bookingLawyer.name} for {selectedSlot} has been scheduled.
+                  {t("directoryBookingConfirmedDesc", { lawyerName: bookingLawyer.name, slot: selectedSlot })}
                 </p>
               </div>
             ) : (
@@ -602,7 +604,7 @@ const LawyerDirectory: React.FC = () => {
                   </div>
                 </div>
                 
-                <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-3">Select a Date & Time</h3>
+                <h3 className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-3">{t("directorySelectDateTime")}</h3>
                 <div className="grid grid-cols-1 gap-2 mb-6">
                   {bookingLawyer.availableSlots.map(slot => (
                     <button
@@ -631,7 +633,7 @@ const LawyerDirectory: React.FC = () => {
                       : 'bg-slate-200 dark:bg-slate-800 text-slate-400 cursor-not-allowed'
                   }`}
                 >
-                  CONFIRM BOOKING
+                  {t("directoryConfirmBookingBtn")}
                 </button>
               </>
             )}
