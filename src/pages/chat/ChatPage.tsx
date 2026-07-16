@@ -7,6 +7,7 @@ import { useVoiceRecording } from "@/hooks/useVoiceRecording";
 import ConversationComposer from "@/components/chat/ConversationComposer";
 import VoiceRecordingUI from "@/components/ui/VoiceRecordingUI";
 import LanguageSwitcherButton from "@/components/ui/LanguageSwitcherButton";
+import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
 import LegalLibrary from "@/components/library/LegalLibrary";
 import LawyerDirectory from "@/components/lawyers/LawyerDirectory";
 import DocumentAnalyzer from "@/components/analyzer/DocumentAnalyzer";
@@ -161,7 +162,7 @@ const ChatPage: React.FC = () => {
                   : "border-b-2 border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
               }`}
             >
-              Research
+              {t("chatTabResearch")}
             </button>
             <button
               onClick={() => handleTabChange("library")}
@@ -171,7 +172,7 @@ const ChatPage: React.FC = () => {
                   : "border-b-2 border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
               }`}
             >
-              Legal Library
+              {t("chatTabLibrary")}
             </button>
             <button
               onClick={() => handleTabChange("analyzer")}
@@ -181,7 +182,7 @@ const ChatPage: React.FC = () => {
                   : "border-b-2 border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
               }`}
             >
-              Document Analyzer
+              {t("chatTabAnalyzer")}
             </button>
             <button
               onClick={() => handleTabChange("lawyers")}
@@ -191,11 +192,12 @@ const ChatPage: React.FC = () => {
                   : "border-b-2 border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
               }`}
             >
-              Lawyer Directory
+              {t("chatTabLawyers")}
             </button>
           </nav>
         </div>
         <div className="flex h-full items-center gap-3">
+          <ThemeToggleButton />
           <LanguageSwitcherButton />
         </div>
       </header>
@@ -217,29 +219,38 @@ const ChatPage: React.FC = () => {
             <span className="mr-1 text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
               {t("suggestions")}
             </span>
-            <button className="group flex h-9 items-center justify-center gap-1.5 rounded-full border border-white/50 bg-white/55 px-4 transition-all hover:-translate-y-0.5 hover:bg-white/75 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 backdrop-blur-xl">
-              <span className="material-symbols-outlined text-[16px] text-slate-500 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
-                balance
-              </span>
-              <span className="text-xs font-semibold text-slate-600 transition-colors group-hover:text-slate-900 dark:text-slate-400 dark:group-hover:text-slate-100">
-                {t("rights")}
-              </span>
+            <button className="group relative flex h-9 items-center justify-center rounded-full p-[1.5px] transition-all hover:-translate-y-0.5 overflow-hidden">
+              <div className="absolute left-1/2 top-1/2 aspect-square w-[200%] -translate-x-1/2 -translate-y-1/2 animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_0%,transparent_35%,#22d3ee_50%,transparent_50%,transparent_85%,#3b82f6_100%)] opacity-70 group-hover:opacity-100 dark:bg-[conic-gradient(from_0deg,transparent_0%,transparent_35%,#fbbf24_50%,transparent_50%,transparent_85%,#eab308_100%)] transition-opacity duration-300"></div>
+              <div className="relative flex h-full w-full items-center justify-center gap-1.5 rounded-full bg-slate-50 px-4 dark:bg-slate-800 transition-all group-hover:bg-white dark:group-hover:bg-slate-700">
+                <span className="material-symbols-outlined text-[16px] text-slate-500 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
+                  balance
+                </span>
+                <span className="text-xs font-semibold text-slate-600 transition-colors group-hover:text-slate-900 dark:text-slate-300 dark:group-hover:text-slate-100">
+                  {t("rights")}
+                </span>
+              </div>
             </button>
-            <button className="group flex h-9 items-center justify-center gap-1.5 rounded-full border border-white/50 bg-white/55 px-4 transition-all hover:-translate-y-0.5 hover:bg-white/75 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 backdrop-blur-xl">
-              <span className="material-symbols-outlined text-[16px] text-slate-500 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
-                checklist
-              </span>
-              <span className="text-xs font-semibold text-slate-600 transition-colors group-hover:text-slate-900 dark:text-slate-400 dark:group-hover:text-slate-100">
-                {t("procedures")}
-              </span>
+            <button className="group relative flex h-9 items-center justify-center rounded-full p-[1.5px] transition-all hover:-translate-y-0.5 overflow-hidden">
+              <div className="absolute left-1/2 top-1/2 aspect-square w-[200%] -translate-x-1/2 -translate-y-1/2 animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_0%,transparent_35%,#22d3ee_50%,transparent_50%,transparent_85%,#3b82f6_100%)] opacity-70 group-hover:opacity-100 dark:bg-[conic-gradient(from_0deg,transparent_0%,transparent_35%,#fbbf24_50%,transparent_50%,transparent_85%,#eab308_100%)] transition-opacity duration-300"></div>
+              <div className="relative flex h-full w-full items-center justify-center gap-1.5 rounded-full bg-slate-50 px-4 dark:bg-slate-800 transition-all group-hover:bg-white dark:group-hover:bg-slate-700">
+                <span className="material-symbols-outlined text-[16px] text-slate-500 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
+                  checklist
+                </span>
+                <span className="text-xs font-semibold text-slate-600 transition-colors group-hover:text-slate-900 dark:text-slate-300 dark:group-hover:text-slate-100">
+                  {t("procedures")}
+                </span>
+              </div>
             </button>
-            <button className="group flex h-9 items-center justify-center gap-1.5 rounded-full border border-white/50 bg-white/55 px-4 transition-all hover:-translate-y-0.5 hover:bg-white/75 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 backdrop-blur-xl">
-              <span className="material-symbols-outlined text-[16px] text-slate-500 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
-                menu_book
-              </span>
-              <span className="text-xs font-semibold text-slate-600 transition-colors group-hover:text-slate-900 dark:text-slate-400 dark:group-hover:text-slate-100">
-                {t("commonDefinitions")}
-              </span>
+            <button className="group relative flex h-9 items-center justify-center rounded-full p-[1.5px] transition-all hover:-translate-y-0.5 overflow-hidden">
+              <div className="absolute left-1/2 top-1/2 aspect-square w-[200%] -translate-x-1/2 -translate-y-1/2 animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_0deg,transparent_0%,transparent_35%,#22d3ee_50%,transparent_50%,transparent_85%,#3b82f6_100%)] opacity-70 group-hover:opacity-100 dark:bg-[conic-gradient(from_0deg,transparent_0%,transparent_35%,#fbbf24_50%,transparent_50%,transparent_85%,#eab308_100%)] transition-opacity duration-300"></div>
+              <div className="relative flex h-full w-full items-center justify-center gap-1.5 rounded-full bg-slate-50 px-4 dark:bg-slate-800 transition-all group-hover:bg-white dark:group-hover:bg-slate-700">
+                <span className="material-symbols-outlined text-[16px] text-slate-500 transition-colors group-hover:text-slate-700 dark:text-slate-400 dark:group-hover:text-slate-200">
+                  menu_book
+                </span>
+                <span className="text-xs font-semibold text-slate-600 transition-colors group-hover:text-slate-900 dark:text-slate-300 dark:group-hover:text-slate-100">
+                  {t("commonDefinitions")}
+                </span>
+              </div>
             </button>
           </div>
 
@@ -269,9 +280,9 @@ const ChatPage: React.FC = () => {
             )}
             {!recordingState.isRecording && !isVoicePreview ? (
               <button
-                className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-white/40 font-bold shadow-[0_18px_45px_rgba(15,23,42,0.18)] transition-all md:mt-0 ${
+                className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 font-bold shadow-md transition-all md:mt-0 dark:border-white/10 dark:shadow-[0_18px_45px_rgba(15,23,42,0.18)] ${
                   !question.trim()
-                    ? "cursor-not-allowed bg-slate-200 text-slate-400 shadow-none dark:bg-slate-800 dark:text-slate-600"
+                    ? "cursor-not-allowed bg-slate-100 text-slate-400 shadow-none dark:bg-slate-800 dark:text-slate-600"
                     : "cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"
                 }`}
                 type="button"
@@ -285,7 +296,7 @@ const ChatPage: React.FC = () => {
             ) : null}
             {isVoicePreview ? (
               <button
-                className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-white/40 font-bold shadow-[0_18px_45px_rgba(15,23,42,0.18)] transition-all md:mt-0 ${"cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"}`}
+                className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 font-bold shadow-md transition-all md:mt-0 dark:border-white/10 dark:shadow-[0_18px_45px_rgba(15,23,42,0.18)] ${"cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"}`}
                 type="button"
                 onClick={handleSendVoice}
               >

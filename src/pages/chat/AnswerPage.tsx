@@ -226,7 +226,7 @@ const AnswerPage: React.FC = () => {
           {showTypingIndicator ? (
             <div className="mr-auto max-w-[88%] rounded-xl border border-slate-200 bg-white p-3 px-4 text-sm text-slate-700 shadow-sm dark:border-border-dark dark:bg-surface-dark dark:text-slate-200">
               <div className="flex items-center gap-2">
-                <BrandLogo containerClassName="flex items-center justify-center size-5" iconClassName="text-xl" />
+                <BrandLogo containerClassName="flex items-center justify-center size-5 overflow-hidden rounded-full" iconClassName="text-xl" imageClassName="h-full w-full object-cover scale-[1.15]" />
                 <div
                   className="flex items-center gap-1.5"
                   aria-live="polite"
@@ -277,7 +277,7 @@ const AnswerPage: React.FC = () => {
                     />
                   ) : (
                     <div className="flex items-center gap-2 py-1 text-slate-500 dark:text-slate-400">
-                      <BrandLogo containerClassName="flex items-center justify-center size-5" iconClassName="text-xl" />
+                      <BrandLogo containerClassName="flex items-center justify-center size-5 overflow-hidden rounded-full" iconClassName="text-xl" imageClassName="h-full w-full object-cover scale-[1.15]" />
                       <div
                         className="flex items-center gap-1.5"
                         aria-live="polite"
@@ -287,6 +287,7 @@ const AnswerPage: React.FC = () => {
                         <span className="h-2 w-2 animate-bounce rounded-full bg-current [animation-delay:-0.15s]" />
                         <span className="h-2 w-2 animate-bounce rounded-full bg-current" />
                       </div>
+
                     </div>
                   )
                 ) : (() => {
@@ -383,9 +384,9 @@ const AnswerPage: React.FC = () => {
           )}
           {!recordingState.isRecording && !isVoicePreview ? (
             <button
-              className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-white/40 font-bold shadow-[0_18px_45px_rgba(15,23,42,0.18)] transition-all md:mt-0 ${
+              className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 font-bold shadow-md transition-all md:mt-0 dark:border-white/10 dark:shadow-[0_18px_45px_rgba(15,23,42,0.18)] ${
                 !question.trim()
-                  ? "cursor-not-allowed bg-slate-200 text-slate-400 shadow-none dark:bg-slate-800 dark:text-slate-600"
+                  ? "cursor-not-allowed bg-slate-100 text-slate-400 shadow-none dark:bg-slate-800 dark:text-slate-600"
                   : "cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"
               }`}
               type="button"
@@ -399,7 +400,7 @@ const AnswerPage: React.FC = () => {
           ) : null}
           {isVoicePreview ? (
             <button
-              className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-white/40 font-bold shadow-[0_18px_45px_rgba(15,23,42,0.18)] transition-all md:mt-0 ${"cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"}`}
+              className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 font-bold shadow-md transition-all md:mt-0 dark:border-white/10 dark:shadow-[0_18px_45px_rgba(15,23,42,0.18)] ${"cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"}`}
               type="button"
               onClick={handleSendVoice}
             >

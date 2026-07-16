@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import BrandLogo from "@/components/ui/BrandLogo";
 import LoginModal from "@/components/ui/LoginModal";
 import LanguageSwitcherButton from "@/components/ui/LanguageSwitcherButton";
+import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
 
 const Navbar: React.FC = () => {
   const { t } = useTranslation();
@@ -17,6 +18,7 @@ const Navbar: React.FC = () => {
             <BrandLogo
               containerClassName="flex size-9 items-center justify-center overflow-hidden rounded-lg bg-primary text-white dark:bg-white dark:text-primary"
               iconClassName="text-2xl"
+              imageClassName="h-full w-full object-cover"
             />
             <h2 className="text-slate-900 dark:text-white text-xl font-bold tracking-tight">
               OpenJustice
@@ -25,9 +27,10 @@ const Navbar: React.FC = () => {
 
           {/* Right side actions */}
           <div className="flex items-center gap-3">
+            <ThemeToggleButton />
             <LanguageSwitcherButton />
 
-            {/* Login Button */}
+            {/* Login Button - Triggers LoginModal */}
             <button
               className="cursor-pointer text-sm font-semibold text-primary transition-opacity hover:opacity-70 dark:text-white"
               type="button"

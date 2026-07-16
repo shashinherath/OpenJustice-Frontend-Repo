@@ -183,23 +183,23 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="flex h-auto max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-[#191919] text-zinc-100 shadow-2xl"
+        className="flex h-auto max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-2xl dark:border-zinc-800 dark:bg-[#191919] dark:text-zinc-100"
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-label="Edit profile"
       >
-        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-zinc-800 bg-[#121212] px-4 py-3 sm:px-6">
+        <header className="sticky top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-slate-50 px-4 py-3 sm:px-6 dark:border-zinc-800 dark:bg-[#121212]">
           <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-zinc-300">
+            <span className="material-symbols-outlined text-slate-500 dark:text-zinc-300">
               person
             </span>
-            <h2 className="text-base font-bold tracking-tight text-zinc-100 sm:text-lg">
+            <h2 className="text-base font-bold tracking-tight text-slate-900 sm:text-lg dark:text-zinc-100">
               User Profile
             </h2>
           </div>
           <button
-            className="rounded-lg p-2 text-zinc-400 transition-colors hover:bg-zinc-900 hover:text-zinc-100"
+            className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-200 hover:text-slate-600 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100"
             type="button"
             onClick={onClose}
             aria-label="Close profile"
@@ -223,12 +223,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
               </p>
             )}
 
-            <section className="rounded-xl border border-white/10 bg-black/30 p-4">
+            <section className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-black/30">
               <div className="flex items-center gap-3">
                 <div 
-                  className="group relative flex h-12 w-12 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-zinc-700 bg-zinc-900 text-sm font-bold text-zinc-300"
+                  className="group relative flex h-12 w-12 cursor-pointer items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-slate-100 text-sm font-bold text-slate-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300"
                   onClick={handleAvatarClick}
                 >
+
                   {user?.avatarUrl ? (
                     <img
                       src={getMediaUrl(user.avatarUrl)}
@@ -255,28 +256,28 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                   onChange={handleFileChange}
                 />
                 <div>
-                  <p className="text-sm font-semibold text-zinc-100">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-zinc-100">
                     {`${firstName} ${lastName}`.trim() || "Anonymous User"}
                   </p>
-                  <p className="text-xs text-zinc-400">
+                  <p className="text-xs text-slate-500 dark:text-zinc-400">
                     Update account details and password securely.
                   </p>
                 </div>
               </div>
             </section>
 
-            <section className="rounded-xl border border-white/10 bg-black/30 p-4">
-              <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+            <section className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-black/30">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
                 Basic Information
               </h3>
 
               <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-500">
                     First Name
                   </label>
                   <input
-                    className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 outline-none transition-colors focus:border-cyan-500/50 disabled:opacity-50"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-blue-500 disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-cyan-500/50"
                     type="text"
                     value={firstName}
                     onChange={(event) => setFirstName(event.target.value)}
@@ -285,11 +286,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-500">
                     Last Name
                   </label>
                   <input
-                    className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 outline-none transition-colors focus:border-cyan-500/50 disabled:opacity-50"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-blue-500 disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-cyan-500/50"
                     type="text"
                     value={lastName}
                     onChange={(event) => setLastName(event.target.value)}
@@ -299,11 +300,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
               </div>
 
               <div className="mt-4 space-y-2">
-                <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-500">
                   Email
                 </label>
                 <input
-                  className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 outline-none transition-colors focus:border-cyan-500/50 disabled:opacity-50"
+                  className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-blue-500 disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-cyan-500/50"
                   type="email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
@@ -312,18 +313,18 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
               </div>
             </section>
 
-            <section className="rounded-xl border border-white/10 bg-black/30 p-4">
-              <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+            <section className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-white/10 dark:bg-black/30">
+              <h3 className="text-xs font-semibold uppercase tracking-widest text-slate-500 dark:text-zinc-400">
                 Change Password (Optional)
               </h3>
 
               <div className="mt-4 space-y-4">
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-500">
                     Current Password
                   </label>
                   <input
-                    className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 outline-none transition-colors focus:border-cyan-500/50 disabled:opacity-50"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-blue-500 disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-cyan-500/50"
                     type="password"
                     placeholder="Enter current password"
                     value={currentPassword}
@@ -334,11 +335,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-500">
                       New Password
                     </label>
                     <input
-                      className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 outline-none transition-colors focus:border-cyan-500/50 disabled:opacity-50"
+                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-blue-500 disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-cyan-500/50"
                       type="password"
                       placeholder="Enter new password"
                       value={newPassword}
@@ -348,11 +349,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-zinc-500">
                       Confirm Password
                     </label>
                     <input
-                      className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100 outline-none transition-colors focus:border-cyan-500/50 disabled:opacity-50"
+                      className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition-colors focus:border-blue-500 disabled:opacity-50 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100 dark:focus:border-cyan-500/50"
                       type="password"
                       placeholder="Confirm new password"
                       value={confirmPassword}
@@ -368,9 +369,9 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        <footer className="flex shrink-0 items-center justify-end gap-2 border-t border-zinc-800 bg-[#121212] px-4 py-3 sm:px-6">
+        <footer className="flex shrink-0 items-center justify-end gap-2 border-t border-slate-200 bg-slate-50 px-4 py-3 sm:px-6 dark:border-zinc-800 dark:bg-[#121212]">
           <button
-            className="rounded-lg border border-zinc-700 px-4 py-2 text-sm font-semibold text-zinc-300 transition-colors hover:bg-zinc-800 disabled:opacity-50"
+            className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 transition-colors hover:bg-slate-200 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             type="button"
             onClick={onClose}
             disabled={isLoading}
@@ -378,7 +379,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
             Cancel
           </button>
           <button
-            className="rounded-lg border border-cyan-400/30 bg-cyan-500/15 px-4 py-2 text-sm font-semibold text-cyan-200 transition-colors hover:bg-cyan-500/25 disabled:opacity-50"
+            className="rounded-lg border border-blue-500 bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:opacity-50 dark:border-cyan-400/30 dark:bg-cyan-500/15 dark:text-cyan-200 dark:hover:bg-cyan-500/25"
             type="button"
             onClick={handleSave}
             disabled={isLoading}

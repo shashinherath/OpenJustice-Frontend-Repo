@@ -47,7 +47,10 @@ const CostAnalyticsPage: React.FC = () => {
   const totalCost = totalOpenAiCost + totalTwilioCost;
 
   const maxDailyTotal = useMemo(
-    () => Math.max(1, ...(data?.daily_costs.map((entry) => entry.openAi + entry.twilio) || [1])),
+    () => {
+      if (!data?.daily_costs || data.daily_costs.length === 0) return 0;
+      return Math.max(...data.daily_costs.map((entry) => entry.openAi + entry.twilio));
+    },
     [data]
   );
 
@@ -196,13 +199,14 @@ const CostAnalyticsPage: React.FC = () => {
           <div className="mt-6 grid grid-cols-7 gap-2">
             {data.daily_costs.map((entry, idx) => {
               const total = entry.openAi + entry.twilio;
+              const safeMaxDailyTotal = maxDailyTotal || 1;
               const openAiHeight = Math.max(
                 4,
-                Math.round((entry.openAi / maxDailyTotal) * 100)
+                Math.round((entry.openAi / safeMaxDailyTotal) * 100)
               );
               const twilioHeight = Math.max(
                 2,
-                Math.round((entry.twilio / maxDailyTotal) * 100)
+                Math.round((entry.twilio / safeMaxDailyTotal) * 100)
               );
 
               return (

@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect, useCallback } from "react";
+import { flushSync } from "react-dom";
 
 type Theme = "light" | "dark";
 const STORAGE_KEY = "oj-theme";
@@ -14,8 +15,8 @@ const accentColorHexMap: Record<string, string> = {
 
 interface ThemeContextType {
   theme: Theme;
-  toggleTheme: () => void;
-  setTheme: (theme: Theme) => void;
+  toggleTheme: (e?: React.MouseEvent | MouseEvent) => void;
+  setTheme: (theme: Theme, e?: React.MouseEvent | MouseEvent) => void;
 }
 
 export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -52,12 +53,59 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem(STORAGE_KEY, theme);
   }, [theme]);
 
-  const toggleTheme = useCallback(() => {
-    setThemeState((prev) => (prev === "dark" ? "light" : "dark"));
+  const performThemeTransition = useCallback((updateFn: () => void, e?: React.MouseEvent | MouseEvent) => {
+    // @ts-ignore
+    if (!document.startViewTransition) {
+      updateFn();
+      return;
+    }
+
+    const x = e?.clientX ?? window.innerWidth / 2;
+    const y = e?.clientY ?? window.innerHeight / 2;
+    const endRadius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y)
+    );
+
+    // @ts-ignore
+    const transition = document.startViewTransition(() => {
+      flushSync(() => {
+        updateFn();
+      });
+    });
+
+    transition.ready.then(() => {
+      document.documentElement.animate(
+        {
+          clipPath: [
+            `circle(0px at ${x}px ${y}px)`,
+            `circle(${endRadius}px at ${x}px ${y}px)`,
+          ],
+        },
+        {
+          duration: 500,
+          easing: "ease-in-out",
+          pseudoElement: "::view-transition-new(root)",
+        }
+      );
+    });
   }, []);
 
+  const toggleTheme = useCallback((e?: React.MouseEvent | MouseEvent) => {
+    performThemeTransition(() => {
+      setThemeState((prev) => (prev === "dark" ? "light" : "dark"));
+    }, e);
+  }, [performThemeTransition]);
+
+  const setThemeWithAnimation = useCallback((newTheme: Theme, e?: React.MouseEvent | MouseEvent) => {
+    if (theme === newTheme) return;
+    performThemeTransition(() => {
+      setThemeState(newTheme);
+    }, e);
+  }, [theme, performThemeTransition]);
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme: setThemeState }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme: setThemeWithAnimation }}>
       {children}
     </ThemeContext.Provider>
   );

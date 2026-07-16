@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { ADMIN_MODULE_BY_PATH } from "@/constants/admin-flow";
+import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
 
 const AdminHeader: React.FC = () => {
   const { pathname } = useLocation();
@@ -24,6 +25,7 @@ const AdminHeader: React.FC = () => {
             System Online
           </span>
         </div>
+        <ThemeToggleButton />
         <button className="material-symbols-outlined text-cyan-200/70 hover:text-cyan-100">
           notifications
         </button>
