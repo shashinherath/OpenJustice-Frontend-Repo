@@ -130,7 +130,7 @@ const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({ audioUrl, sende
           </div>
         ) : (
           <div className="absolute inset-0 bg-blue-100 flex items-center justify-center text-blue-600">
-            <BrandLogo containerClassName="flex items-center justify-center size-6" iconClassName="text-xl" />
+            <BrandLogo containerClassName="flex items-center justify-center w-full h-full" iconClassName="text-xl" imageClassName="h-full w-full object-cover scale-[1.15]" />
           </div>
         )}
       </div>

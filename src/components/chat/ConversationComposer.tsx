@@ -85,7 +85,7 @@ const ConversationComposer: React.FC<ConversationComposerProps> = ({
             onKeyDown={handleTypingActivity}
           />
           <button
-            className={`flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full border transition-all duration-300 border-slate-200 bg-slate-100 text-slate-600 hover:border-slate-300 hover:bg-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:text-white`}
+            className={`flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full border transition-all duration-300 border-slate-200 bg-slate-100 text-slate-600 hover:border-slate-300 hover:bg-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:text-white dark:hover:bg-slate-900`}
             title={micTitle}
             onClick={onMicClick}
             type="button"

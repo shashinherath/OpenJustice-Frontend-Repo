@@ -6,39 +6,7 @@ const ThemeToggleButton: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
 
   const handleToggleTheme = (e: React.MouseEvent) => {
-    // @ts-ignore - View Transitions API
-    if (!document.startViewTransition) {
-      toggleTheme();
-      return;
-    }
-
-    const x = e.clientX;
-    const y = e.clientY;
-    const endRadius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
-    );
-
-    // @ts-ignore
-    const transition = document.startViewTransition(() => {
-      toggleTheme();
-    });
-
-    transition.ready.then(() => {
-      document.documentElement.animate(
-        {
-          clipPath: [
-            `circle(0px at ${x}px ${y}px)`,
-            `circle(${endRadius}px at ${x}px ${y}px)`,
-          ],
-        },
-        {
-          duration: 500,
-          easing: "ease-in-out",
-          pseudoElement: "::view-transition-new(root)",
-        }
-      );
-    });
+    toggleTheme(e);
   };
 
   return (

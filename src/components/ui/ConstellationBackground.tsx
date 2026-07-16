@@ -36,14 +36,14 @@ const ConstellationBackground: React.FC<ConstellationBackgroundProps> = ({
       height = canvas.height = canvas.offsetHeight;
 
       // Adjust particle count based on screen size for performance
-      const particleCount = Math.min(Math.floor((width * height) / 5000), 300);
+      const particleCount = Math.min(Math.floor((width * height) / 4000), 400);
       particles = [];
       for (let i = 0; i < particleCount; i++) {
         particles.push({
           x: Math.random() * width,
           y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 2.0,
-          vy: (Math.random() - 0.5) * 2.0,
+          vx: (Math.random() - 0.5) * 0.8,
+          vy: (Math.random() - 0.5) * 0.8,
           radius: Math.random() * 2 + 1,
         });
       }
@@ -100,21 +100,21 @@ const ConstellationBackground: React.FC<ConstellationBackgroundProps> = ({
         const dyMouse = p.y - mouse.y;
         const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
 
-        if (distMouse < 180) {
+        if (distMouse < 200) {
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(mouse.x, mouse.y);
-          const opacity = 1 - distMouse / 180;
+          const opacity = 1 - distMouse / 200;
           ctx.strokeStyle = isDark
             ? `rgba(125, 211, 252, ${opacity * 0.5})`
             : `rgba(37, 99, 235, ${opacity * 0.6})`; // enhanced mouse line opacity
           ctx.lineWidth = 1.5;
           ctx.stroke();
           
-          // Slight attraction to mouse for a cool interactive feel
+          // Quick attraction to mouse for a highly interactive feel
           if (distMouse > 50) {
-             p.x -= dxMouse * 0.005;
-             p.y -= dyMouse * 0.005;
+             p.x -= dxMouse * 0.03;
+             p.y -= dyMouse * 0.03;
           }
         }
       }

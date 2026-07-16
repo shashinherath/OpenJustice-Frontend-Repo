@@ -213,7 +213,7 @@ const AnswerPage: React.FC = () => {
           {showTypingIndicator ? (
             <div className="mr-auto max-w-[88%] rounded-xl border border-slate-200 bg-white p-3 px-4 text-sm text-slate-700 shadow-sm dark:border-border-dark dark:bg-surface-dark dark:text-slate-200">
               <div className="flex items-center gap-2">
-                <BrandLogo containerClassName="flex items-center justify-center size-5" iconClassName="text-xl" />
+                <BrandLogo containerClassName="flex items-center justify-center size-5 overflow-hidden rounded-full" iconClassName="text-xl" imageClassName="h-full w-full object-cover scale-[1.15]" />
                 <div
                   className="flex items-center gap-1.5"
                   aria-live="polite"
@@ -259,7 +259,7 @@ const AnswerPage: React.FC = () => {
                   />
                 ) : (
                   <div className="flex items-center gap-2 py-1 text-slate-500 dark:text-slate-400">
-                    <BrandLogo containerClassName="flex items-center justify-center size-5" iconClassName="text-xl" />
+                    <BrandLogo containerClassName="flex items-center justify-center size-5 overflow-hidden rounded-full" iconClassName="text-xl" imageClassName="h-full w-full object-cover scale-[1.15]" />
                     <div
                       className="flex items-center gap-1.5"
                       aria-live="polite"

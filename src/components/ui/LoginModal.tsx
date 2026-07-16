@@ -112,11 +112,11 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
         {/* Header */}
         <div className="flex flex-col items-center mb-8 text-center">
-          <div className="w-16 h-16 bg-slate-50 dark:bg-zinc-950 rounded-full flex items-center justify-center mb-6 border border-slate-200 dark:border-zinc-800 p-3 shadow-sm">
+          <div className="w-16 h-16 bg-slate-50 dark:bg-zinc-950 rounded-full flex items-center justify-center mb-6 border border-slate-200 dark:border-zinc-800 shadow-sm overflow-hidden">
             <BrandLogo
-              containerClassName="w-full h-full flex items-center justify-center overflow-hidden"
+              containerClassName="w-full h-full flex items-center justify-center"
               iconClassName="text-blue-600 dark:text-blue-300 text-3xl"
-              imageClassName="h-full w-full object-contain"
+              imageClassName="h-full w-full object-cover scale-[1.15]"
             />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">
