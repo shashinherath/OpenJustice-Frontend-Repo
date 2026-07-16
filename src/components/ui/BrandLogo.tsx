@@ -21,13 +21,13 @@ const BrandLogo: React.FC<BrandLogoProps> = ({
           <img
             alt={BRAND_LOGO_ALT}
             className={`hidden dark:block ${imageClassName}`}
-            src={BRAND_LOGO_SRC_DARK}
+            src={BRAND_LOGO_SRC_LIGHT}
             onError={() => setImageError(true)}
           />
           <img
             alt={BRAND_LOGO_ALT}
             className={`block dark:hidden ${imageClassName}`}
-            src={BRAND_LOGO_SRC_LIGHT}
+            src={BRAND_LOGO_SRC_DARK}
             onError={() => setImageError(true)}
           />
         </>

@@ -553,6 +553,7 @@ const HomePage: React.FC = () => {
         </div>
       </div>
 
+      {/* Login Modal - Triggered by Ask a Question or URL params */}
       <LoginModal isOpen={isLoginModalOpen} onClose={handleCloseLogin} />
     </>
   );

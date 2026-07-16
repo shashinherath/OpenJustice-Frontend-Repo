@@ -36,14 +36,14 @@ const ConstellationBackground: React.FC<ConstellationBackgroundProps> = ({
       height = canvas.height = canvas.offsetHeight;
 
       // Adjust particle count based on screen size for performance
-      const particleCount = Math.min(Math.floor((width * height) / 12000), 120);
+      const particleCount = Math.min(Math.floor((width * height) / 5000), 300);
       particles = [];
       for (let i = 0; i < particleCount; i++) {
         particles.push({
           x: Math.random() * width,
           y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.8,
-          vy: (Math.random() - 0.5) * 0.8,
+          vx: (Math.random() - 0.5) * 2.0,
+          vy: (Math.random() - 0.5) * 2.0,
           radius: Math.random() * 2 + 1,
         });
       }
