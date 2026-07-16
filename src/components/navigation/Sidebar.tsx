@@ -244,7 +244,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                   </span>
                   {!isCollapsed && (
                     <p
-                      className={`truncate pr-5 ${selectedChatId === chat.id ? "text-sm font-medium" : "text-sm font-normal"}`}
+                      className={`flex-1 min-w-0 truncate transition-all ${selectedChatId === chat.id ? "text-sm font-medium" : "text-sm font-normal"} group-hover:pr-8`}
                     >
                       {chat.title}
                     </p>
@@ -260,7 +260,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
 
                   {!isCollapsed && (
                     <button
-                      className="ml-auto rounded p-1 text-slate-400 opacity-0 transition-all hover:bg-slate-200 hover:text-slate-700 group-hover:opacity-100 dark:hover:bg-border-dark dark:hover:text-slate-200 cursor-pointer"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-slate-400 opacity-0 transition-all hover:bg-slate-200 hover:text-slate-700 group-hover:opacity-100 dark:hover:bg-border-dark dark:hover:text-slate-200 cursor-pointer"
                       type="button"
                       aria-label="Chat item actions"
                       onClick={(event) => {
