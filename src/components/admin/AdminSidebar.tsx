@@ -1,14 +1,16 @@
-﻿import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import BrandLogo from "@/components/ui/BrandLogo";
 import { ADMIN_MENU_ITEMS, type AdminMenuGroup } from "@/constants/admin-flow";
 import { useAuthStore } from "@/stores/authStore";
+import { getMediaUrl } from "@/utils/urlUtils";
 import { useSettingsModal } from "@/hooks/common/useSettingsModal";
 
 const AdminSidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
   const { openProfile } = useSettingsModal();
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
@@ -200,14 +202,22 @@ const AdminSidebar: React.FC = () => {
             aria-haspopup="menu"
             aria-expanded={profileMenuOpen}
           >
-            <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/5">
-              <span className="material-symbols-outlined text-white">
-                account_circle
-              </span>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/10 bg-white/5">
+              {user?.avatarUrl ? (
+                <img
+                  src={getMediaUrl(user.avatarUrl)}
+                  alt="Admin avatar"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <span className="material-symbols-outlined text-white">
+                  account_circle
+                </span>
+              )}
             </div>
             <div className="flex-1 overflow-hidden">
               <p className="truncate text-sm font-bold text-white">
-                Admin User
+                {user?.name || "Admin User"}
               </p>
               <p className="truncate text-[10px] uppercase tracking-widest text-slate-500">
                 System Overseer

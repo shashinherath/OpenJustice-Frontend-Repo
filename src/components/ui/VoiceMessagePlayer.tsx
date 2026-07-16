@@ -131,19 +131,6 @@ const VoiceMessagePlayer: React.FC<VoiceMessagePlayerProps> = ({ audioUrl, sende
           </div>
         </div>
       </div>
-
-      {/* Avatar outside the box on the right (if isUser) */}
-      <div className="shrink-0 flex items-center justify-center size-10 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden relative border-2 border-white/10 shadow-sm">
-        {isUser ? (
-          <div className="absolute inset-0 bg-slate-400 flex items-center justify-center">
-            <span className="material-symbols-outlined text-[24px] text-white">person</span>
-          </div>
-        ) : (
-          <div className="absolute inset-0 bg-blue-100 flex items-center justify-center text-blue-600">
-            <BrandLogo containerClassName="flex items-center justify-center size-6" iconClassName="text-xl" />
-          </div>
-        )}
-      </div>
     </div>
   );
 };
