@@ -161,7 +161,7 @@ const ChatPage: React.FC = () => {
                   : "border-b-2 border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
               }`}
             >
-              Research
+              {t("chatTabResearch")}
             </button>
             <button
               onClick={() => handleTabChange("library")}
@@ -171,7 +171,7 @@ const ChatPage: React.FC = () => {
                   : "border-b-2 border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
               }`}
             >
-              Legal Library
+              {t("chatTabLibrary")}
             </button>
             <button
               onClick={() => handleTabChange("analyzer")}
@@ -181,7 +181,7 @@ const ChatPage: React.FC = () => {
                   : "border-b-2 border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
               }`}
             >
-              Document Analyzer
+              {t("chatTabAnalyzer")}
             </button>
             <button
               onClick={() => handleTabChange("lawyers")}
@@ -191,7 +191,7 @@ const ChatPage: React.FC = () => {
                   : "border-b-2 border-transparent text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
               }`}
             >
-              Lawyer Directory
+              {t("chatTabLawyers")}
             </button>
           </nav>
         </div>
