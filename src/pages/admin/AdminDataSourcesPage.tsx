@@ -8,6 +8,7 @@ const AdminDataSourcesPage: React.FC = () => {
     isLoading,
     error,
     isUploading,
+    uploadProgress,
     searchQuery,
     filterLanguage,
     filterStatus,
@@ -208,7 +209,7 @@ const AdminDataSourcesPage: React.FC = () => {
             disabled={isUploading || !selectedFile}
             className="rounded border border-cyan-400/30 bg-cyan-500/15 px-4 py-2 text-xs font-bold uppercase tracking-widest text-cyan-100 transition-colors hover:bg-cyan-500/25 disabled:opacity-50"
           >
-            {isUploading ? "Uploading..." : "Upload"}
+            {isUploading ? `Uploading... (${uploadProgress}%)` : "Upload"}
           </button>
           <button
             type="button"
