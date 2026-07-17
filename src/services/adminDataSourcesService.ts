@@ -54,23 +54,56 @@ export const adminDataSourcesService = {
     return response.data.data;
   },
 
-  async uploadDocument(file: File, language: string, collectionId: string, publishedYear: string): Promise<DocumentItem> {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("language", language);
-    formData.append("collection_id", collectionId);
-    if (publishedYear) {
-      formData.append("published_year", publishedYear);
-    }
+  async uploadDocument(
+    file: File, 
+    language: string, 
+    collectionId: string, 
+    publishedYear: string,
+    onProgress?: (progress: number) => void
+  ): Promise<DocumentItem> {
+    const CHUNK_SIZE = 1 * 1024 * 1024; // 1 MB chunk
+    const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
     
-    // In a real app we might also extract title or let user specify type
-    formData.append("title", file.name);
+    // 1. Initialize
+    const initRes = await apiClient.post<SuccessResponse<{ upload_id: string }>>("/documents/chunked/initialize");
+    const uploadId = initRes.data.data.upload_id;
 
-    const response = await apiClient.post<SuccessResponse<DocumentItem>>("/documents", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data"
+    // 2. Upload chunks sequentially
+    for (let i = 0; i < totalChunks; i++) {
+      const start = i * CHUNK_SIZE;
+      const end = Math.min(start + CHUNK_SIZE, file.size);
+      const chunk = file.slice(start, end);
+
+      const chunkForm = new FormData();
+      chunkForm.append("upload_id", uploadId);
+      chunkForm.append("chunk_index", i.toString());
+      chunkForm.append("file", chunk, file.name);
+
+      await apiClient.post("/documents/chunked/upload", chunkForm, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+
+      if (onProgress) {
+        onProgress(Math.round(((i + 1) / totalChunks) * 100));
       }
+    }
+
+    // 3. Complete
+    const completeForm = new FormData();
+    completeForm.append("upload_id", uploadId);
+    completeForm.append("filename", file.name);
+    completeForm.append("total_chunks", totalChunks.toString());
+    completeForm.append("language", language);
+    completeForm.append("collection_id", collectionId);
+    if (publishedYear) {
+      completeForm.append("published_year", publishedYear);
+    }
+    completeForm.append("title", file.name);
+
+    const response = await apiClient.post<SuccessResponse<DocumentItem>>("/documents/chunked/complete", completeForm, {
+      headers: { "Content-Type": "multipart/form-data" }
     });
+
     return response.data.data;
   },
 

@@ -6,6 +6,7 @@ interface AdminDataSourcesState {
   isLoading: boolean;
   error: string | null;
   isUploading: boolean;
+  uploadProgress: number;
 
   searchQuery: string;
   filterLanguage: string;
@@ -32,6 +33,7 @@ export const useAdminDataSourcesStore = create<AdminDataSourcesState>((set, get)
   isLoading: true,
   error: null,
   isUploading: false,
+  uploadProgress: 0,
 
   searchQuery: "",
   filterLanguage: "All",
@@ -71,18 +73,26 @@ export const useAdminDataSourcesStore = create<AdminDataSourcesState>((set, get)
   },
 
   uploadDocument: async (file: File, language: string, collectionId: string, publishedYear: string) => {
-    set({ isUploading: true, error: null });
+    set({ isUploading: true, uploadProgress: 0, error: null });
     try {
-      const newDoc = await adminDataSourcesService.uploadDocument(file, language, collectionId, publishedYear);
+      const newDoc = await adminDataSourcesService.uploadDocument(
+        file, 
+        language, 
+        collectionId, 
+        publishedYear,
+        (progress) => set({ uploadProgress: progress })
+      );
       const { documents } = get();
       set({ 
         documents: [newDoc, ...documents],
-        isUploading: false 
+        isUploading: false,
+        uploadProgress: 0 
       });
     } catch (error: any) {
       set({ 
         error: error.message || "Failed to upload document.",
-        isUploading: false 
+        isUploading: false,
+        uploadProgress: 0 
       });
       throw error;
     }
