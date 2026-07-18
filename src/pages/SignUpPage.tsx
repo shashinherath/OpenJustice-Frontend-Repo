@@ -449,6 +449,27 @@ const SignUpPage: React.FC = () => {
                 <strong>{t("disclaimer")}</strong> {t("disclaimerText")}
               </div>
             </form>
+            <div className="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">
+              This site is protected by reCAPTCHA and the Google{" "}
+              <a
+                href="https://policies.google.com/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline dark:text-blue-400"
+              >
+                Privacy Policy
+              </a>{" "}
+              and{" "}
+              <a
+                href="https://policies.google.com/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:underline dark:text-blue-400"
+              >
+                Terms of Service
+              </a>{" "}
+              apply.
+            </div>
             </>
             )}
           </div>
