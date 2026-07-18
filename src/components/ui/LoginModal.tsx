@@ -225,8 +225,30 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
           </button>
         </form>
 
+        <div className="mt-6 text-center text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+          This site is protected by reCAPTCHA and the Google{" "}
+          <a
+            href="https://policies.google.com/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline dark:text-blue-400"
+          >
+            Privacy Policy
+          </a>{" "}
+          and{" "}
+          <a
+            href="https://policies.google.com/terms"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:underline dark:text-blue-400"
+          >
+            Terms of Service
+          </a>{" "}
+          apply.
+        </div>
+
         {/* Sign Up Link */}
-        <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700 flex flex-col items-center gap-4">
+        <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700 flex flex-col items-center gap-4">
           <p className="text-slate-500 dark:text-slate-400 text-sm">
             {t("dontHaveAccount")}
           </p>

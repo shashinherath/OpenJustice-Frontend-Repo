@@ -58,3 +58,8 @@
 ::view-transition-new(root) {
   z-index: 9999;
 }
+
+/* Hide reCAPTCHA badge */
+.grecaptcha-badge {
+  visibility: hidden;
+}
