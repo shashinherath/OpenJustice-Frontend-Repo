@@ -53,7 +53,7 @@ const ConversationComposer: React.FC<ConversationComposerProps> = ({
   return (
     <>
       <style>{`@keyframes gradient-shift { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }`}</style>
-      <div className="relative isolate flex w-full flex-1 items-center rounded-[30px] p-[1.5px] transition-all duration-300">
+      <div className="relative isolate flex w-full min-w-0 flex-1 items-center rounded-[30px] p-[1.5px] transition-all duration-300">
         <span
           aria-hidden="true"
           className={`pointer-events-none absolute inset-0 rounded-[30px] bg-[linear-gradient(90deg,rgba(34,211,238,0.95),rgba(59,130,246,0.95),rgba(168,85,247,0.9),rgba(245,158,11,0.85),rgba(34,211,238,0.95))] bg-size-[300%_100%] blur-xl transition-opacity duration-300 animate-[gradient-shift_4s_linear_infinite] ${
@@ -66,7 +66,7 @@ const ConversationComposer: React.FC<ConversationComposerProps> = ({
             isTypingActive ? "opacity-100" : "opacity-0"
           }`}
         />
-        <div className="relative z-10 flex w-full items-center gap-1 rounded-[28px] border border-slate-200 bg-white px-3 py-2.5 shadow-[0_16px_50px_rgba(0,0,0,0.08)] backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-[#111111] dark:shadow-[0_16px_50px_rgba(0,0,0,0.45)]">
+        <div className="relative z-10 flex w-full min-w-0 items-center gap-1 rounded-[28px] border border-slate-200 bg-white px-3 py-2.5 shadow-[0_16px_50px_rgba(0,0,0,0.08)] backdrop-blur-xl transition-all duration-300 dark:border-white/10 dark:bg-[#111111] dark:shadow-[0_16px_50px_rgba(0,0,0,0.45)]">
           <button
             className="flex size-10 shrink-0 items-center justify-center text-slate-400 transition-colors hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-300 dark:hover:text-white"
             title={attachTitle}

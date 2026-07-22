@@ -246,7 +246,7 @@ const LanguageSwitcherButton: React.FC<LanguageSwitcherButtonProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative inline-block ${className}`.trim()}
+      className={`relative hidden md:inline-block ${className}`.trim()}
     >
       <button
         ref={triggerRef}

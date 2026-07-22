@@ -9,9 +9,10 @@ import ChatActionModal from "@/components/ui/ChatActionModal";
 
 interface SidebarProps {
   showBrand?: boolean;
+  onMobileClose?: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
+const Sidebar: React.FC<SidebarProps> = ({ showBrand = true, onMobileClose }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [activeChatMenu, setActiveChatMenu] = useState<string | null>(null);
@@ -174,6 +175,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
             type="button"
             onClick={() => {
               navigate("/chat");
+              onMobileClose?.();
             }}
           >
             <span
@@ -237,6 +239,7 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true }) => {
                     setActiveConversation(chat.id);
                     navigate(`/chat/${chat.id}`);
                     void loadConversation(chat.id);
+                    onMobileClose?.();
                   }}
                 >
                   <span className="material-symbols-outlined text-[18px]">

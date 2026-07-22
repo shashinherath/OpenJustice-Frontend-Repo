@@ -200,8 +200,8 @@ const AnswerPage: React.FC = () => {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <header className="shrink-0 flex items-center justify-between border-b border-slate-200 bg-white px-8 py-4 dark:border-border-dark dark:bg-brand-bg">
-        <div className="min-w-0">
+      <header className="shrink-0 flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 md:px-8 md:py-4 dark:border-border-dark dark:bg-brand-bg">
+        <div className="min-w-0 pr-4">
           <h1 className="truncate text-lg font-bold text-slate-900 dark:text-white">
             {chat.title}
           </h1>
@@ -357,7 +357,7 @@ const AnswerPage: React.FC = () => {
       </div>
 
       <footer className="shrink-0 border-t border-transparent bg-transparent px-4 py-4 dark:border-transparent dark:bg-transparent">
-        <div className="mx-auto flex w-full max-w-4xl flex-col items-center gap-3 md:flex-row">
+        <div className="mx-auto flex w-full min-w-0 max-w-4xl flex-row items-center gap-2 sm:gap-3">
           {recordingState.isRecording || isVoicePreview ? (
             <VoiceRecordingUI
               durationLabel={formatDuration(recordingState.duration)}
@@ -384,7 +384,7 @@ const AnswerPage: React.FC = () => {
           )}
           {!recordingState.isRecording && !isVoicePreview ? (
             <button
-              className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 font-bold shadow-md transition-all md:mt-0 dark:border-white/10 dark:shadow-[0_18px_45px_rgba(15,23,42,0.18)] ${
+              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 font-bold shadow-md transition-all dark:border-white/10 dark:shadow-[0_18px_45px_rgba(15,23,42,0.18)] ${
                 !question.trim()
                   ? "cursor-not-allowed bg-slate-100 text-slate-400 shadow-none dark:bg-slate-800 dark:text-slate-600"
                   : "cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"
@@ -400,7 +400,7 @@ const AnswerPage: React.FC = () => {
           ) : null}
           {isVoicePreview ? (
             <button
-              className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 font-bold shadow-md transition-all md:mt-0 dark:border-white/10 dark:shadow-[0_18px_45px_rgba(15,23,42,0.18)] ${"cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"}`}
+              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 font-bold shadow-md transition-all dark:border-white/10 dark:shadow-[0_18px_45px_rgba(15,23,42,0.18)] ${"cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"}`}
               type="button"
               onClick={handleSendVoice}
             >
