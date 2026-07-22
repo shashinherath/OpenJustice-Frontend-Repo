@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import BrowseLayout from "@/layout/BrowseLayout";
+
 import TopicCard, { type TopicData } from "@/components/ui/TopicCard";
 
 const TopicBrowserPage: React.FC = () => {

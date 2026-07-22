@@ -1,9 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import BrandLogo from "@/components/ui/BrandLogo";
-import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
-import LanguageSwitcherButton from "@/components/ui/LanguageSwitcherButton";
+
 
 const ResearchPage: React.FC = () => {
   const { t } = useTranslation();

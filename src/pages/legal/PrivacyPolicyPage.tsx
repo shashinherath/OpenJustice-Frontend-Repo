@@ -1,14 +1,12 @@
-import React, { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import React from "react";
+
 import { useTranslation } from "react-i18next";
-import BrandLogo from "@/components/ui/BrandLogo";
-import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
-import LanguageSwitcherButton from "@/components/ui/LanguageSwitcherButton";
+
 
 const PrivacyPolicyPage: React.FC = () => {
   const { t } = useTranslation();
-  const [searchQuery, setSearchQuery] = useState("");
-  const searchInputRef = useRef<HTMLInputElement>(null);
+
+
 
   const privacyHighlights = [t("privacyHighlight1"), t("privacyHighlight2"), t("privacyHighlight3")];
 
@@ -69,9 +67,7 @@ const PrivacyPolicyPage: React.FC = () => {
     },
   ];
 
-  const handleSearchClick = () => {
-    searchInputRef.current?.focus();
-  };
+
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 antialiased dark:bg-[#191919] dark:text-slate-100">
