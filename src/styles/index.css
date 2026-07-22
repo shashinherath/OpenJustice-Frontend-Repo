@@ -34,14 +34,28 @@
     width: 4px;
     height: 4px;
   }
+  
+  /* Light mode (default) */
   ::-webkit-scrollbar-track {
-    background: #191919;
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #333333;
+    background: #cbd5e1;
     border-radius: 10px;
   }
   ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
+  /* Dark mode */
+  .dark ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .dark ::-webkit-scrollbar-thumb {
+    background: #333333;
+    border-radius: 10px;
+  }
+  .dark ::-webkit-scrollbar-thumb:hover {
     background: #444444;
   }
 }

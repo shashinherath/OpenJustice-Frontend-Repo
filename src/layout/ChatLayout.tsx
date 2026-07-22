@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Sidebar from "@/components/navigation/Sidebar";
 import BrandLogo from "@/components/ui/BrandLogo";
 import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
@@ -34,8 +35,10 @@ const ChatLayout: React.FC<ChatLayoutProps> = ({ children }) => {
              <button type="button" onClick={() => setIsMobileMenuOpen(true)} className="p-1 cursor-pointer">
                <span className="material-symbols-outlined text-slate-700 dark:text-slate-300">menu</span>
              </button>
-             <BrandLogo containerClassName="bg-primary dark:bg-slate-200 rounded-lg size-8 flex items-center justify-center overflow-hidden" iconClassName="text-white dark:text-[#191919] scale-110" />
-             <span className="font-bold text-slate-900 dark:text-white">OpenJustice</span>
+             <Link to="/" className="flex items-center gap-3">
+               <BrandLogo containerClassName="bg-primary dark:bg-slate-200 rounded-lg size-8 flex items-center justify-center overflow-hidden" iconClassName="text-white dark:text-[#191919] scale-110" />
+               <span className="font-bold text-slate-900 dark:text-white">OpenJustice</span>
+             </Link>
           </div>
           <div className="flex items-center gap-2">
              <ThemeToggleButton />

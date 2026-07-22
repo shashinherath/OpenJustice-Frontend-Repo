@@ -41,14 +41,7 @@ const ReleaseNotesPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 antialiased dark:bg-[#191919] dark:text-slate-100">
-      <header className="border-b border-slate-200 bg-white/95 backdrop-blur dark:border-border-dark dark:bg-[#191919]/95">
-        <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link className="text-lg font-black tracking-tight text-slate-900 dark:text-white" to="/">
-            OpenJustice
-          </Link>
-          <div className="flex items-center gap-3" />
-        </div>
-      </header>
+      
 
       <main className="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
         <section className="mb-10 max-w-3xl">

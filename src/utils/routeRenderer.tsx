@@ -58,7 +58,20 @@ const RequireAdmin: React.FC<{ children: React.ReactNode }> = ({
 };
 
 const withLayout = (path: string, content: React.ReactNode) => {
-  if (path === "/") {
+  const mainLayoutPaths = [
+    "/",
+    "/privacy-policy",
+    "/terms-of-service",
+    "/about-us",
+    "/contact",
+    "/help",
+    "/release-notes",
+    "/topics",
+    "/research",
+    "/developers"
+  ];
+
+  if (mainLayoutPaths.includes(path)) {
     return <MainLayout>{content}</MainLayout>;
   }
 
@@ -75,14 +88,6 @@ const withLayout = (path: string, content: React.ReactNode) => {
       <RequireAdmin>
         <AdminLayout>{content}</AdminLayout>
       </RequireAdmin>
-    );
-  }
-
-  if (path === "/developers") {
-    return (
-      <RequireAuth>
-        <MainLayout>{content}</MainLayout>
-      </RequireAuth>
     );
   }
 
