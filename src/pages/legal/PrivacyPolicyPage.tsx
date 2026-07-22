@@ -75,51 +75,7 @@ const PrivacyPolicyPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 antialiased dark:bg-[#191919] dark:text-slate-100">
-      <header className="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="px-4 md:px-10 lg:px-40 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <Link className="flex items-center gap-3 text-lg font-black tracking-tight text-slate-900 dark:text-white" to="/">
-              <BrandLogo
-                containerClassName="flex size-9 items-center justify-center overflow-hidden rounded-lg bg-primary text-white dark:bg-white dark:text-primary"
-                iconClassName="text-2xl"
-              />
-              <span>OpenJustice</span>
-            </Link>
-            <nav className="hidden items-center gap-5 md:flex">
-              <div className="flex items-center gap-2">
-                <input
-                  ref={searchInputRef}
-                  className="h-9 w-52 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none transition-colors placeholder:text-slate-400 focus:border-slate-400 dark:border-slate-700 dark:bg-[#232323] dark:text-slate-100"
-                  type="text"
-                  placeholder={t("policySearchPlaceholder")}
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                />
-                <button
-                  className="flex items-center text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white"
-                  type="button"
-                  aria-label={t("searchPrivacyPolicy")}
-                  onClick={handleSearchClick}
-                >
-                  <span className="material-symbols-outlined text-[20px]">search</span>
-                </button>
-              </div>
-            </nav>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <ThemeToggleButton />
-            <LanguageSwitcherButton />
-            <Link
-              className="inline-flex items-center gap-2 rounded-lg bg-primary text-white dark:bg-white dark:text-primary px-4 py-2 text-sm font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors"
-              to="/chat"
-            >
-              <span className="material-symbols-outlined text-sm">chat</span>
-              {t("tryOpenJustice")}
-            </Link>
-          </div>
-        </div>
-      </header>
+      
 
       <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
         <section className="mb-14 lg:mb-16">
@@ -229,28 +185,7 @@ const PrivacyPolicyPage: React.FC = () => {
           </div>
         </section>
 
-        <footer className="mt-8 flex flex-col items-center justify-center gap-6 border-t border-slate-200 py-8 text-center dark:border-slate-800">
-          <div className="flex items-center gap-2 text-center">
-            <span className="text-sm font-medium text-slate-500">{t("copyright")}</span>
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 text-center">
-            <Link className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" to="/terms-of-service">
-              {t("termsOfService")}
-            </Link>
-            <Link className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" to="/about-us">
-              {t("aboutUs")}
-            </Link>
-            <Link className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" to="/contact">
-              {t("contact")}
-            </Link>
-            <Link className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" to="/help">
-              {t("help")}
-            </Link>
-            <Link className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 transition-colors hover:text-slate-900 dark:hover:text-white" to="/release-notes">
-              {t("releaseNotes")}
-            </Link>
-          </div>
-        </footer>
+        
       </div>
     </div>
   );

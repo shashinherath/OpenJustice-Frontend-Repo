@@ -38,28 +38,7 @@ const DeveloperPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-linear-to-b from-slate-50 to-white dark:from-[#191919] dark:to-slate-900">
       {/* Header */}
-      <header className="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
-        <div className="px-4 md:px-10 lg:px-40 py-4 flex items-center justify-between">
-          <Link className="flex items-center gap-3 text-lg font-black tracking-tight text-slate-900 dark:text-white" to="/">
-            <BrandLogo
-              containerClassName="flex size-9 items-center justify-center overflow-hidden rounded-lg bg-primary text-white dark:bg-white dark:text-primary"
-              iconClassName="text-2xl"
-            />
-            <span>OpenJustice</span>
-          </Link>
-          <div className="flex items-center gap-3">
-            <ThemeToggleButton />
-            <LanguageSwitcherButton />
-            <Link
-              className="inline-flex items-center gap-2 rounded-lg bg-primary text-white dark:bg-white dark:text-primary px-4 py-2 text-sm font-bold hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors"
-              to="/chat"
-            >
-              <span className="material-symbols-outlined text-sm">chat</span>
-              {t("tryOpenJustice")}
-            </Link>
-          </div>
-        </div>
-      </header>
+      
 
       {/* Main Content */}
       <main className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
