@@ -151,9 +151,9 @@ const ChatPage: React.FC = () => {
         <div className="absolute bottom-0 left-1/3 h-72 w-72 rounded-full bg-white/40 blur-3xl dark:bg-white/5" />
       </div>
 
-      <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-white/40 bg-white/55 px-6 py-4 shadow-[0_8px_32px_rgba(15,23,42,0.08)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#191919]/55 md:px-8">
-        <div className="flex items-center gap-6">
-          <nav className="flex items-center gap-6">
+      <header className="relative z-10 flex shrink-0 items-center justify-between border-b border-white/40 bg-white/55 px-4 py-3 md:px-8 md:py-4 shadow-[0_8px_32px_rgba(15,23,42,0.08)] backdrop-blur-2xl dark:border-white/10 dark:bg-[#191919]/55 overflow-x-auto hide-scrollbar">
+        <div className="flex items-center gap-4 md:gap-6 min-w-max pr-4">
+          <nav className="flex items-center gap-4 md:gap-6">
             <button
               onClick={() => handleTabChange("research")}
               className={`cursor-pointer py-1 text-sm font-semibold transition-colors ${
@@ -196,7 +196,7 @@ const ChatPage: React.FC = () => {
             </button>
           </nav>
         </div>
-        <div className="flex h-full items-center gap-3">
+        <div className="hidden md:flex h-full items-center gap-3">
           <ThemeToggleButton />
           <LanguageSwitcherButton />
         </div>
@@ -254,7 +254,7 @@ const ChatPage: React.FC = () => {
             </button>
           </div>
 
-          <div className="flex w-full flex-col items-center gap-3 md:flex-row">
+          <div className="flex w-full min-w-0 flex-row items-center gap-2 sm:gap-3">
             {recordingState.isRecording || isVoicePreview ? (
               <VoiceRecordingUI
                 durationLabel={formatDuration(recordingState.duration)}
@@ -280,7 +280,7 @@ const ChatPage: React.FC = () => {
             )}
             {!recordingState.isRecording && !isVoicePreview ? (
               <button
-                className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 font-bold shadow-md transition-all md:mt-0 dark:border-white/10 dark:shadow-[0_18px_45px_rgba(15,23,42,0.18)] ${
+                className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 font-bold shadow-md transition-all dark:border-white/10 dark:shadow-[0_18px_45px_rgba(15,23,42,0.18)] ${
                   !question.trim()
                     ? "cursor-not-allowed bg-slate-100 text-slate-400 shadow-none dark:bg-slate-800 dark:text-slate-600"
                     : "cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"
@@ -296,7 +296,7 @@ const ChatPage: React.FC = () => {
             ) : null}
             {isVoicePreview ? (
               <button
-                className={`mt-3 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 font-bold shadow-md transition-all md:mt-0 dark:border-white/10 dark:shadow-[0_18px_45px_rgba(15,23,42,0.18)] ${"cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"}`}
+                className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-200 font-bold shadow-md transition-all dark:border-white/10 dark:shadow-[0_18px_45px_rgba(15,23,42,0.18)] ${"cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-slate-200 dark:text-black dark:hover:bg-white"}`}
                 type="button"
                 onClick={handleSendVoice}
               >

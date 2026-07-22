@@ -5,11 +5,11 @@ import ThemeToggleButton from "@/components/ui/ThemeToggleButton";
 
 const BrowseHeader: React.FC = () => {
   return (
-    <header className="flex items-center justify-between border-b border-[#2d2d2d] px-6 py-3 bg-[#191919] sticky top-0 z-50">
-      <div className="flex items-center gap-8">
-        <Link className="flex items-center gap-3" to="/">
-          <BrandLogo containerClassName="flex size-9 items-center justify-center overflow-hidden rounded-lg border border-white/20 bg-white text-primary" iconClassName="text-3xl" />
-          <h2 className="text-xl font-black leading-tight tracking-widest uppercase text-white">OpenJustice</h2>
+    <header className="flex items-center justify-between border-b border-[#2d2d2d] px-4 md:px-6 py-3 bg-[#191919] sticky top-0 z-50">
+      <div className="flex items-center gap-4 md:gap-8 min-w-0">
+        <Link className="flex items-center gap-3 min-w-0" to="/">
+          <BrandLogo containerClassName="flex shrink-0 size-9 items-center justify-center overflow-hidden rounded-lg border border-white/20 bg-white text-primary" iconClassName="text-3xl" />
+          <h2 className="text-lg md:text-xl font-black leading-tight tracking-widest uppercase text-white truncate">OpenJustice</h2>
         </Link>
       </div>
       <div className="flex flex-1 justify-end gap-6 items-center">
