@@ -60,6 +60,15 @@ src/
 │   ├── chat/                     # Chat-specific components
 │   │   └── ConversationComposer.tsx  # Message input & send controls
 │   │
+│   ├── analyzer/                 # Document analysis components
+│   │   └── DocumentAnalyzer.tsx  # Legal document analyzer UI
+│   │
+│   ├── lawyers/                  # Lawyer directory components
+│   │   └── LawyerDirectory.tsx   # Searchable lawyer directory
+│   │
+│   ├── library/                  # Legal library components
+│   │   └── LegalLibrary.tsx      # Case law & document library
+│   │
 │   ├── common/                   # Shared generic components
 │   │   └── MarkdownText.tsx      # Renders markdown with syntax highlighting
 │   │
@@ -77,10 +86,12 @@ src/
 │   ├── ui/                       # Base UI primitives (Radix wrappers)
 │   │   ├── BrandLogo.tsx         # App logo component
 │   │   ├── ChatActionModal.tsx   # Chat action confirmation modal
+│   │   ├── ConstellationBackground.tsx # Interactive background effect
 │   │   ├── FeatureCard.tsx       # Homepage feature showcase card
 │   │   ├── LanguageSelect.tsx    # Language dropdown selector
 │   │   ├── LanguageSwitcherButton.tsx  # Language toggle button
 │   │   ├── LoginModal.tsx        # Login/auth modal
+│   │   ├── ThemeToggleButton.tsx # Dark/light mode toggle button
 │   │   ├── TopicCard.tsx         # Legal topic browsing card
 │   │   ├── VoiceMessagePlayer.tsx # Audio playback for voice messages
 │   │   └── VoiceRecordingUI.tsx  # Voice recording interface
@@ -106,6 +117,8 @@ src/
 │   └── ThemeContext.tsx           # Light/dark theme toggle & accent color
 │
 ├── hooks/                        # Custom React hooks
+│   ├── useRecaptcha.ts           # Google reCAPTCHA v3 hook
+│   ├── useVoiceRecording.ts      # Full voice recording lifecycle hook
 │   ├── auth/                     # (empty — reserved)
 │   ├── chat/                     # (empty — reserved)
 │   ├── common/
@@ -113,8 +126,7 @@ src/
 │   │   └── useTheme.ts          # Access ThemeContext
 │   ├── legal/                    # (empty — reserved)
 │   ├── voice/                    # (empty — reserved)
-│   ├── websocket/                # (empty — reserved)
-│   └── useVoiceRecording.ts      # Full voice recording lifecycle hook
+│   └── websocket/                # (empty — reserved)
 │
 ├── layout/                       # Layout wrapper components
 │   ├── AdminLayout.tsx           # Admin sidebar + header shell
@@ -170,6 +182,7 @@ src/
 │   │       ├── RetrievalSettingsPage.tsx
 │   │       └── SecuritySettingsPage.tsx
 │   │
+│   ├── auth/                     # Authentication pages (reserved)
 │   ├── chat/
 │   │   ├── ChatPage.tsx          # New chat / conversation list
 │   │   └── AnswerPage.tsx        # Active conversation view
@@ -195,8 +208,10 @@ src/
 │   ├── dashboard/                # (empty — reserved)
 │   ├── DeveloperPage.tsx         # Developer/API information page
 │   ├── HomePage.tsx              # Public landing page
+│   ├── NotFoundPage.tsx          # 404 Error page
 │   ├── ResearchPage.tsx          # Research overview page
-│   └── SignUpPage.tsx            # User registration page
+│   ├── SignUpPage.tsx            # User registration page
+│   └── VerifyEmailPage.tsx       # Email verification handling page
 │
 ├── services/                     # API service layer
 │   ├── apiClient.ts              # Axios instance with 401 interceptor
@@ -205,6 +220,8 @@ src/
 │   ├── adminService.ts           # Admin overview, users, logs, analytics
 │   ├── adminDataSourcesService.ts # Data source CRUD
 │   ├── adminKnowledgeService.ts  # Knowledge base operations
+│   ├── analyzerService.ts        # Document analysis service
+│   ├── libraryService.ts         # Legal library service
 │   └── socketService.ts          # Socket.IO singleton connection
 │
 ├── stores/                       # Zustand state management
@@ -216,7 +233,8 @@ src/
 │   ├── adminStore.ts             # Admin overview & evaluation data
 │   ├── adminDataSourcesStore.ts  # Admin data sources state
 │   ├── adminKnowledgeStore.ts    # Admin knowledge base state
-│   └── adminUsersStore.ts        # Admin user management state
+│   ├── adminUsersStore.ts        # Admin user management state
+│   └── libraryStore.ts           # Legal library global state
 │
 ├── styles/                       # Global styles
 │   ├── index.css                 # Tailwind imports, theme tokens, scrollbar styles
@@ -233,7 +251,8 @@ src/
 │
 ├── utils/                        # Utility functions
 │   ├── audioUtils.ts             # Blob-to-DataURL converter
-│   └── routeRenderer.tsx         # Route rendering with layout selection & auth guards
+│   ├── routeRenderer.tsx         # Route rendering with layout selection & auth guards
+│   └── urlUtils.ts               # URL parsing and formatting utilities
 │
 ├── App.tsx                       # Root component (Router, ScrollToTop, global modals)
 └── main.tsx                      # Application entry point (providers, render)
