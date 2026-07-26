@@ -232,7 +232,7 @@ const translation = {
           "privacyClause3Body": "Generative responses include confidence indicators and retrieval trace details to support manual verification of source paths.",
 
           // Home page extra content
-          "homeBadge": "Bridging the Justice Gap",
+          "homeBadge": "Access To Justice, Made Simple.",
           "homeHeroTitleLine1": "Ask a legal question",
           "homeHeroTitleLine2": "in your language.",
           "homeHeroDescription": "Our mission is to democratize legal information. We provide clear, multi-lingual guidance to help you navigate complex systems and protect your rights with confidence.",
