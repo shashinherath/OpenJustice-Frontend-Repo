@@ -394,27 +394,14 @@ export const useChatStore = create<ChatStore>()(
         set({ isTyping: true, error: null });
 
         try {
-          // Send the voice message
-          const aiAudioBlob = await chatService.sendVoiceMessage(
-            chatId,
-            audioBlob,
-          );
-
-          // The backend saves the user message and AI message during the voice processing.
-          // Let's reload the conversation to pull the newly transcribed text and AI reply
-          await get().loadConversation(chatId);
-
-          // Play the received audio automatically
-          const url = URL.createObjectURL(aiAudioBlob);
-          const audio = new Audio(url);
-          audio.onended = () => URL.revokeObjectURL(url);
-          await audio
-            .play()
-            .catch((err) => console.error("Failed to play AI audio:", err));
+          await chatService.sendVoiceMessage(chatId, audioBlob);
         } catch (error: any) {
           set({ error: error?.message || "Failed to send voice message." });
           throw error;
         } finally {
+          // Always reload the conversation so the saved AI reply replaces
+          // the optimistic placeholder — even if the audio response failed.
+          await get().loadConversation(chatId).catch(() => {});
           set({ isTyping: false });
         }
       },
