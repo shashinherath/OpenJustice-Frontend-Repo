@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { adminService, type RetrievalSettingsPayload } from "@/services/adminService";
+import ConfirmationDialog from "@/components/ui/ConfirmationDialog";
 
 
 
@@ -20,6 +21,7 @@ const RetrievalSettingsPage: React.FC = () => {
 
   const [saveNotice, setSaveNotice] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -244,7 +246,7 @@ const RetrievalSettingsPage: React.FC = () => {
         <div className="flex flex-col gap-3 md:flex-row md:items-center">
           <button
             type="button"
-            onClick={handleSave}
+            onClick={() => setConfirmSaveOpen(true)}
             disabled={isLoading}
             className="rounded border border-cyan-400/30 bg-cyan-500/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-cyan-600 dark:text-cyan-300 transition-colors hover:bg-cyan-500/20 disabled:opacity-50"
           >
@@ -255,6 +257,15 @@ const RetrievalSettingsPage: React.FC = () => {
           )}
         </div>
       </section>
+
+      <ConfirmationDialog
+        isOpen={confirmSaveOpen}
+        title="Save Retrieval Settings"
+        message="Are you sure you want to save these retrieval settings? This will affect document retrieval and chunking behaviour."
+        confirmLabel="Save"
+        onConfirm={() => { setConfirmSaveOpen(false); void handleSave(); }}
+        onCancel={() => setConfirmSaveOpen(false)}
+      />
     </div>
   );
 };

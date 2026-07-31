@@ -126,7 +126,7 @@ const AdminAnalyticsPage: React.FC = () => {
       <section className="rounded border border-cyan-400/20 bg-white dark:bg-[#191919] p-6">
         <div>
           <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Simple Analytics
+            Analytics
           </h2>
           <p className="mt-3 max-w-3xl text-sm text-slate-600 dark:text-slate-300">
             Review daily query activity and language distribution to understand

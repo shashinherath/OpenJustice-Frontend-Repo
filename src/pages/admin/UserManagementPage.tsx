@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useAdminUsersStore } from "@/stores/adminUsersStore";
 import type { AdminUserItem } from "@/services/adminService";
 import { getMediaUrl } from "@/utils/urlUtils";
+import ConfirmationDialog from "@/components/ui/ConfirmationDialog";
 
 const maskEmail = (email: string): string => {
   const [localPart, domain] = email.split("@");
@@ -27,6 +28,7 @@ const UserTableCard: React.FC<{
 }> = ({ usersList, title, showAddButton = false, onAddAdmin, onViewUser, onToggleStatus }) => {
   const [localSearch, setLocalSearch] = useState("");
   const [localStatusFilter, setLocalStatusFilter] = useState("All");
+  const [toggleTarget, setToggleTarget] = useState<AdminUserItem | null>(null);
 
   const filteredUsers = useMemo(() => {
     let result = usersList;
@@ -139,7 +141,7 @@ const UserTableCard: React.FC<{
                     {user.status === "Active" ? (
                       <button
                         type="button"
-                        onClick={() => onToggleStatus(user.id, user.status)}
+                        onClick={() => setToggleTarget(user)}
                         className="rounded border border-red-400/30 bg-red-500/10 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-red-600 dark:text-red-300 transition-colors hover:bg-red-500/20"
                       >
                         Block user
@@ -147,7 +149,7 @@ const UserTableCard: React.FC<{
                     ) : (
                       <button
                         type="button"
-                        onClick={() => onToggleStatus(user.id, user.status)}
+                        onClick={() => setToggleTarget(user)}
                         className="rounded border border-green-400/30 bg-green-500/10 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-green-600 dark:text-green-300 transition-colors hover:bg-green-500/20"
                       >
                         Unblock user
@@ -160,6 +162,23 @@ const UserTableCard: React.FC<{
           </tbody>
         </table>
       </div>
+
+      <ConfirmationDialog
+        isOpen={toggleTarget !== null}
+        title={toggleTarget?.status === "Active" ? "Block User" : "Unblock User"}
+        message={
+          toggleTarget?.status === "Active"
+            ? "Are you sure you want to block this user? They will lose access immediately."
+            : "Are you sure you want to unblock this user? They will regain access immediately."
+        }
+        confirmLabel={toggleTarget?.status === "Active" ? "Block" : "Unblock"}
+        variant={toggleTarget?.status === "Active" ? "danger" : "default"}
+        onConfirm={() => {
+          if (toggleTarget) void onToggleStatus(toggleTarget.id, toggleTarget.status);
+          setToggleTarget(null);
+        }}
+        onCancel={() => setToggleTarget(null)}
+      />
     </section>
   );
 };

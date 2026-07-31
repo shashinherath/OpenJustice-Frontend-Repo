@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { adminService, type AISettingsPayload } from "@/services/adminService";
+import ConfirmationDialog from "@/components/ui/ConfirmationDialog";
 
 const AI_MODELS = [
   { value: "gpt-4o", label: "GPT-4o" },
@@ -17,6 +18,7 @@ const AISettingsPage: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [saveNotice, setSaveNotice] = useState<string>("");
+  const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -239,7 +241,7 @@ const AISettingsPage: React.FC = () => {
         <div className="flex flex-col gap-3 md:flex-row md:items-center">
           <button
             type="button"
-            onClick={handleSave}
+            onClick={() => setConfirmSaveOpen(true)}
             disabled={isLoading}
             className="rounded border border-cyan-400/30 bg-cyan-500/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-cyan-600 dark:text-cyan-300 transition-colors hover:bg-cyan-500/20 disabled:opacity-50"
           >
@@ -250,6 +252,15 @@ const AISettingsPage: React.FC = () => {
           )}
         </div>
       </section>
+
+      <ConfirmationDialog
+        isOpen={confirmSaveOpen}
+        title="Save AI Settings"
+        message="Are you sure you want to save these AI model settings? This will affect all active inference requests."
+        confirmLabel="Save"
+        onConfirm={() => { setConfirmSaveOpen(false); void handleSave(); }}
+        onCancel={() => setConfirmSaveOpen(false)}
+      />
     </div>
   );
 };

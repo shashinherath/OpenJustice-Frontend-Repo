@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
-import LanguageSelect from "@/components/ui/LanguageSelect";
 import { useAdminDataSourcesStore } from "@/stores/adminDataSourcesStore";
+import ConfirmationDialog from "@/components/ui/ConfirmationDialog";
 
 const AdminDataSourcesPage: React.FC = () => {
   const {
@@ -26,11 +26,13 @@ const AdminDataSourcesPage: React.FC = () => {
   } = useAdminDataSourcesStore();
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedLanguage, setSelectedLanguage] = useState<string>("English");
-  const [selectedCollectionId, setSelectedCollectionId] = useState<string>("special");
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("");
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string>("");
   const [publishedYear, setPublishedYear] = useState<string>("");
   const [localErrorMessage, setLocalErrorMessage] = useState<string>("");
+  const [yearError, setYearError] = useState<string>("");
   const [collapsedCollections, setCollapsedCollections] = useState<Set<string>>(new Set());
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const toggleCollection = (collectionId: string) => {
     setCollapsedCollections(prev => {
@@ -78,11 +80,15 @@ const AdminDataSourcesPage: React.FC = () => {
       return;
     }
 
+    if (yearError) return;
+
     setLocalErrorMessage("");
     try {
       await uploadDocument(selectedFile, selectedLanguage, selectedCollectionId, publishedYear);
       setSelectedFile(null);
       setPublishedYear("");
+      setSelectedCollectionId("");
+      setSelectedLanguage("");
     } catch (e: any) {
       setLocalErrorMessage(e.message || "Upload failed");
     }
@@ -166,47 +172,62 @@ const AdminDataSourcesPage: React.FC = () => {
             className="w-full rounded border border-cyan-400/20 bg-slate-100 dark:bg-black/30 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 file:mr-4 file:rounded file:border-0 file:bg-cyan-500/15 file:px-3 file:py-2 file:text-xs file:font-semibold file:text-cyan-700 dark:file:text-cyan-100 hover:file:bg-cyan-500/25 disabled:opacity-50"
           />
           <div className="flex flex-col gap-4 sm:flex-row">
-            <div className="w-full sm:w-1/3">
-            <LanguageSelect
+            <select
               value={selectedCollectionId}
-              onChange={(v) => setSelectedCollectionId(v)}
-              options={[
-                { value: "special", label: "Special" },
-                { value: "slr", label: "SLR" },
-                { value: "nlr", label: "NLR" },
-                { value: "sclr", label: "SCLR" },
-                { value: "scoa", label: "SCOA" },
-                { value: "acts", label: "Acts" },
-              ]}
-              ariaLabel="Select collection"
-            />
-            </div>
+              onChange={(e) => setSelectedCollectionId(e.target.value)}
+              aria-label="Select collection"
+              className="w-full sm:w-1/3 rounded border border-cyan-400/20 bg-white dark:bg-[#191919] px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+            >
+              <option value="" disabled hidden>Category</option>
+              <option value="special">Special</option>
+              <option value="slr">SLR</option>
+              <option value="nlr">NLR</option>
+              <option value="sclr">SCLR</option>
+              <option value="scoa">SCOA</option>
+              <option value="acts">Acts</option>
+            </select>
             <input
               type="number"
               placeholder="Year (e.g. 2023)"
               value={publishedYear}
-              onChange={(e) => setPublishedYear(e.target.value)}
-              className="flex w-full sm:w-1/3 min-w-32 items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 py-2 text-left text-sm font-semibold text-slate-800 shadow-lg shadow-black/10 transition-all duration-200 hover:border-slate-400 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 dark:border-slate-700/70 dark:bg-[#191919] dark:text-slate-200 dark:shadow-black/20 dark:hover:border-cyan-400/20 dark:hover:bg-[#202020] placeholder:font-normal placeholder:text-slate-400 dark:placeholder:text-slate-500"
+              onChange={(e) => {
+                const val = e.target.value;
+                setPublishedYear(val);
+                if (val === "") {
+                  setYearError("");
+                } else {
+                  const num = parseInt(val, 10);
+                  const currentYear = new Date().getFullYear();
+                  if (!/^\d{4}$/.test(val) || num < 1800 || num > currentYear) {
+                    setYearError(`Enter a valid year between 1800 and ${currentYear}.`);
+                  } else {
+                    setYearError("");
+                  }
+                }
+              }}
+              className={`w-full sm:w-1/3 min-w-32 rounded border px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-1 placeholder:text-slate-400 dark:placeholder:text-slate-500 bg-white dark:bg-[#191919] ${yearError ? "border-rose-500 focus:border-rose-500 focus:ring-rose-400/30" : "border-cyan-400/20 focus:border-cyan-400 focus:ring-cyan-400"}`}
             />
-            <div className="w-full sm:w-1/3">
-            <LanguageSelect
+            <select
               value={selectedLanguage}
-              onChange={(v) => setSelectedLanguage(v)}
-              options={[
-                { value: "English", label: "English" },
-                { value: "Sinhala", label: "Sinhala" },
-                { value: "Tamil", label: "Tamil" },
-              ]}
-              ariaLabel="Select document language"
-            />
-            </div>
+              onChange={(e) => setSelectedLanguage(e.target.value)}
+              aria-label="Select document language"
+              className="w-full sm:w-1/3 rounded border border-cyan-400/20 bg-white dark:bg-[#191919] px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+            >
+              <option value="" disabled hidden>Language</option>
+              <option value="English">English</option>
+              <option value="Sinhala">Sinhala</option>
+              <option value="Tamil">Tamil</option>
+            </select>
           </div>
         </div>
+        {yearError && (
+          <p className="mt-2 text-xs text-rose-500 dark:text-rose-400">{yearError}</p>
+        )}
         <div className="mt-4 flex flex-wrap items-center gap-4">
           <button
             type="button"
             onClick={handleUploadDocument}
-            disabled={isUploading || !selectedFile}
+            disabled={isUploading || !selectedFile || !selectedCollectionId || !publishedYear || !!yearError || !selectedLanguage}
             className="rounded border border-cyan-400/30 bg-cyan-500/15 px-4 py-2 text-xs font-bold uppercase tracking-widest text-cyan-700 dark:text-cyan-100 transition-colors hover:bg-cyan-500/25 disabled:opacity-50"
           >
             {isUploading ? `Uploading... (${uploadProgress}%)` : "Upload"}
@@ -365,7 +386,7 @@ const AdminDataSourcesPage: React.FC = () => {
                           </button>
                           <button
                             type="button"
-                            onClick={() => deleteDocument(document.id)}
+                            onClick={() => setDeleteTargetId(document.id)}
                             className="rounded border border-red-400/30 bg-red-500/10 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-red-600 dark:text-red-300 transition-colors hover:bg-red-500/20"
                           >
                             Delete
@@ -381,6 +402,19 @@ const AdminDataSourcesPage: React.FC = () => {
           </table>
         </div>
       </section>
+
+      <ConfirmationDialog
+        isOpen={deleteTargetId !== null}
+        title="Delete Document"
+        message="Are you sure you want to permanently delete this document? This action cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={() => {
+          if (deleteTargetId) void deleteDocument(deleteTargetId);
+          setDeleteTargetId(null);
+        }}
+        onCancel={() => setDeleteTargetId(null)}
+      />
     </div>
   );
 };

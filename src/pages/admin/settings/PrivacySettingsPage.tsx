@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ConfirmationDialog from "@/components/ui/ConfirmationDialog";
 
 interface PrivacySettings {
   autoDeleteTranscripts: boolean;
@@ -19,6 +20,7 @@ const PrivacySettingsPage: React.FC = () => {
 
   const [saveNotice, setSaveNotice] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
 
   const handleSave = async () => {
     setIsLoading(true);
@@ -213,7 +215,7 @@ const PrivacySettingsPage: React.FC = () => {
         <div className="flex flex-col gap-3 md:flex-row md:items-center">
           <button
             type="button"
-            onClick={handleSave}
+            onClick={() => setConfirmSaveOpen(true)}
             disabled={isLoading}
             className="rounded border border-cyan-400/30 bg-cyan-500/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-cyan-600 dark:text-cyan-300 transition-colors hover:bg-cyan-500/20 disabled:opacity-50"
           >
@@ -224,6 +226,15 @@ const PrivacySettingsPage: React.FC = () => {
           )}
         </div>
       </section>
+
+      <ConfirmationDialog
+        isOpen={confirmSaveOpen}
+        title="Save Privacy Settings"
+        message="Are you sure you want to save these privacy settings? Changes to data retention and PII masking will take effect immediately."
+        confirmLabel="Save"
+        onConfirm={() => { setConfirmSaveOpen(false); void handleSave(); }}
+        onCancel={() => setConfirmSaveOpen(false)}
+      />
     </div>
   );
 };
