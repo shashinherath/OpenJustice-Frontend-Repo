@@ -8,7 +8,7 @@ const MOUSE_RADIUS = 200;
 const MOUSE_RADIUS_SQUARED = MOUSE_RADIUS * MOUSE_RADIUS;
 
 const MOUSE_FORCE = 0.08;
-const HOME_RETURN_FORCE = 0.02;
+const HOME_RETURN_FORCE = 0.05;
 
 const BASE_CONNECTION_DISTANCE = 83;
 const BASE_CONNECTION_DISTANCE_SQUARED = BASE_CONNECTION_DISTANCE * BASE_CONNECTION_DISTANCE;
@@ -199,11 +199,11 @@ const ConstellationBackground: React.FC<ConstellationBackgroundProps> = ({
 
       const isDark = document.documentElement.classList.contains("dark");
       const dotColor = isDark
-        ? "rgba(186, 230, 253, 1)" // sky-200 (Dark mode dot/line color)
+        ? "rgba(125, 211, 252, 1)" // sky-300 (Softer, reduced brightness in dark mode)
         : "rgba(29, 78, 216, 1)"; // blue-700 (Light mode dot/line color - balanced medium royal blue)
 
-      const baseLineOpacity = isDark ? 0.4 : 0.45; // Connector line opacity (light mode: 0.45)
-      const globalAlpha = isDark ? 0.65 : 0.70; // Dot opacity (light mode: 0.70)
+      const baseLineOpacity = isDark ? 0.30 : 0.45; // Connector line opacity (light mode: 0.45)
+      const globalAlpha = isDark ? 0.45 : 0.70; // Lower dot brightness/opacity in dark mode (light mode: 0.70)
 
       const now = Date.now();
       const particles = particlesRef.current;
