@@ -52,6 +52,25 @@ function getThreeStagePulse(elapsed: number): number {
   return 0;
 }
 
+function getFiveStagePulse(elapsed: number): number {
+  if (elapsed < 130) return Math.sin((elapsed / 130) * Math.PI);
+  if (elapsed >= 150 && elapsed < 280) return Math.sin(((elapsed - 150) / 130) * Math.PI) * 0.9;
+  if (elapsed >= 300 && elapsed < 430) return Math.sin(((elapsed - 300) / 130) * Math.PI) * 0.85;
+  if (elapsed >= 450 && elapsed < 580) return Math.sin(((elapsed - 450) / 130) * Math.PI) * 0.8;
+  if (elapsed >= 600 && elapsed < 730) return Math.sin(((elapsed - 600) / 130) * Math.PI) * 0.75;
+  return 0;
+}
+
+function getSixStagePulse(elapsed: number): number {
+  if (elapsed < 110) return Math.sin((elapsed / 110) * Math.PI);
+  if (elapsed >= 125 && elapsed < 235) return Math.sin(((elapsed - 125) / 110) * Math.PI) * 0.9;
+  if (elapsed >= 250 && elapsed < 360) return Math.sin(((elapsed - 250) / 110) * Math.PI) * 0.85;
+  if (elapsed >= 375 && elapsed < 485) return Math.sin(((elapsed - 375) / 110) * Math.PI) * 0.8;
+  if (elapsed >= 500 && elapsed < 610) return Math.sin(((elapsed - 500) / 110) * Math.PI) * 0.75;
+  if (elapsed >= 625 && elapsed < 735) return Math.sin(((elapsed - 625) / 110) * Math.PI) * 0.7;
+  return 0;
+}
+
 interface Particle {
   x: number;
   y: number;
@@ -224,39 +243,43 @@ const ConstellationBackground: React.FC<ConstellationBackgroundProps> = ({
       );
       const currentWaveRadius = (waveElapsed / 500) * waveMaxRadius;
 
-      // Occasional forward-jump movement addon effect (active for 10s every 20-25s)
+      // Occasional forward-jump movement addon effect (active for 20s every 40-60s)
       if (nextJumpyTime === 0) {
-        nextJumpyTime = now + 4000;
+        nextJumpyTime = now + 6000;
       } else if (now >= nextJumpyTime) {
         jumpyStartTime = now;
-        nextJumpyTime = now + 20000 + Math.random() * 5000;
+        nextJumpyTime = now + 40000 + Math.random() * 20000;
       }
 
       const jumpyElapsed = now - jumpyStartTime;
-      const isJumpyModeActive = jumpyElapsed < 10000;
+      const isJumpyModeActive = jumpyElapsed < 20000;
       const jumpCycle = jumpyElapsed % 450; // Periodic jump every 450ms
       const jumpBoost =
         isJumpyModeActive && jumpCycle < 120
           ? Math.sin((jumpCycle / 120) * Math.PI) * 1 // Positive-only forward hop
           : 0;
 
-      // Trigger a subtle short-distance movement pulse every 5-7 seconds across 9 patterns
+      // Trigger a subtle short-distance movement pulse across 18 clean 2D patterns
       if (nextPulseTime === 0) {
         nextPulseTime = now + 1500;
       } else if (now >= nextPulseTime) {
         pulseStartTime = now;
         nextPulseTime = now + 5000 + Math.random() * 2000;
-        pulsePattern = Math.floor(Math.random() * 9); // 9 total subtle movement structures
+        pulsePattern = Math.floor(Math.random() * 15); // 15 total clean 2D movement structures
       }
 
       const elapsed = now - pulseStartTime;
       let pulseValue = 0;
-      if (pulsePattern < 4) {
+      if (pulsePattern < 3) {
         pulseValue = getSingleStagePulse(elapsed);
-      } else if (pulsePattern < 7) {
+      } else if (pulsePattern < 8) {
         pulseValue = getTwoStagePulse(elapsed);
-      } else {
+      } else if (pulsePattern === 8) {
         pulseValue = getThreeStagePulse(elapsed);
+      } else if (pulsePattern < 12) {
+        pulseValue = getFiveStagePulse(elapsed);
+      } else {
+        pulseValue = getSixStagePulse(elapsed);
       }
 
       for (let i = 0; i < count; i++) {
@@ -298,43 +321,127 @@ const ConstellationBackground: React.FC<ConstellationBackgroundProps> = ({
             const distC = Math.hypot(dxC, dyC) || 1;
 
             if (pulsePattern === 0) {
-              // Pattern 0: 1-Stage Forward Surge
+              // Pattern 0: 1-Stage Forward Surge (Favorite)
               finalDx *= 1 + pulseValue * 1.6;
               finalDy *= 1 + pulseValue * 1.6;
             } else if (pulsePattern === 1) {
-              // Pattern 1: 1-Stage Lateral Shift
+              // Pattern 1: 1-Stage Lateral Shift (Favorite)
               finalDx += -normalDy * pulseValue * 2.5;
               finalDy += normalDx * pulseValue * 2.5;
             } else if (pulsePattern === 2) {
-              // Pattern 2: 1-Stage Radial Expansion
-              finalDx += (dxC / distC) * pulseValue * 1.2;
-              finalDy += (dyC / distC) * pulseValue * 1.2;
+              // Pattern 2: 1-Stage Diagonal Sidestep (45° Lane Change)
+              finalDx += (normalDx - normalDy) * 0.707 * pulseValue * 2.2;
+              finalDy += (normalDy + normalDx) * 0.707 * pulseValue * 2.2;
             } else if (pulsePattern === 3) {
-              // Pattern 3: 1-Stage Rotational Swirl
-              finalDx += (-dyC / distC) * pulseValue * 1.2;
-              finalDy += (dxC / distC) * pulseValue * 1.2;
-            } else if (pulsePattern === 4) {
-              // Pattern 4: 2-Stage Double Forward Surge
+              // Pattern 3: 2-Stage Double Forward Surge (Favorite)
               finalDx *= 1 + pulseValue * 1.5;
               finalDy *= 1 + pulseValue * 1.5;
-            } else if (pulsePattern === 5) {
-              // Pattern 5: 2-Stage Zig-Zag (Sideways Left then Sideways Right)
+            } else if (pulsePattern === 4) {
+              // Pattern 4: 2-Stage Zig-Zag (Sideways Left then Sideways Right) (Favorite)
               const stageSign = elapsed < 220 ? 1 : -1;
               finalDx += stageSign * -normalDy * pulseValue * 2.5;
               finalDy += stageSign * normalDx * pulseValue * 2.5;
+            } else if (pulsePattern === 5) {
+              // Pattern 5: 2-Stage L-Turn (Forward then Sideways)
+              if (elapsed < 220) {
+                finalDx *= 1 + pulseValue * 1.6;
+                finalDy *= 1 + pulseValue * 1.6;
+              } else {
+                finalDx += -normalDy * pulseValue * 2.5;
+                finalDy += normalDx * pulseValue * 2.5;
+              }
             } else if (pulsePattern === 6) {
-              // Pattern 6: 2-Stage Breathe (Radial Outward then Inward)
-              const stageSign = elapsed < 220 ? 1 : -1;
-              finalDx += stageSign * (dxC / distC) * pulseValue * 1.2;
-              finalDy += stageSign * (dyC / distC) * pulseValue * 1.2;
+              // Pattern 6: 2-Stage Chevron Advance (Diagonal-Left then Diagonal-Right)
+              if (elapsed < 220) {
+                finalDx += (normalDx - normalDy) * 0.707 * pulseValue * 2.2;
+                finalDy += (normalDy + normalDx) * 0.707 * pulseValue * 2.2;
+              } else {
+                finalDx += (normalDx + normalDy) * 0.707 * pulseValue * 2.2;
+                finalDy += (normalDy - normalDx) * 0.707 * pulseValue * 2.2;
+              }
             } else if (pulsePattern === 7) {
-              // Pattern 7: 3-Stage Triple Radial Ripple (tat-tat-tat outward)
-              finalDx += (dxC / distC) * pulseValue * 1.3;
-              finalDy += (dyC / distC) * pulseValue * 1.3;
+              // Pattern 7: 2-Stage Push-and-Coast (Forward Burst then Lateral Drift)
+              if (elapsed < 220) {
+                finalDx *= 1 + pulseValue * 1.8;
+                finalDy *= 1 + pulseValue * 1.8;
+              } else {
+                finalDx += -normalDy * pulseValue * 2.2;
+                finalDy += normalDx * pulseValue * 2.2;
+              }
             } else if (pulsePattern === 8) {
-              // Pattern 8: 3-Stage Triple Tangential Swirl (tat-tat-tat swirl)
-              finalDx += (-dyC / distC) * pulseValue * 1.3;
-              finalDy += (dxC / distC) * pulseValue * 1.3;
+              // Pattern 8: 3-Stage Step-Step-Surge (Short-Short-Long Advance)
+              if (elapsed < 340) {
+                finalDx *= 1 + pulseValue * 1.1;
+                finalDy *= 1 + pulseValue * 1.1;
+              } else {
+                finalDx *= 1 + pulseValue * 2.0;
+                finalDy *= 1 + pulseValue * 2.0;
+              }
+            } else if (pulsePattern === 9) {
+              // Pattern 9: 5-Stage Staircase Climb (Forward -> Right -> Forward -> Right -> Forward)
+              const step = Math.floor(elapsed / 140);
+              if (step % 2 === 0) {
+                finalDx *= 1 + pulseValue * 1.6;
+                finalDy *= 1 + pulseValue * 1.6;
+              } else {
+                finalDx += normalDy * pulseValue * 2.2;
+                finalDy += -normalDx * pulseValue * 2.2;
+              }
+            } else if (pulsePattern === 10) {
+              // Pattern 10: 5-Stage Pulse-Train (Short -> Short -> Long -> Short -> Long)
+              const step = Math.floor(elapsed / 140);
+              const boost = (step === 2 || step === 4) ? 2.0 : 1.1;
+              finalDx *= 1 + pulseValue * boost;
+              finalDy *= 1 + pulseValue * boost;
+            } else if (pulsePattern === 11) {
+              // Pattern 11: 5-Stage Diamond Perimeter (Up-Right -> Down-Right -> Down-Left -> Up-Left -> Settle)
+              const step = Math.floor(elapsed / 140);
+              const dirs = [
+                [0.707, -0.707],
+                [0.707, 0.707],
+                [-0.707, 0.707],
+                [-0.707, -0.707],
+                [normalDx, normalDy]
+              ];
+              const d = dirs[Math.min(step, 4)];
+              finalDx += d[0] * pulseValue * 2.0;
+              finalDy += d[1] * pulseValue * 2.0;
+            } else if (pulsePattern === 12) {
+              // Pattern 12: 6-Stage Hexagon Circuit (6 Equal 60-degree turns)
+              const step = Math.min(Math.floor(elapsed / 115), 5);
+              const angle = step * (Math.PI / 3);
+              const cosA = Math.cos(angle);
+              const sinA = Math.sin(angle);
+              finalDx += (normalDx * cosA - normalDy * sinA) * pulseValue * 2.0;
+              finalDy += (normalDx * sinA + normalDy * cosA) * pulseValue * 2.0;
+            } else if (pulsePattern === 13) {
+              // Pattern 13: 6-Stage Zig-Zag Ladder (Left -> Forward -> Right -> Forward -> Left -> Forward)
+              const step = Math.floor(elapsed / 115);
+              if (step % 2 === 1) {
+                finalDx *= 1 + pulseValue * 1.5;
+                finalDy *= 1 + pulseValue * 1.5;
+              } else {
+                const dir = (step === 0 || step === 4) ? 1 : -1;
+                finalDx += dir * -normalDy * pulseValue * 2.2;
+                finalDy += dir * normalDx * pulseValue * 2.2;
+              }
+            } else if (pulsePattern === 14) {
+              // Pattern 14: 6-Stage Box-Step & Surge (Forward -> Right -> Back -> Left -> Surge -> Surge)
+              const step = Math.floor(elapsed / 115);
+              if (step >= 4) {
+                finalDx *= 1 + pulseValue * 1.8;
+                finalDy *= 1 + pulseValue * 1.8;
+              } else {
+                const boxDirs = [
+                  [normalDx, normalDy],
+                  [normalDy, -normalDx],
+                  [-normalDx, -normalDy],
+                  [-normalDy, normalDx]
+                ];
+                const bd = boxDirs[step % 4];
+                finalDx += bd[0] * pulseValue * 2.0;
+                finalDy += bd[1] * pulseValue * 2.0;
+              }
             }
           }
 
