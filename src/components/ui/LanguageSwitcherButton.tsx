@@ -308,7 +308,7 @@ const LanguageSwitcherButton: React.FC<LanguageSwitcherButtonProps> = ({
                       tabIndex={focusedIndex === index ? 0 : -1}
                       onClick={() => void handleSelect(language)}
                       onKeyDown={(event) => handleOptionKeyDown(event, index)}
-                      className={`flex w-full items-center px-3 py-2 text-left text-sm transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 ${isSelected ? "rounded-md bg-white text-slate-900 dark:bg-white dark:text-slate-900 cursor-pointer" : "text-slate-700 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-slate-100 cursor-pointer"}`}
+                      className={`flex w-full items-center px-3 py-2 text-left text-sm transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 ${isSelected ? "rounded-md bg-slate-900 text-white font-bold dark:bg-white dark:text-slate-900 cursor-pointer" : "text-slate-700 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-white/5 dark:hover:text-slate-100 cursor-pointer"}`}
                     >
                       <span className="font-semibold">
                         {getLanguageLabel(language, t)}
