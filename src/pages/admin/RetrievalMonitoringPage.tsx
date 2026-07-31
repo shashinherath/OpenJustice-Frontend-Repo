@@ -15,6 +15,26 @@ const getToneClasses = (tone: RetrievalMetric["tone"]) => {
   return tones[tone];
 };
 
+const getLatencyColor = (latencyStr: string) => {
+  const ms = parseInt(latencyStr, 10);
+  if (ms < 100) return "text-emerald-300";
+  if (ms < 200) return "text-amber-300";
+  return "text-rose-300";
+};
+
+const getMismatchColor = (mismatchStr: string) => {
+  const pct = parseFloat(mismatchStr);
+  if (pct <= 5) return "text-emerald-300";
+  if (pct <= 20) return "text-amber-300";
+  return "text-rose-300";
+};
+
+const getConfidenceColor = (confidence: string) => {
+  if (confidence === "High") return "text-emerald-300";
+  if (confidence === "Review") return "text-amber-300";
+  return "text-rose-300"; // Degraded
+};
+
 const getStatusClasses = (status: RetrievalCheck["status"]) => {
   if (status === "Pass") {
     return "bg-emerald-500/15 text-emerald-300";
@@ -24,7 +44,7 @@ const getStatusClasses = (status: RetrievalCheck["status"]) => {
     return "bg-amber-500/15 text-amber-300";
   }
 
-  return "bg-rose-500/15 text-rose-300";
+  return "bg-rose-500/15 text-rose-300"; // "Fail"
 };
 
 const RetrievalMonitoringPage: React.FC = () => {
@@ -149,7 +169,7 @@ const RetrievalMonitoringPage: React.FC = () => {
                 <span className="text-sm font-semibold text-slate-200">
                   Latency p95
                 </span>
-                <span className="text-sm font-bold text-amber-300">{data.health_targets.latencyP95}</span>
+                <span className={`text-sm font-bold ${getLatencyColor(data.health_targets.latencyP95)}`}>{data.health_targets.latencyP95}</span>
               </div>
               <p className="mt-2 text-xs text-slate-400">
                 Investigate cache misses and vector store pressure when this
@@ -161,7 +181,7 @@ const RetrievalMonitoringPage: React.FC = () => {
                 <span className="text-sm font-semibold text-slate-200">
                   Citation mismatch rate
                 </span>
-                <span className="text-sm font-bold text-rose-300">{data.health_targets.citationMismatchRate}</span>
+                <span className={`text-sm font-bold ${getMismatchColor(data.health_targets.citationMismatchRate)}`}>{data.health_targets.citationMismatchRate}</span>
               </div>
               <p className="mt-2 text-xs text-slate-400">
                 Any increase here should be traced to prompt grounding or source
