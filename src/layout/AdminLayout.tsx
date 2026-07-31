@@ -16,11 +16,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   }, [location.pathname]);
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-[#191919] text-slate-300 antialiased font-display">
+    <div className="flex h-screen w-full overflow-hidden bg-slate-50 dark:bg-[#191919] text-slate-600 dark:text-slate-300 antialiased font-display">
       <AdminSidebar />
       <main
         ref={mainRef}
-        className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-[#191919]"
+        className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-slate-50 dark:bg-[#191919]"
       >
         <AdminHeader />
         {children}

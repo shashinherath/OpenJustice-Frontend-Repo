@@ -124,7 +124,7 @@ const AdminDashboard: React.FC = () => {
   if (isLoading) {
     return (
       <div className="p-8 flex justify-center items-center h-64">
-        <div className="text-cyan-400 animate-pulse font-bold tracking-widest uppercase text-sm">
+        <div className="text-cyan-600 dark:text-cyan-400 animate-pulse font-bold tracking-widest uppercase text-sm">
           Loading System Metrics...
         </div>
       </div>
@@ -134,7 +134,7 @@ const AdminDashboard: React.FC = () => {
   if (error || !data) {
     return (
       <div className="p-8">
-        <div className="rounded border border-rose-500/30 bg-rose-500/10 p-6 text-rose-300">
+        <div className="rounded border border-rose-500/30 bg-rose-500/10 p-6 text-rose-600 dark:text-rose-300">
           <h2 className="font-bold mb-2">Error Loading Dashboard</h2>
           <p className="text-sm">{error || "No data available."}</p>
         </div>
@@ -184,7 +184,7 @@ const AdminDashboard: React.FC = () => {
         <div className="flex justify-end pt-1">
           <button
             onClick={() => setShowAllCards(!showAllCards)}
-            className="inline-flex items-center gap-1.5 rounded border border-cyan-400/35 bg-cyan-500/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-cyan-100 transition-all hover:border-cyan-400/50 hover:bg-cyan-500/20"
+            className="inline-flex items-center gap-1.5 rounded border border-cyan-400/35 bg-cyan-500/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-cyan-700 dark:text-cyan-100 transition-all hover:border-cyan-400/50 hover:bg-cyan-500/20"
           >
             <span className="material-symbols-outlined text-[16px] leading-none">
               {showAllCards ? "expand_less" : "expand_more"}
@@ -196,19 +196,19 @@ const AdminDashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <section className="rounded border border-cyan-400/15 bg-[#191919] p-8">
+          <section className="rounded border border-cyan-400/15 bg-white dark:bg-[#191919] p-8">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-lg font-bold text-white flex items-center gap-3">
-                <span className="material-symbols-outlined text-cyan-300">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-3">
+                <span className="material-symbols-outlined text-cyan-600 dark:text-cyan-300">
                   bar_chart
                 </span>
                 Queries Per Day
               </h2>
               <div className="flex gap-2">
-                <button className="rounded border border-cyan-400/30 bg-cyan-500/15 px-3 py-1 text-[10px] font-bold text-cyan-100">
+                <button className="rounded border border-cyan-400/30 bg-cyan-500/15 px-3 py-1 text-[10px] font-bold text-cyan-700 dark:text-cyan-100">
                   7D
                 </button>
-                <button className="rounded border border-slate-700 px-3 py-1 text-[10px] font-bold text-slate-300">
+                <button className="rounded border border-slate-300 dark:border-slate-700 px-3 py-1 text-[10px] font-bold text-slate-600 dark:text-slate-300">
                   30D
                 </button>
               </div>
@@ -216,14 +216,14 @@ const AdminDashboard: React.FC = () => {
             <div className="grid grid-cols-7 gap-2">
               {data.queries_per_day?.map((day, idx) => (
                 <div key={idx} className="space-y-2 text-center">
-                  <div className="flex h-48 items-end rounded border border-white/10 bg-[#191919] p-2">
+                  <div className="flex h-48 items-end rounded border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#191919] p-2">
                     <div
                       className={`w-full rounded-sm transition-all hover:opacity-100 ${idx === 4 ? "bg-cyan-400" : idx === 6 ? "bg-amber-400" : "bg-cyan-400/80"}`}
                       style={{ height: day.heightPercentage }}
                     />
                   </div>
-                  <p className="text-[11px] text-slate-400">{day.date}</p>
-                  <p className="text-[11px] font-semibold text-slate-300">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">{day.date}</p>
+                  <p className="text-[11px] font-semibold text-slate-600 dark:text-slate-300">
                     {day.count}
                   </p>
                 </div>
@@ -231,22 +231,22 @@ const AdminDashboard: React.FC = () => {
             </div>
           </section>
 
-          <section className="rounded border border-cyan-400/15 bg-[#191919] p-6">
+          <section className="rounded border border-cyan-400/15 bg-white dark:bg-[#191919] p-6">
             <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-600/70 dark:text-cyan-200/70">
                   Monitoring Layers
                 </p>
-                <h2 className="mt-2 text-lg font-bold text-white">
+                <h2 className="mt-2 text-lg font-bold text-slate-900 dark:text-white">
                   Separate ingestion health from retrieval quality
                 </h2>
-                <p className="mt-2 max-w-3xl text-sm text-slate-400">
+                <p className="mt-2 max-w-3xl text-sm text-slate-500 dark:text-slate-400">
                   Knowledge monitoring tracks chunks and embeddings. Retrieval
                   monitoring tracks ranking quality, latency, and citation
                   validity.
                 </p>
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
                 RAG observability
               </span>
             </div>
@@ -254,40 +254,40 @@ const AdminDashboard: React.FC = () => {
             <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
               <Link
                 to="/admin/knowledge-monitoring"
-                className="group rounded border border-white/10 bg-black/30 p-5 transition-all hover:border-cyan-400/30 hover:bg-cyan-500/5"
+                className="group rounded border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/30 p-5 transition-all hover:border-cyan-400/30 hover:bg-cyan-500/5"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500">
                       Ingestion Health
                     </p>
-                    <h3 className="mt-2 text-lg font-bold text-white">
+                    <h3 className="mt-2 text-lg font-bold text-slate-900 dark:text-white">
                       Knowledge Monitoring
                     </h3>
-                    <p className="mt-2 text-sm text-slate-400">
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                       Track indexed documents, chunk counts, and embedding
                       status.
                     </p>
                   </div>
-                  <span className="material-symbols-outlined text-cyan-300 transition-transform group-hover:translate-x-0.5">
+                  <span className="material-symbols-outlined text-cyan-600 dark:text-cyan-300 transition-transform group-hover:translate-x-0.5">
                     database
                   </span>
                 </div>
-                <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-400">
-                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-500 dark:text-slate-400">
+                  <div className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] px-3 py-2">
                     Indexed docs
                   </div>
-                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                  <div className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] px-3 py-2">
                     Chunk coverage
                   </div>
-                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                  <div className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] px-3 py-2">
                     Embedding state
                   </div>
-                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                  <div className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] px-3 py-2">
                     Processing status
                   </div>
                 </div>
-                <div className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-cyan-200/80">
+                <div className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-cyan-600/80 dark:text-cyan-200/80">
                   Open knowledge monitoring
                   <span className="material-symbols-outlined text-[16px]">
                     arrow_forward
@@ -297,40 +297,40 @@ const AdminDashboard: React.FC = () => {
 
               <Link
                 to="/admin/retrieval-monitoring"
-                className="group rounded border border-white/10 bg-black/30 p-5 transition-all hover:border-cyan-400/30 hover:bg-cyan-500/5"
+                className="group rounded border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/30 p-5 transition-all hover:border-cyan-400/30 hover:bg-cyan-500/5"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500">
                       Retrieval Quality
                     </p>
-                    <h3 className="mt-2 text-lg font-bold text-white">
+                    <h3 className="mt-2 text-lg font-bold text-slate-900 dark:text-white">
                       Retrieval Monitoring
                     </h3>
-                    <p className="mt-2 text-sm text-slate-400">
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
                       Inspect similarity, top-K accuracy, latency, and citation
                       validity.
                     </p>
                   </div>
-                  <span className="material-symbols-outlined text-cyan-300 transition-transform group-hover:translate-x-0.5">
+                  <span className="material-symbols-outlined text-cyan-600 dark:text-cyan-300 transition-transform group-hover:translate-x-0.5">
                     manage_search
                   </span>
                 </div>
-                <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-400">
-                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                <div className="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-500 dark:text-slate-400">
+                  <div className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] px-3 py-2">
                     Avg similarity
                   </div>
-                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                  <div className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] px-3 py-2">
                     Top-K accuracy
                   </div>
-                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                  <div className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] px-3 py-2">
                     Retrieval latency
                   </div>
-                  <div className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+                  <div className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] px-3 py-2">
                     Citation validity
                   </div>
                 </div>
-                <div className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-cyan-200/80">
+                <div className="mt-4 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-cyan-600/80 dark:text-cyan-200/80">
                   Open retrieval monitoring
                   <span className="material-symbols-outlined text-[16px]">
                     arrow_forward
@@ -340,9 +340,9 @@ const AdminDashboard: React.FC = () => {
             </div>
           </section>
 
-          <section className="rounded border border-cyan-400/15 bg-[#191919] p-8">
-            <h2 className="text-lg font-bold text-white mb-6 flex items-center gap-3">
-              <span className="material-symbols-outlined text-cyan-300">
+          <section className="rounded border border-cyan-400/15 bg-white dark:bg-[#191919] p-8">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-3">
+              <span className="material-symbols-outlined text-cyan-600 dark:text-cyan-300">
                 history
               </span>
               Recent System Activity
@@ -360,36 +360,36 @@ const AdminDashboard: React.FC = () => {
                 />
               ))}
             </div>
-            <button className="mt-6 w-full rounded border border-dashed border-cyan-400/25 py-3 text-[10px] font-bold uppercase tracking-widest text-cyan-200/80 transition-all hover:bg-cyan-500/10 hover:text-cyan-100">
+            <button className="mt-6 w-full rounded border border-dashed border-cyan-400/25 py-3 text-[10px] font-bold uppercase tracking-widest text-cyan-600/80 dark:text-cyan-200/80 transition-all hover:bg-cyan-500/10 hover:text-cyan-700 dark:hover:text-cyan-100">
               View Full Logs
             </button>
           </section>
         </div>
 
         <div className="space-y-6">
-          <section className="rounded border border-cyan-400/15 bg-[#191919] p-6">
-            <h2 className="text-sm font-bold text-white mb-6 uppercase tracking-[0.15em]">
+          <section className="rounded border border-cyan-400/15 bg-white dark:bg-[#191919] p-6">
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-[0.15em]">
               Live Status Indicators
             </h2>
             <div className="space-y-3">
               {data.core_services?.map((indicator) => (
                 <div
                   key={indicator.title}
-                  className="flex items-center justify-between rounded border border-white/10 bg-black/30 p-3"
+                  className="flex items-center justify-between rounded border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/30 p-3"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="material-symbols-outlined text-cyan-300 text-[18px]">
+                    <span className="material-symbols-outlined text-cyan-600 dark:text-cyan-300 text-[18px]">
                       {indicator.icon}
                     </span>
-                    <span className="text-sm font-medium text-slate-200">
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
                       {indicator.title}
                     </span>
                   </div>
                   <span
                     className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest ${
                       indicator.status === "Active"
-                        ? "bg-emerald-500/15 text-emerald-300"
-                        : "bg-rose-500/15 text-rose-300"
+                        ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-300"
+                        : "bg-rose-500/15 text-rose-600 dark:text-rose-300"
                     }`}
                   >
                     {indicator.status}
@@ -399,8 +399,8 @@ const AdminDashboard: React.FC = () => {
             </div>
           </section>
 
-          <section className="rounded border border-cyan-400/15 bg-[#191919] p-6">
-            <h2 className="text-sm font-bold text-white mb-6 uppercase tracking-[0.15em]">
+          <section className="rounded border border-cyan-400/15 bg-white dark:bg-[#191919] p-6">
+            <h2 className="text-sm font-bold text-slate-900 dark:text-white mb-6 uppercase tracking-[0.15em]">
               Admin Quick Actions
             </h2>
             <div className="grid grid-cols-2 gap-3">
@@ -408,12 +408,12 @@ const AdminDashboard: React.FC = () => {
                 <button
                   key={action.action_id}
                   onClick={() => handleQuickAction(action.action_id)}
-                  className={`space-y-2 rounded border border-slate-700/70 bg-[#191919] p-3 text-center transition-all hover:border-cyan-400/35 hover:bg-cyan-500/5 ${action.highlight ? "text-cyan-100" : ""}`}
+                  className={`space-y-2 rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-3 text-center transition-all hover:border-cyan-400/35 hover:bg-cyan-500/5 ${action.highlight ? "text-cyan-700 dark:text-cyan-100" : ""}`}
                 >
-                  <span className="material-symbols-outlined text-cyan-200">
+                  <span className="material-symbols-outlined text-cyan-600 dark:text-cyan-200">
                     {action.icon}
                   </span>
-                  <span className="block text-[9px] font-bold uppercase text-slate-300">
+                  <span className="block text-[9px] font-bold uppercase text-slate-600 dark:text-slate-300">
                     {action.label}
                   </span>
                 </button>
@@ -424,7 +424,7 @@ const AdminDashboard: React.FC = () => {
       </div>
 
       <footer className="border-t border-cyan-400/15 pb-8 pt-16 text-center">
-        <p className="text-[11px] font-medium uppercase tracking-widest text-cyan-200/65">
+        <p className="text-[11px] font-medium uppercase tracking-widest text-cyan-600/65 dark:text-cyan-200/65">
           OpenJustice © 2026. All rights reserved.
         </p>
       </footer>

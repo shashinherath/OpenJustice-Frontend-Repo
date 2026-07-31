@@ -98,12 +98,12 @@ const LanguageSettingsPage: React.FC = () => {
 
   return (
     <div className="space-y-8 p-8">
-      <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
+      <section className="rounded border border-cyan-400/20 bg-white dark:bg-[#191919] p-6">
         <div>
-          <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">
+          <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Language Settings
           </h2>
-          <p className="mt-3 max-w-3xl text-sm text-slate-300">
+          <p className="mt-3 max-w-3xl text-sm text-slate-600 dark:text-slate-300">
             Configure supported languages, set default language, and manage
             translation pipeline behavior.
           </p>
@@ -111,62 +111,62 @@ const LanguageSettingsPage: React.FC = () => {
       </section>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
             Enabled Languages
           </p>
-          <p className="mt-3 text-2xl font-black text-white">
+          <p className="mt-3 text-2xl font-black text-slate-900 dark:text-white">
             {languages.filter((l) => l.enabled).length}
           </p>
         </article>
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
             Default Language
           </p>
-          <p className="mt-3 text-2xl font-black text-cyan-400">
+          <p className="mt-3 text-2xl font-black text-cyan-600 dark:text-cyan-400">
             {defaultLanguage.toUpperCase()}
           </p>
         </article>
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
             Translation Pipeline
           </p>
-          <p className="mt-3 text-2xl font-black text-green-400">
+          <p className="mt-3 text-2xl font-black text-green-600 dark:text-green-400">
             {translationPipelineEnabled ? "Enabled" : "Disabled"}
           </p>
         </article>
       </section>
 
-      <section className="space-y-6 rounded border border-slate-700/70 bg-[#191919] p-6">
-        <article className="rounded border border-white/10 bg-black/30 p-5">
-          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+      <section className="space-y-6 rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-6">
+        <article className="rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-black/30 p-5">
+          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-900 dark:text-white">
             Enable or Disable Languages
           </h3>
           <div className="mt-4 space-y-3">
             {languages.map((language) => (
               <label
                 key={language.code}
-                className="flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-3 transition-colors hover:bg-white/5"
+                className="flex items-center justify-between rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-black/30 px-3 py-3 transition-colors hover:bg-slate-50 dark:hover:bg-white/5"
               >
-                <span className="text-sm text-slate-200">
+                <span className="text-sm text-slate-700 dark:text-slate-200">
                   {language.code.toUpperCase()} - {language.label}
                 </span>
                 <input
                   type="checkbox"
                   checked={language.enabled}
                   onChange={() => toggleLanguage(language.code)}
-                  className="h-4 w-4 rounded border-white/20 bg-black/40"
+                  className="h-4 w-4 rounded border-slate-300 dark:border-white/20 bg-white dark:bg-black/40"
                 />
               </label>
             ))}
           </div>
         </article>
 
-        <article className="rounded border border-white/10 bg-black/30 p-5">
-          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+        <article className="rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-black/30 p-5">
+          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-900 dark:text-white">
             Set Default Language
           </h3>
-          <p className="mt-2 text-[10px] text-slate-400">
+          <p className="mt-2 text-[10px] text-slate-500 dark:text-slate-400">
             Users will see this language by default on first login.
           </p>
           <div className="mt-4 md:w-80">
@@ -187,15 +187,15 @@ const LanguageSettingsPage: React.FC = () => {
           </div>
         </article>
 
-        <article className="rounded border border-white/10 bg-black/30 p-5">
-          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+        <article className="rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-black/30 p-5">
+          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-900 dark:text-white">
             Toggle Translation Pipeline
           </h3>
-          <p className="mt-2 text-[10px] text-slate-400">
+          <p className="mt-2 text-[10px] text-slate-500 dark:text-slate-400">
             Enable automatic translation for multilingual user queries.
           </p>
-          <label className="mt-4 flex items-center justify-between rounded border border-white/10 bg-black/30 px-3 py-3 md:w-80">
-            <span className="text-sm text-slate-200">Translation Pipeline</span>
+          <label className="mt-4 flex items-center justify-between rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-black/30 px-3 py-3 md:w-80">
+            <span className="text-sm text-slate-700 dark:text-slate-200">Translation Pipeline</span>
             <input
               type="checkbox"
               checked={translationPipelineEnabled}
@@ -203,7 +203,7 @@ const LanguageSettingsPage: React.FC = () => {
                 setTranslationPipelineEnabled((previous) => !previous);
                 setSaveNotice("");
               }}
-              className="h-4 w-4 rounded border-white/20 bg-black/40"
+              className="h-4 w-4 rounded border-slate-300 dark:border-white/20 bg-white dark:bg-black/40"
             />
           </label>
         </article>
@@ -212,7 +212,7 @@ const LanguageSettingsPage: React.FC = () => {
           <button
             type="button"
             onClick={handleSaveSettings}
-            className="rounded border border-cyan-400/30 bg-cyan-500/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-cyan-300 transition-colors hover:bg-cyan-500/20"
+            className="rounded border border-cyan-400/30 bg-cyan-500/10 px-4 py-2 text-xs font-bold uppercase tracking-widest text-cyan-600 dark:text-cyan-300 transition-colors hover:bg-cyan-500/20"
           >
             Save Settings
           </button>
@@ -220,8 +220,8 @@ const LanguageSettingsPage: React.FC = () => {
             <p
               className={`text-xs font-semibold ${
                 saveNotice.includes("success")
-                  ? "text-green-400"
-                  : "text-slate-300"
+                  ? "text-green-600 dark:text-green-400"
+                  : "text-slate-600 dark:text-slate-300"
               }`}
             >
               {saveNotice}

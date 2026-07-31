@@ -51,8 +51,6 @@ const AdminLogsPage: React.FC = () => {
 
   const selectedLog = logs.find((log) => log.id === selectedLogId) ?? null;
 
-
-
   useEffect(() => {
     fetchLogs();
   }, []);
@@ -96,8 +94,6 @@ const AdminLogsPage: React.FC = () => {
     }
   };
 
-
-
   const deleteLog = async (id: string) => {
     try {
       await adminService.deleteLog(id);
@@ -127,12 +123,12 @@ const AdminLogsPage: React.FC = () => {
 
   return (
     <div className="space-y-8 p-8">
-      <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
+      <section className="rounded border border-cyan-400/20 bg-white dark:bg-[#191919] p-6">
         <div>
-          <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">
+          <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             AI Logs & Traceability
           </h2>
-          <p className="mt-3 max-w-3xl text-sm text-slate-300">
+          <p className="mt-3 max-w-3xl text-sm text-slate-600 dark:text-slate-300">
             Audit LLM request and response events, monitor correlation IDs,
             token usage, retrieval evidence, and investigation outcomes.
           </p>
@@ -140,64 +136,64 @@ const AdminLogsPage: React.FC = () => {
       </section>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-6">
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-600/70 dark:text-cyan-200/70">
             Total AI Logs
           </p>
-          <p className="mt-3 text-2xl font-black text-white">{totalLogs}</p>
+          <p className="mt-3 text-2xl font-black text-slate-900 dark:text-white">{totalLogs}</p>
         </article>
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-600/70 dark:text-cyan-200/70">
             Completed
           </p>
-          <p className="mt-3 text-2xl font-black text-emerald-300">
+          <p className="mt-3 text-2xl font-black text-emerald-600 dark:text-emerald-300">
             {globalStats.completed}
           </p>
         </article>
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-600/70 dark:text-cyan-200/70">
             Reviewed
           </p>
-          <p className="mt-3 text-2xl font-black text-indigo-300">{globalStats.reviewed}</p>
+          <p className="mt-3 text-2xl font-black text-indigo-600 dark:text-indigo-300">{globalStats.reviewed}</p>
         </article>
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-600/70 dark:text-cyan-200/70">
             Pending
           </p>
-          <p className="mt-3 text-2xl font-black text-amber-300">{globalStats.pending}</p>
+          <p className="mt-3 text-2xl font-black text-amber-600 dark:text-amber-300">{globalStats.pending}</p>
         </article>
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-600/70 dark:text-cyan-200/70">
             Failed
           </p>
-          <p className="mt-3 text-2xl font-black text-red-300">{globalStats.failed}</p>
+          <p className="mt-3 text-2xl font-black text-red-600 dark:text-red-300">{globalStats.failed}</p>
         </article>
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-600/70 dark:text-cyan-200/70">
             Token Volume
           </p>
-          <p className="mt-3 text-2xl font-black text-white">{globalStats.tokens}</p>
-          <p className="mt-1 text-[10px] text-slate-400">
+          <p className="mt-3 text-2xl font-black text-slate-900 dark:text-white">{globalStats.tokens}</p>
+          <p className="mt-1 text-[10px] text-slate-500 dark:text-slate-400">
             Avg latency: {globalStats.latency} ms
           </p>
         </article>
       </section>
 
-      <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
+      <section className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-6">
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_170px_180px_170px_auto_auto]">
           <input
             type="text"
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
             placeholder="Search by log ID, correlation ID, or model"
-            className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+            className="w-full rounded border border-cyan-400/20 bg-slate-100 dark:bg-black/30 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
           />
           <select
             value={statusFilter}
             onChange={(event) =>
               setStatusFilter(event.target.value as TraceStatus | "All")
             }
-            className="w-full rounded border border-cyan-400/20 bg-[#191919] px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+            className="w-full rounded border border-cyan-400/20 bg-white dark:bg-[#191919] px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
           >
             <option value="All">All Statuses</option>
             <option value="Completed">Completed</option>
@@ -210,7 +206,7 @@ const AdminLogsPage: React.FC = () => {
             onChange={(event) =>
               setEventFilter(event.target.value as EventType | "All")
             }
-            className="w-full rounded border border-cyan-400/20 bg-[#191919] px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+            className="w-full rounded border border-cyan-400/20 bg-white dark:bg-[#191919] px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
           >
             <option value="All">All Event Types</option>
             <option value="llm_request">llm_request</option>
@@ -223,7 +219,7 @@ const AdminLogsPage: React.FC = () => {
           <select
             value={modelFilter}
             onChange={(event) => setModelFilter(event.target.value)}
-            className="w-full rounded border border-cyan-400/20 bg-[#191919] px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+            className="w-full rounded border border-cyan-400/20 bg-white dark:bg-[#191919] px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
           >
             <option value="All">All Models</option>
             <option value="gpt-4o">gpt-4o</option>
@@ -238,19 +234,19 @@ const AdminLogsPage: React.FC = () => {
               setEventFilter("All");
               setModelFilter("All");
             }}
-            className="rounded border border-white/10 bg-black/30 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+            className="rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-black/30 px-4 py-2 text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 transition-colors hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
           >
             Clear Filters
           </button>
         </div>
       </section>
 
-      <section className="rounded border border-white/10 bg-white/2 p-6">
+      <section className="rounded border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-white/2 p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-900 dark:text-white">
             AI Trace Log Table
           </h3>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
             {filteredLogs.length} entries
           </span>
         </div>
@@ -258,7 +254,7 @@ const AdminLogsPage: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse text-sm">
             <thead>
-              <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-widest text-slate-500">
+              <tr className="border-b border-slate-200 dark:border-white/10 text-left text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500">
                 <th className="px-3 py-3 font-semibold">Log ID</th>
                 <th className="px-3 py-3 font-semibold">Correlation ID</th>
                 <th className="px-3 py-3 font-semibold">Event</th>
@@ -273,65 +269,65 @@ const AdminLogsPage: React.FC = () => {
             </thead>
             <tbody>
               {paginatedLogs.map((log) => (
-                <tr key={log.id} className="border-b border-white/5">
-                  <td className="px-3 py-3 text-slate-200">{log.id}</td>
-                  <td className="px-3 py-3 text-slate-300">
+                <tr key={log.id} className="border-b border-slate-100 dark:border-white/5">
+                  <td className="px-3 py-3 text-slate-700 dark:text-slate-200">{log.id}</td>
+                  <td className="px-3 py-3 text-slate-600 dark:text-slate-300">
                     {log.correlationId}
                   </td>
-                  <td className="px-3 py-3 text-slate-300">{log.eventType}</td>
-                  <td className="px-3 py-3 text-slate-300">{log.model}</td>
-                  <td className="px-3 py-3 text-slate-300">{log.language}</td>
-                  <td className="px-3 py-3 text-slate-300">
+                  <td className="px-3 py-3 text-slate-600 dark:text-slate-300">{log.eventType}</td>
+                  <td className="px-3 py-3 text-slate-600 dark:text-slate-300">{log.model}</td>
+                  <td className="px-3 py-3 text-slate-600 dark:text-slate-300">{log.language}</td>
+                  <td className="px-3 py-3 text-slate-600 dark:text-slate-300">
                     {["stt_request", "tts_request", "retrieval_results"].includes(log.eventType) || ["retrieval-engine", "embeddings"].some(m => log.model?.includes(m))
                       ? "N/A"
                       : `${log.promptTokens} / ${log.completionTokens}`}
                   </td>
-                  <td className="px-3 py-3 text-slate-400">
+                  <td className="px-3 py-3 text-slate-500 dark:text-slate-400">
                     {log.latencyMs > 0 ? `${log.latencyMs} ms` : "-"}
                   </td>
                   <td className="px-3 py-3">
                     <span
                       className={`rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${
                         log.status === "Completed"
-                          ? "bg-green-500/15 text-green-400"
+                          ? "bg-green-500/15 text-green-600 dark:text-green-400"
                           : log.status === "Reviewed"
-                            ? "bg-indigo-500/15 text-indigo-300"
+                            ? "bg-indigo-500/15 text-indigo-600 dark:text-indigo-300"
                             : log.status === "Pending"
-                              ? "bg-amber-500/15 text-amber-300"
-                              : "bg-red-500/15 text-red-300"
+                              ? "bg-amber-500/15 text-amber-600 dark:text-amber-300"
+                              : "bg-red-500/15 text-red-600 dark:text-red-300"
                       }`}
                     >
                       {log.status}
                     </span>
                   </td>
-                  <td className="px-3 py-3 text-slate-400">{log.timestamp}</td>
+                  <td className="px-3 py-3 text-slate-500 dark:text-slate-400">{log.timestamp}</td>
                   <td className="px-3 py-3">
                     <div className="flex flex-wrap gap-2">
                       <button
                         type="button"
                         onClick={() => setSelectedLogId(log.id)}
-                        className="rounded border border-white/10 bg-white/5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+                        className="rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 transition-colors hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
                       >
                         Trace
                       </button>
                       <button
                         type="button"
                         onClick={() => handleCopyCorrelation(log.correlationId)}
-                        className="rounded border border-white/10 bg-white/5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+                        className="rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 transition-colors hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
                       >
                         Copy ID
                       </button>
                       <button
                         type="button"
                         onClick={() => markAsReviewed(log.id)}
-                        className="rounded border border-white/10 bg-white/5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+                        className="rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 transition-colors hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
                       >
                         Review
                       </button>
                       <button
                         type="button"
                         onClick={() => deleteLog(log.id)}
-                        className="rounded border border-red-400/30 bg-red-500/10 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-red-300 transition-colors hover:bg-red-500/20"
+                        className="rounded border border-red-400/30 bg-red-500/10 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-red-600 dark:text-red-300 transition-colors hover:bg-red-500/20"
                       >
                         Delete
                       </button>
@@ -344,7 +340,7 @@ const AdminLogsPage: React.FC = () => {
         </div>
 
         {totalPages > 1 && (
-          <div className="mt-4 flex items-center justify-between text-xs text-slate-400">
+          <div className="mt-4 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
             <span>
               Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
               {Math.min(currentPage * itemsPerPage, filteredLogs.length)} of{" "}
@@ -355,7 +351,7 @@ const AdminLogsPage: React.FC = () => {
                 type="button"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
-                className="rounded border border-white/10 px-2 py-1 transition-colors hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent"
+                className="rounded border border-slate-200 dark:border-white/10 px-2 py-1 transition-colors hover:bg-slate-200 dark:hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent"
               >
                 &lt;
               </button>
@@ -366,8 +362,8 @@ const AdminLogsPage: React.FC = () => {
                   onClick={() => setCurrentPage(idx + 1)}
                   className={`rounded border px-2.5 py-1 transition-colors ${
                     currentPage === idx + 1
-                      ? "border-cyan-400 text-cyan-400"
-                      : "border-white/10 hover:bg-white/10"
+                      ? "border-cyan-400 text-cyan-600 dark:text-cyan-400"
+                      : "border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10"
                   }`}
                 >
                   {idx + 1}
@@ -377,7 +373,7 @@ const AdminLogsPage: React.FC = () => {
                 type="button"
                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
-                className="rounded border border-white/10 px-2 py-1 transition-colors hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent"
+                className="rounded border border-slate-200 dark:border-white/10 px-2 py-1 transition-colors hover:bg-slate-200 dark:hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-transparent"
               >
                 &gt;
               </button>
@@ -387,16 +383,16 @@ const AdminLogsPage: React.FC = () => {
       </section>
 
       {selectedLog && (
-        <section className="rounded border border-white/10 bg-black/30 p-6">
+        <section className="rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-black/30 p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
                 Trace Detail
               </p>
-              <h3 className="mt-2 text-base font-bold text-white">
+              <h3 className="mt-2 text-base font-bold text-slate-900 dark:text-white">
                 {selectedLog.id}
               </h3>
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 Correlation ID: {selectedLog.correlationId}
               </p>
             </div>
@@ -404,14 +400,14 @@ const AdminLogsPage: React.FC = () => {
               <button
                 type="button"
                 onClick={exportSelectedTrace}
-                className="rounded border border-white/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-300 hover:bg-white/10 hover:text-white"
+                className="rounded border border-slate-200 dark:border-white/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
               >
                 Export JSON
               </button>
               <button
                 type="button"
                 onClick={() => setSelectedLogId(null)}
-                className="rounded border border-white/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-300 hover:bg-white/10 hover:text-white"
+                className="rounded border border-slate-200 dark:border-white/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
               >
                 Close
               </button>
@@ -419,18 +415,18 @@ const AdminLogsPage: React.FC = () => {
           </div>
 
           <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-            <article className="rounded border border-white/10 bg-black/30 p-4 text-xs text-slate-400">
-              <p className="uppercase tracking-wider text-slate-500">LLM</p>
-              <p className="mt-2 text-sm font-semibold text-slate-200">
+            <article className="rounded border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/30 p-4 text-xs text-slate-500 dark:text-slate-400">
+              <p className="uppercase tracking-wider text-slate-400 dark:text-slate-500">LLM</p>
+              <p className="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-200">
                 {selectedLog.model}
               </p>
               <p className="mt-1">
                 Prompt Version: {selectedLog.promptVersion}
               </p>
             </article>
-            <article className="rounded border border-white/10 bg-black/30 p-4 text-xs text-slate-400">
-              <p className="uppercase tracking-wider text-slate-500">Tokens</p>
-              <p className="mt-2 text-sm font-semibold text-slate-200">
+            <article className="rounded border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/30 p-4 text-xs text-slate-500 dark:text-slate-400">
+              <p className="uppercase tracking-wider text-slate-400 dark:text-slate-500">Tokens</p>
+              <p className="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-200">
                 {selectedLog.promptTokens + selectedLog.completionTokens}
               </p>
               <p className="mt-1">
@@ -438,22 +434,22 @@ const AdminLogsPage: React.FC = () => {
                 {selectedLog.completionTokens}
               </p>
             </article>
-            <article className="rounded border border-white/10 bg-black/30 p-4 text-xs text-slate-400">
-              <p className="uppercase tracking-wider text-slate-500">
+            <article className="rounded border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/30 p-4 text-xs text-slate-500 dark:text-slate-400">
+              <p className="uppercase tracking-wider text-slate-400 dark:text-slate-500">
                 Retrieval
               </p>
-              <p className="mt-2 text-sm font-semibold text-slate-200">
+              <p className="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-200">
                 {selectedLog.retrievalCount} chunks
               </p>
               <p className="mt-1">
                 Citations generated: {selectedLog.citationCount}
               </p>
             </article>
-            <article className="rounded border border-white/10 bg-black/30 p-4 text-xs text-slate-400">
-              <p className="uppercase tracking-wider text-slate-500">
+            <article className="rounded border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/30 p-4 text-xs text-slate-500 dark:text-slate-400">
+              <p className="uppercase tracking-wider text-slate-400 dark:text-slate-500">
                 Execution
               </p>
-              <p className="mt-2 text-sm font-semibold text-slate-200">
+              <p className="mt-2 text-sm font-semibold text-slate-700 dark:text-slate-200">
                 {selectedLog.latencyMs > 0
                   ? `${selectedLog.latencyMs} ms`
                   : "In progress"}
@@ -462,22 +458,22 @@ const AdminLogsPage: React.FC = () => {
             </article>
           </div>
 
-          <div className="mt-5 rounded border border-white/10 bg-black/30 p-4">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+          <div className="mt-5 rounded border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/30 p-4">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
               Trace Timeline
             </p>
-            <ol className="mt-3 space-y-2 text-xs text-slate-300">
-              <li className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+            <ol className="mt-3 space-y-2 text-xs text-slate-600 dark:text-slate-300">
+              <li className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] px-3 py-2">
                 1. Query request received and sanitized for logging.
               </li>
-              <li className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+              <li className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] px-3 py-2">
                 2. Retrieval pipeline executed with chunk ranking and score
                 logging.
               </li>
-              <li className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+              <li className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] px-3 py-2">
                 3. LLM generation completed with token and latency capture.
               </li>
-              <li className="rounded border border-white/10 bg-[#191919] px-3 py-2">
+              <li className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] px-3 py-2">
                 4. Citation validation and final trace status recorded.
               </li>
             </ol>
