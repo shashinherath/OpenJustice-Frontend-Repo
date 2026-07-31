@@ -232,6 +232,7 @@ const HomePage: React.FC = () => {
       iconColor: "text-green-600 dark:text-green-400",
       title: t("privateAndSecure"),
       description: t("privateDescription"),
+      userAvatar: "/user1.png",
       chat: {
         userMsg: t("isMyDataShared"),
         botMsg: t("dataSecurity"),
@@ -243,6 +244,7 @@ const HomePage: React.FC = () => {
       iconColor: "text-purple-600 dark:text-purple-400",
       title: t("plainLanguage"),
       description: t("plainDescription"),
+      userAvatar: "/user2.png",
       chat: {
         userMsg: t("forceMajeure"),
         botMsg: t("forceMajeureExplanation"),
@@ -254,6 +256,7 @@ const HomePage: React.FC = () => {
       iconColor: "text-orange-600 dark:text-orange-400",
       title: t("comprehensive"),
       description: t("comprehensiveDescription"),
+      userAvatar: "/user3.png",
       chat: {
         userMsg: t("smallClaimsCase"),
         botMsg: t("smallClaimsSteps"),

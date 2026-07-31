@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import BrandLogo from "@/components/ui/BrandLogo";
 
 export interface FeatureData {
   icon: string;
@@ -6,6 +7,7 @@ export interface FeatureData {
   iconColor: string;
   title: string;
   description: string;
+  userAvatar?: string;
   chat: {
     userMsg: string;
     botMsg: string;
@@ -17,6 +19,8 @@ interface FeatureCardProps {
 }
 
 const FeatureCard: React.FC<FeatureCardProps> = ({ feature }) => {
+  const [avatarError, setAvatarError] = useState(false);
+
   return (
     <div className="flex flex-col gap-6 group">
       {/* Feature Info Card */}
@@ -40,18 +44,29 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ feature }) => {
       <div className="flex flex-col gap-3 p-5 rounded-2xl bg-slate-100/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 text-left">
         {/* User message */}
         <div className="flex items-start gap-3">
-          <div className="size-7 rounded-full bg-slate-300 dark:bg-slate-700 shrink-0" />
+          {feature.userAvatar && !avatarError ? (
+            <img
+              src={feature.userAvatar}
+              alt="User"
+              className="size-7 rounded-full object-cover shrink-0 border border-slate-200 dark:border-slate-700 shadow-sm"
+              onError={() => setAvatarError(true)}
+            />
+          ) : (
+            <div className="size-7 rounded-full bg-slate-300 dark:bg-slate-700 shrink-0 flex items-center justify-center text-slate-600 dark:text-slate-300">
+              <span className="material-symbols-outlined text-[16px]">person</span>
+            </div>
+          )}
           <p className="text-[13px] text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-800 p-2.5 rounded-lg shadow-sm border border-slate-100 dark:border-slate-700">
             {feature.chat.userMsg}
           </p>
         </div>
         {/* Bot message */}
         <div className="flex items-start gap-3 flex-row-reverse">
-          <div className="size-7 rounded-full bg-blue-600 shrink-0 flex items-center justify-center text-white">
-            <span className="material-symbols-outlined text-[16px]">
-              smart_toy
-            </span>
-          </div>
+          <BrandLogo
+            containerClassName="size-7 rounded-full bg-white dark:bg-slate-800 shrink-0 flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-700 shadow-sm"
+            imageClassName="h-full w-full object-cover scale-125"
+            iconClassName="text-[16px]"
+          />
           <p className="text-[13px] text-slate-700 dark:text-slate-300 bg-blue-50 dark:bg-blue-900/20 p-2.5 rounded-lg border border-blue-100 dark:border-blue-800/50">
             {feature.chat.botMsg}
           </p>

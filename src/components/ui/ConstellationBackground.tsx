@@ -134,6 +134,12 @@ const ConstellationBackground: React.FC<ConstellationBackgroundProps> = ({
   }, [createParticles]);
 
   const handleMouseMove = useCallback((event: MouseEvent) => {
+    // Ignore mouse interaction in the upper border / navbar area (logo, theme toggle, language switcher, login)
+    if (event.clientY < 85) {
+      mouseRef.current.x = -1000;
+      mouseRef.current.y = -1000;
+      return;
+    }
     const canvas = canvasRef.current;
     if (!canvas) return;
     const rect = canvas.getBoundingClientRect();
