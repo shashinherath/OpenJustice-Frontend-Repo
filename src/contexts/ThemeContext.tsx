@@ -77,14 +77,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // correctly without adjustment.
     const coordFactor = Number.isInteger(dpr) ? 1 : dpr;
 
-    const x = ((e?.clientX ?? vpWidth / 2) + offsetLeft) * coordFactor;
-    const y = ((e?.clientY ?? vpHeight / 2) + offsetTop) * coordFactor;
+    const clipX = ((e?.clientX ?? vpWidth / 2) + offsetLeft) * coordFactor;
+    const clipY = ((e?.clientY ?? vpHeight / 2) + offsetTop) * coordFactor;
 
     const layoutW = window.innerWidth * coordFactor;
     const layoutH = window.innerHeight * coordFactor;
     const endRadius = Math.hypot(
-      Math.max(x, layoutW - x),
-      Math.max(y, layoutH - y)
+      Math.max(clipX, layoutW - clipX),
+      Math.max(clipY, layoutH - clipY)
     );
 
     // @ts-ignore
@@ -98,8 +98,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       document.documentElement.animate(
         {
           clipPath: [
-            `circle(0px at ${x}px ${y}px)`,
-            `circle(${endRadius}px at ${x}px ${y}px)`,
+            `circle(0px at ${clipX}px ${clipY}px)`,
+            `circle(${endRadius}px at ${clipX}px ${clipY}px)`,
           ],
         },
         {
