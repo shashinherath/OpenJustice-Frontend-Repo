@@ -22,7 +22,7 @@ const translation = {
           "comprehensive": "Comprehensive",
           "comprehensiveDescription": "From housing disputes to small claims and family law, our library covers the essential legal procedures you need to know.",
           "disclaimer": "Important Disclaimer:",
-          "disclaimerText": "OpenJustice is an AI-powered educational tool. We provide legal information, not legal advice or representation. Consult a qualified attorney for your specific situation.",
+          "disclaimerText": "OpenJustice is an AI-powered educational platform that provides legal information to help you better understand laws and legal procedures. It does not provide legal advice or legal representation.",
           "readPrivacyPolicy": "Read Privacy Policy",
           "whatsAppIntegration": "WhatsApp Integration",
           "whatsAppDesc": "Access legal knowledge directly from your phone. Send voice notes or text messages to our dedicated WhatsApp number and receive instant, plain-language legal answers anywhere, anytime.",

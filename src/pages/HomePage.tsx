@@ -273,7 +273,7 @@ const HomePage: React.FC = () => {
           className="pointer-events-none absolute inset-0 overflow-hidden"
           style={{ transformStyle: "preserve-3d" }}
         >
-          <ConstellationBackground className="opacity-80 dark:opacity-60" />
+          <ConstellationBackground className="opacity-90 dark:opacity-75" />
           <div
             className="absolute left-1/2 top-24 h-176 w-176 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(59,130,246,0.18)_0%,rgba(14,165,233,0.10)_30%,rgba(255,255,255,0)_72%)] blur-3xl transition-transform duration-200 ease-out dark:bg-[radial-gradient(circle,rgba(96,165,250,0.14)_0%,rgba(34,211,238,0.08)_30%,rgba(255,255,255,0)_72%)] md:h-216 md:w-216"
             style={{

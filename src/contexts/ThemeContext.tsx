@@ -54,14 +54,15 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [theme]);
 
   const performThemeTransition = useCallback((updateFn: () => void, e?: React.MouseEvent | MouseEvent) => {
+    const x = e?.clientX ?? window.innerWidth / 2;
+    const y = e?.clientY ?? window.innerHeight / 2;
+    window.dispatchEvent(new CustomEvent("theme-toggle-wave", { detail: { x, y } }));
+
     // @ts-ignore
     if (!document.startViewTransition) {
       updateFn();
       return;
     }
-
-    const x = e?.clientX ?? window.innerWidth / 2;
-    const y = e?.clientY ?? window.innerHeight / 2;
     const endRadius = Math.hypot(
       Math.max(x, window.innerWidth - x),
       Math.max(y, window.innerHeight - y)
