@@ -10,6 +10,15 @@ const EMBEDDING_MODELS = [
   { value: "text-embedding-ada-002", label: "Text Embedding Ada 002" },
 ];
 
+const CACHE_TTL_OPTIONS = [
+  { value: 0, label: "No expiry (manual clear only)" },
+  { value: 1, label: "1 hour" },
+  { value: 6, label: "6 hours" },
+  { value: 24, label: "24 hours" },
+  { value: 168, label: "7 days" },
+  { value: 720, label: "30 days" },
+];
+
 const RetrievalSettingsPage: React.FC = () => {
   const [settings, setSettings] = useState<RetrievalSettingsPayload>({
     retrieval_top_k: 5,
@@ -17,9 +26,11 @@ const RetrievalSettingsPage: React.FC = () => {
     retrieval_embedding_model: "text-embedding-3-large",
     retrieval_chunk_size: 1000,
     retrieval_chunk_overlap: 200,
+    semantic_cache_ttl_hours: 0,
   });
 
   const [saveNotice, setSaveNotice] = useState<string>("");
+  const [isSaveError, setIsSaveError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [confirmSaveOpen, setConfirmSaveOpen] = useState(false);
 
@@ -39,10 +50,12 @@ const RetrievalSettingsPage: React.FC = () => {
     setIsLoading(true);
     try {
       await adminService.updateRetrievalSettings(settings);
+      setIsSaveError(false);
       setSaveNotice("Retrieval settings saved successfully.");
       setTimeout(() => setSaveNotice(""), 3000);
     } catch (error) {
       console.error(error);
+      setIsSaveError(true);
       setSaveNotice("Failed to save retrieval settings.");
     } finally {
       setIsLoading(false);
@@ -62,10 +75,9 @@ const RetrievalSettingsPage: React.FC = () => {
           </p>
         </div>
       </section>
-
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
+        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
             Top-K Results
           </p>
           <p className="mt-3 text-2xl font-black text-cyan-600 dark:text-cyan-400">
@@ -86,6 +98,18 @@ const RetrievalSettingsPage: React.FC = () => {
           </p>
           <p className="mt-3 text-2xl font-black text-slate-900 dark:text-white">
             {settings.retrieval_chunk_size}
+          </p>
+        </article>
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
+            Cache TTL
+          </p>
+          <p className="mt-3 text-2xl font-black text-violet-600 dark:text-violet-400">
+            {settings.semantic_cache_ttl_hours === 0
+              ? "No expiry"
+              : settings.semantic_cache_ttl_hours < 24
+              ? `${settings.semantic_cache_ttl_hours}h`
+              : `${settings.semantic_cache_ttl_hours / 24}d`}
           </p>
         </article>
       </section>
@@ -243,6 +267,41 @@ const RetrievalSettingsPage: React.FC = () => {
           </div>
         </article>
 
+        <article className="rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-black/30 p-5">
+          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-900 dark:text-white">
+            Semantic Cache TTL
+          </h3>
+          <p className="mt-2 text-[10px] text-slate-500 dark:text-slate-400">
+            Automatically expire cache entries older than this interval when clearing the cache. Set to "No expiry" to clear all entries manually.
+          </p>
+          <div className="mt-4 md:w-96">
+            <select
+              value={settings.semantic_cache_ttl_hours}
+              onChange={(e) =>
+                setSettings({ ...settings, semantic_cache_ttl_hours: parseInt(e.target.value, 10) })
+              }
+              className="w-full rounded border border-slate-300 dark:border-white/10 bg-white dark:bg-[#191919] px-3 py-2 text-sm text-slate-700 dark:text-slate-300 transition-colors hover:border-cyan-400/30 focus:border-cyan-400/50 focus:outline-none"
+            >
+              {CACHE_TTL_OPTIONS.map((opt) => (
+                <option
+                  key={opt.value}
+                  value={opt.value}
+                  className="bg-white dark:bg-[#191919] text-slate-700 dark:text-slate-300"
+                >
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <p className="mt-3 text-[10px] text-slate-400 dark:text-slate-500">
+            {settings.semantic_cache_ttl_hours === 0
+              ? 'The "Clear Semantic Cache" action will delete all entries.'
+              : `The "Clear Semantic Cache" action will only delete entries older than ${
+                  CACHE_TTL_OPTIONS.find((o) => o.value === settings.semantic_cache_ttl_hours)?.label ?? `${settings.semantic_cache_ttl_hours}h`
+                }.`}
+          </p>
+        </article>
+
         <div className="flex flex-col gap-3 md:flex-row md:items-center">
           <button
             type="button"
@@ -253,7 +312,7 @@ const RetrievalSettingsPage: React.FC = () => {
             {isLoading ? "Saving..." : "Save Settings"}
           </button>
           {saveNotice && (
-            <p className="text-xs font-semibold text-green-400">{saveNotice}</p>
+            <p className={`text-xs font-semibold ${isSaveError ? "text-red-400" : "text-green-400"}`}>{saveNotice}</p>
           )}
         </div>
       </section>

@@ -292,6 +292,7 @@ export interface RetrievalSettingsPayload {
   retrieval_embedding_model: string;
   retrieval_chunk_size: number;
   retrieval_chunk_overlap: number;
+  semantic_cache_ttl_hours: number;
 }
 
 export interface IntegrationSettingsPayload {
