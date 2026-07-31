@@ -316,10 +316,6 @@ const ConstellationBackground: React.FC<ConstellationBackgroundProps> = ({
           let finalDy = normalDy;
 
           if (pulseValue > 0) {
-            const dxC = particle.x - width / 2;
-            const dyC = particle.y - height / 2;
-            const distC = Math.hypot(dxC, dyC) || 1;
-
             if (pulsePattern === 0) {
               // Pattern 0: 1-Stage Forward Surge (Favorite)
               finalDx *= 1 + pulseValue * 1.6;
