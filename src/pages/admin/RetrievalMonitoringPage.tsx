@@ -173,7 +173,7 @@ const RetrievalMonitoringPage: React.FC = () => {
                 <span className="text-sm font-semibold text-slate-200">
                   Top-K hit confidence
                 </span>
-                <span className="text-sm font-bold text-emerald-300">{data.health_targets.topKHitConfidence}</span>
+                <span className={`text-sm font-bold ${getConfidenceColor(data.health_targets.topKHitConfidence)}`}>{data.health_targets.topKHitConfidence}</span>
               </div>
               <p className="mt-2 text-xs text-slate-400">
                 Prefer stable gains here before relaxing chunking or ranking
