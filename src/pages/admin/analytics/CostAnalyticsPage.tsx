@@ -93,7 +93,7 @@ const CostAnalyticsPage: React.FC = () => {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center p-8">
-        <div className="text-cyan-400">Loading cost analytics...</div>
+        <div className="text-cyan-600 dark:text-cyan-400">Loading cost analytics...</div>
       </div>
     );
   }
@@ -108,25 +108,25 @@ const CostAnalyticsPage: React.FC = () => {
 
   return (
     <div className="space-y-8 p-8">
-      <section className="rounded border border-rose-400/20 bg-[#191919] p-6">
+      <section className="rounded border border-rose-400/20 bg-white dark:bg-[#191919] p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-rose-300/70">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-rose-600/70 dark:text-rose-300/70">
               Analytics / Cost
             </p>
-            <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">
+            <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
               Cost Analytics
             </h2>
-            <p className="mt-3 max-w-3xl text-sm text-slate-300">
+            <p className="mt-3 max-w-3xl text-sm text-slate-600 dark:text-slate-300">
               Track the main spend drivers: OpenAI models, vector embeddings,
               transcription, and TTS, plus Twilio messaging.
             </p>
           </div>
-          <div className="rounded border border-white/10 bg-black/30 px-4 py-3 text-right">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+          <div className="rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-black/30 px-4 py-3 text-right">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
               Projected Monthly Cost
             </p>
-            <p className="mt-2 text-2xl font-black text-white">
+            <p className="mt-2 text-2xl font-black text-slate-900 dark:text-white">
               {currencyFormatter.format(projectedMonthlyCost)}
             </p>
           </div>
@@ -134,64 +134,64 @@ const CostAnalyticsPage: React.FC = () => {
       </section>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <article className="rounded border border-white/10 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+        <article className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
             Estimated Cost (7d)
           </p>
-          <p className="mt-3 text-2xl font-black text-white">
+          <p className="mt-3 text-2xl font-black text-slate-900 dark:text-white">
             {currencyFormatter.format(totalCost)}
           </p>
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
             OpenAI and Twilio combined
           </p>
         </article>
-        <article className="rounded border border-white/10 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+        <article className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
             OpenAI Cost
           </p>
-          <p className="mt-3 text-2xl font-black text-rose-300">
+          <p className="mt-3 text-2xl font-black text-rose-600 dark:text-rose-300">
             {currencyFormatter.format(totalOpenAiCost)}
           </p>
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
             Models, embeddings, STT, and TTS
           </p>
         </article>
-        <article className="rounded border border-white/10 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+        <article className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
             Twilio Cost
           </p>
           <p className="mt-3 text-2xl font-black text-blue-400">
             {currencyFormatter.format(totalTwilioCost)}
           </p>
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
             WhatsApp messaging and numbers
           </p>
         </article>
-        <article className="rounded border border-white/10 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+        <article className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
             Highest Daily Cost
           </p>
-          <p className="mt-3 text-2xl font-black text-white">
+          <p className="mt-3 text-2xl font-black text-slate-900 dark:text-white">
             {currencyFormatter.format(maxDailyTotal)}
           </p>
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
             Peak activity day in the current window
           </p>
         </article>
       </section>
 
       <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1.35fr_0.95fr]">
-        <article className="rounded border border-white/10 bg-[#191919] p-6">
+        <article className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] p-6">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+              <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-900 dark:text-white">
                 Daily Cost Trend
               </h3>
-              <p className="mt-1 text-sm text-slate-400">
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                 OpenAI spend versus Twilio messaging spend over the last 7 days.
               </p>
             </div>
-            <span className="rounded border border-white/10 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-rose-300">
+            <span className="rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-rose-600 dark:text-rose-300">
               7 day view
             </span>
           </div>
@@ -211,7 +211,7 @@ const CostAnalyticsPage: React.FC = () => {
 
               return (
                 <div key={`${entry.day}-${idx}`} className="space-y-2 text-center">
-                  <div className="flex h-44 items-end rounded border border-white/10 bg-black/30 p-2">
+                  <div className="flex h-44 items-end rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-black/30 p-2">
                     <div className="flex h-full w-full items-end gap-1">
                       <div
                         className="w-1/2 rounded-sm bg-rose-400/80 transition-all duration-500 ease-in-out"
@@ -225,8 +225,8 @@ const CostAnalyticsPage: React.FC = () => {
                       />
                     </div>
                   </div>
-                  <p className="text-[11px] text-slate-400">{entry.day}</p>
-                  <p className="text-[11px] font-semibold text-slate-300">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">{entry.day}</p>
+                  <p className="text-[11px] font-semibold text-slate-600 dark:text-slate-300">
                     {currencyFormatter.format(total)}
                   </p>
                 </div>
@@ -234,7 +234,7 @@ const CostAnalyticsPage: React.FC = () => {
             })}
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-3 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+          <div className="mt-4 flex flex-wrap gap-3 text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
             <span className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-rose-400" />
               OpenAI
@@ -246,13 +246,13 @@ const CostAnalyticsPage: React.FC = () => {
           </div>
 
           {data.daily_model_costs && data.daily_model_costs.length > 0 && (
-            <div className="mt-8 border-t border-white/10 pt-6">
+            <div className="mt-8 border-t border-slate-200 dark:border-white/10 pt-6">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <h4 className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-400">
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
                     OpenAI Model Trending
                   </h4>
-                  <p className="mt-1 text-[11px] text-slate-500">
+                  <p className="mt-1 text-[11px] text-slate-400 dark:text-slate-500">
                     Daily cost split across language models, embeddings, and audio generation.
                   </p>
                 </div>
@@ -262,19 +262,19 @@ const CostAnalyticsPage: React.FC = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={data.daily_model_costs} margin={{ top: 5, right: 10, bottom: 0, left: -20 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                    <XAxis 
-                      dataKey="day" 
-                      stroke="#64748b" 
-                      fontSize={10} 
-                      tickLine={false} 
-                      axisLine={false} 
-                      dy={5} 
+                    <XAxis
+                      dataKey="day"
+                      stroke="#64748b"
+                      fontSize={10}
+                      tickLine={false}
+                      axisLine={false}
+                      dy={5}
                     />
-                    <YAxis 
-                      stroke="#64748b" 
-                      fontSize={10} 
-                      tickLine={false} 
-                      axisLine={false} 
+                    <YAxis
+                      stroke="#64748b"
+                      fontSize={10}
+                      tickLine={false}
+                      axisLine={false}
                       tickFormatter={(value) => `$${value}`}
                     />
                     <Tooltip
@@ -295,17 +295,17 @@ const CostAnalyticsPage: React.FC = () => {
           )}
         </article>
 
-        <article className="rounded border border-white/10 bg-[#191919] p-6">
-          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+        <article className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] p-6">
+          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-900 dark:text-white">
             Spend Mix
           </h3>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Breakdown of total spend by cost driver.
           </p>
 
           <div className="mt-6 flex items-center justify-center">
             <div
-              className="relative h-48 w-48 rounded-full border border-white/10 transition-all duration-1000 ease-in-out"
+              className="relative h-48 w-48 rounded-full border border-slate-200 dark:border-white/10 transition-all duration-1000 ease-in-out"
               style={{
                 background: costSegments.length > 0 ? `conic-gradient(${costSegments
                   .map(
@@ -314,12 +314,12 @@ const CostAnalyticsPage: React.FC = () => {
                   .join(", ")})` : '#333',
               }}
             >
-              <div className="absolute inset-8 rounded-full border border-white/10 bg-[#191919]" />
+              <div className="absolute inset-8 rounded-full border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919]" />
               <div className="absolute inset-14 flex flex-col items-center justify-center text-center">
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
                   Total Cost
                 </p>
-                <p className="mt-2 text-xl font-black text-white">
+                <p className="mt-2 text-xl font-black text-slate-900 dark:text-white">
                   {currencyFormatter.format(totalCost)}
                 </p>
               </div>
@@ -336,17 +336,17 @@ const CostAnalyticsPage: React.FC = () => {
               return (
                 <div
                   key={cat.id}
-                  className="rounded border border-white/10 bg-black/30 p-4"
+                  className="rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-black/30 p-4"
                 >
                   <div className="mb-2 flex items-center justify-between gap-4">
-                    <p className="text-sm font-semibold text-slate-200">
+                    <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
                       {cat.label}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
                       {currencyFormatter.format(cat.cost)} · {share}%
                     </p>
                   </div>
-                  <div className="h-2 overflow-hidden rounded bg-white/10">
+                  <div className="h-2 overflow-hidden rounded bg-slate-200 dark:bg-white/10">
                     <div
                       className={`${cat.colorClass} h-full transition-all duration-700 ease-in-out`}
                       style={{
@@ -362,18 +362,18 @@ const CostAnalyticsPage: React.FC = () => {
       </section>
 
 
-      <section className="rounded border border-white/10 bg-[#191919] p-6">
+      <section className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] p-6">
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+            <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-900 dark:text-white">
               OpenAI Cost Drivers
             </h3>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               The backend cost is mostly driven by LLM tokens, embeddings,
               Whisper transcription minutes, and TTS character generation.
             </p>
           </div>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-400 dark:text-slate-500">
             Each driver is measured in its native billing unit.
           </p>
         </div>
@@ -381,7 +381,7 @@ const CostAnalyticsPage: React.FC = () => {
         <div className="mt-6 overflow-x-auto">
           <table className="min-w-full border-collapse text-sm">
             <thead>
-              <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-widest text-slate-500">
+              <tr className="border-b border-slate-200 dark:border-white/10 text-left text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500">
                 <th className="px-3 py-3 font-semibold">Driver</th>
                 <th className="px-3 py-3 font-semibold">Model</th>
                 <th className="px-3 py-3 font-semibold">Usage</th>
@@ -391,23 +391,23 @@ const CostAnalyticsPage: React.FC = () => {
             </thead>
             <tbody>
               {[...data.cost_drivers].sort((a, b) => b.estimatedCost - a.estimatedCost).map((driver) => (
-                <tr key={driver.key} className="border-b border-white/5">
-                  <td className="px-3 py-3 text-slate-200">
+                <tr key={driver.key} className="border-b border-slate-100 dark:border-white/5">
+                  <td className="px-3 py-3 text-slate-700 dark:text-slate-200">
                     <div>
                       <p className="font-semibold">{driver.title}</p>
-                      <p className="mt-1 text-xs text-slate-400">{driver.detail}</p>
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{driver.detail}</p>
                     </div>
                   </td>
-                  <td className="px-3 py-3 text-slate-300">{driver.model}</td>
-                  <td className="px-3 py-3 text-slate-300">
-                    {integerFormatter.format(driver.usage)} <span className="text-xs text-slate-500">({driver.unit})</span>
+                  <td className="px-3 py-3 text-slate-600 dark:text-slate-300">{driver.model}</td>
+                  <td className="px-3 py-3 text-slate-600 dark:text-slate-300">
+                    {integerFormatter.format(driver.usage)} <span className="text-xs text-slate-400 dark:text-slate-500">({driver.unit})</span>
                   </td>
                   <td className="px-3 py-3">
                     <span className={`text-[10px] font-bold uppercase tracking-widest ${driver.colorClass.replace('bg-', 'text-')}`}>
                       {driver.trend}
                     </span>
                   </td>
-                  <td className="px-3 py-3 text-right font-semibold text-white">
+                  <td className="px-3 py-3 text-right font-semibold text-slate-900 dark:text-white">
                     {currencyFormatter.format(driver.estimatedCost)}
                   </td>
                 </tr>
@@ -416,35 +416,35 @@ const CostAnalyticsPage: React.FC = () => {
           </table>
         </div>
 
-        <div className="mt-6 rounded border border-white/10 bg-white/5 p-4">
+        <div className="mt-6 rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 p-4">
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500">
                 OpenAI subtotal
               </p>
-              <p className="mt-2 text-xl font-black text-white">
+              <p className="mt-2 text-xl font-black text-slate-900 dark:text-white">
                 {currencyFormatter.format(totalOpenAiCost)}
               </p>
             </div>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Includes text generation, embeddings, and audio processing fees.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="rounded border border-white/10 bg-[#191919] p-6">
+      <section className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] p-6">
         <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+            <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-900 dark:text-white">
               Twilio Messaging Costs
             </h3>
-            <p className="mt-1 text-sm text-slate-400">
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
               WhatsApp traffic is billed separately through Twilio for the phone
               number and per-message send/receive charges.
             </p>
           </div>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-400 dark:text-slate-500">
             Messaging spend is smaller than OpenAI, but still a live cost line.
           </p>
         </div>
@@ -452,7 +452,7 @@ const CostAnalyticsPage: React.FC = () => {
         <div className="mt-6 overflow-x-auto">
           <table className="min-w-full border-collapse text-sm">
             <thead>
-              <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-widest text-slate-500">
+              <tr className="border-b border-slate-200 dark:border-white/10 text-left text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500">
                 <th className="px-3 py-3 font-semibold">Item</th>
                 <th className="px-3 py-3 font-semibold">Usage</th>
                 <th className="px-3 py-3 font-semibold text-right">Estimated Spend</th>
@@ -460,14 +460,14 @@ const CostAnalyticsPage: React.FC = () => {
             </thead>
             <tbody>
               {data.twilio_items.map((item) => (
-                <tr key={item.label} className="border-b border-white/5">
-                  <td className="px-3 py-3 text-slate-200">
+                <tr key={item.label} className="border-b border-slate-100 dark:border-white/5">
+                  <td className="px-3 py-3 text-slate-700 dark:text-slate-200">
                     <div>
                       <p className="font-semibold">{item.label}</p>
-                      <p className="mt-1 text-xs text-slate-400">{item.note}</p>
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{item.note}</p>
                     </div>
                   </td>
-                  <td className="px-3 py-3 text-slate-300">
+                  <td className="px-3 py-3 text-slate-600 dark:text-slate-300">
                     {integerFormatter.format(item.value)}
                   </td>
                   <td className="px-3 py-3 text-right font-semibold text-blue-400">
@@ -479,17 +479,17 @@ const CostAnalyticsPage: React.FC = () => {
           </table>
         </div>
 
-        <div className="mt-6 rounded border border-white/10 bg-white/5 p-4">
+        <div className="mt-6 rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 p-4">
           <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-400 dark:text-slate-500">
                 Twilio subtotal
               </p>
-              <p className="mt-2 text-xl font-black text-white">
+              <p className="mt-2 text-xl font-black text-slate-900 dark:text-white">
                 {currencyFormatter.format(totalTwilioCost)}
               </p>
             </div>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Includes monthly number rental and WhatsApp delivery fees.
             </p>
           </div>

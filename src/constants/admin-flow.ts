@@ -126,7 +126,7 @@ export const ADMIN_MODULES: AdminModule[] = [
   },
   {
     key: "analytics",
-    label: "Simple Analytics",
+    label: "Analytics",
     navLabel: "Analytics",
     path: "/admin/analytics",
     icon: "insights",
