@@ -6,6 +6,7 @@ import { useChatStore } from "@/stores/chatStore";
 import { useAuthStore } from "@/stores/authStore";
 import BrandLogo from "@/components/ui/BrandLogo";
 import ChatActionModal from "@/components/ui/ChatActionModal";
+import WhatsAppConnectModal from "@/components/ui/WhatsAppConnectModal";
 
 interface SidebarProps {
   showBrand?: boolean;
@@ -15,6 +16,7 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ showBrand = true, onMobileClose }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [whatsappModalOpen, setWhatsappModalOpen] = useState(false);
   const [activeChatMenu, setActiveChatMenu] = useState<string | null>(null);
   const [chatModalState, setChatModalState] = useState<{
     mode: "rename" | "delete";
@@ -106,9 +108,8 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true, onMobileClose }) =>
 
   return (
     <aside
-      className={`relative flex h-full min-h-0 shrink-0 flex-col overflow-visible border-r border-slate-200 bg-white transition-all duration-200 dark:border-border-dark dark:bg-brand-bg ${
-        isCollapsed ? "w-20" : "w-64"
-      }`}
+      className={`relative flex h-full min-h-0 shrink-0 flex-col overflow-visible border-r border-slate-200 bg-white transition-all duration-200 dark:border-border-dark dark:bg-brand-bg ${isCollapsed ? "w-20" : "w-64"
+        }`}
     >
       <div className={`flex-none ${isCollapsed ? "gap-4 p-2" : "gap-6 p-4"}`}>
         {showBrand && (
@@ -169,9 +170,8 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true, onMobileClose }) =>
       <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-4 pb-4">
         <div className="flex-none">
           <button
-            className={`mb-4 flex w-full items-center rounded-lg border border-slate-200 bg-white py-2.5 text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:text-slate-900 dark:border-transparent dark:bg-slate-200 dark:text-black dark:hover:bg-white cursor-pointer ${
-              isCollapsed ? "justify-center px-2" : "gap-3 px-3"
-            }`}
+            className={`mb-4 flex w-full items-center rounded-lg border border-slate-200 bg-white py-2.5 text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:text-slate-900 dark:border-transparent dark:bg-slate-200 dark:text-black dark:hover:bg-white cursor-pointer ${isCollapsed ? "justify-center px-2" : "gap-3 px-3"
+              }`}
             type="button"
             onClick={() => {
               navigate("/chat");
@@ -228,13 +228,11 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true, onMobileClose }) =>
               activeChats.map((chat) => (
                 <div
                   key={chat.id}
-                  className={`group relative flex cursor-pointer items-center rounded-lg py-2 transition-colors ${
-                    isCollapsed ? "justify-center px-2" : "gap-3 px-3"
-                  } ${
-                    selectedChatId === chat.id
+                  className={`group relative flex cursor-pointer items-center rounded-lg py-2 transition-colors ${isCollapsed ? "justify-center px-2" : "gap-3 px-3"
+                    } ${selectedChatId === chat.id
                       ? "bg-slate-100 text-slate-900 border border-slate-200 dark:bg-surface-dark dark:border-border-dark dark:text-white"
                       : "text-slate-600 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-surface-dark"
-                  }`}
+                    }`}
                   onClick={() => {
                     setActiveConversation(chat.id);
                     navigate(`/chat/${chat.id}`);
@@ -396,9 +394,9 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true, onMobileClose }) =>
         onInputChange={
           chatModalState?.mode === "rename"
             ? (value) =>
-                setChatModalState((current) =>
-                  current?.mode === "rename" ? { ...current, value } : current,
-                )
+              setChatModalState((current) =>
+                current?.mode === "rename" ? { ...current, value } : current,
+              )
             : undefined
         }
         onClose={() => setChatModalState(null)}
@@ -429,11 +427,10 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true, onMobileClose }) =>
       <div className="relative z-20 flex-none border-t border-slate-200 p-4 dark:border-border-dark">
         <div className="relative profile-menu" ref={profileMenuRef}>
           <button
-            className={`flex w-full items-center rounded-lg px-2 py-2 text-left transition-colors group focus:outline-none cursor-pointer ${
-              isCollapsed
-                ? "justify-center"
-                : "gap-3 hover:bg-slate-50 dark:hover:bg-surface-dark text-slate-900 dark:text-white"
-            }`}
+            className={`flex w-full items-center rounded-lg px-2 py-2 text-left transition-colors group focus:outline-none cursor-pointer ${isCollapsed
+              ? "justify-center"
+              : "gap-3 hover:bg-slate-50 dark:hover:bg-surface-dark text-slate-900 dark:text-white"
+              }`}
             onClick={() => setMenuOpen(!menuOpen)}
           >
             <div className="size-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center overflow-hidden border border-slate-300 dark:border-slate-600 shrink-0">
@@ -503,6 +500,20 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true, onMobileClose }) =>
                   settings
                 </span>
                 Settings
+              </button>
+
+              <button
+                className="flex w-full items-center gap-3 px-4 py-2 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-border-dark transition-colors cursor-pointer"
+                type="button"
+                onClick={() => {
+                  setWhatsappModalOpen(true);
+                  setMenuOpen(false);
+                }}
+              >
+                <span className="material-symbols-outlined text-[18px]">
+                  qr_code_2
+                </span>
+                WhatsApp
               </button>
 
               <div
@@ -604,6 +615,11 @@ const Sidebar: React.FC<SidebarProps> = ({ showBrand = true, onMobileClose }) =>
           )}
         </div>
       </div>
+
+      <WhatsAppConnectModal
+        isOpen={whatsappModalOpen}
+        onClose={() => setWhatsappModalOpen(false)}
+      />
     </aside>
   );
 };

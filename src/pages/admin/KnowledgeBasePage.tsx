@@ -76,7 +76,6 @@ const KnowledgeBasePage: React.FC = () => {
     try {
       await reprocessDocument(documentId);
     } catch (err) {
-      // Error handling is managed by store/service or can be displayed via UI toast
       console.error(err);
     }
   };
@@ -98,7 +97,7 @@ const KnowledgeBasePage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="p-8 flex justify-center items-center h-64">
-        <div className="text-cyan-400 animate-pulse font-bold tracking-widest uppercase text-sm">
+        <div className="text-cyan-600 dark:text-cyan-400 animate-pulse font-bold tracking-widest uppercase text-sm">
           Loading knowledge metrics...
         </div>
       </div>
@@ -108,7 +107,7 @@ const KnowledgeBasePage: React.FC = () => {
   if (error) {
     return (
       <div className="p-8">
-        <div className="rounded border border-rose-500/30 bg-rose-500/10 p-6 text-rose-300">
+        <div className="rounded border border-rose-500/30 bg-rose-500/10 p-6 text-rose-600 dark:text-rose-300">
           <h2 className="font-bold mb-2">Error Loading Knowledge</h2>
           <p className="text-sm">{error}</p>
         </div>
@@ -118,12 +117,12 @@ const KnowledgeBasePage: React.FC = () => {
 
   return (
     <div className="space-y-8 p-8">
-      <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
+      <section className="rounded border border-cyan-400/20 bg-white dark:bg-[#191919] p-6">
         <div>
-          <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">
+          <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Knowledge Monitoring
           </h2>
-          <p className="mt-3 max-w-3xl text-sm text-slate-300">
+          <p className="mt-3 max-w-3xl text-sm text-slate-600 dark:text-slate-300">
             View indexed chunks and embedding status for document processing
             quality.
           </p>
@@ -131,49 +130,49 @@ const KnowledgeBasePage: React.FC = () => {
       </section>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-600/70 dark:text-cyan-200/70">
             Indexed Documents
           </p>
-          <p className="mt-3 text-2xl font-black text-white">
+          <p className="mt-3 text-2xl font-black text-slate-900 dark:text-white">
             {records.length}
           </p>
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
             Total documents with embeddings.
           </p>
         </article>
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-600/70 dark:text-cyan-200/70">
             Active Embeddings
           </p>
-          <p className="mt-3 text-2xl font-black text-emerald-300">
+          <p className="mt-3 text-2xl font-black text-emerald-600 dark:text-emerald-300">
             {activeKnowledge}
           </p>
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
             Documents with successful embeddings.
           </p>
         </article>
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-200/70">
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-600/70 dark:text-cyan-200/70">
             Failed Embeddings
           </p>
-          <p className="mt-3 text-2xl font-black text-red-300">
+          <p className="mt-3 text-2xl font-black text-red-600 dark:text-red-300">
             {failedKnowledge}
           </p>
-          <p className="mt-2 text-xs text-slate-400">
+          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
             Documents that failed processing.
           </p>
         </article>
       </section>
 
-      <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
+      <section className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-6">
         <div className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+            <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-900 dark:text-white">
               Knowledge Base Status
             </h3>
           </div>
-          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500">
             {filteredRecords.length} of {records.length} entries
           </span>
         </div>
@@ -184,12 +183,12 @@ const KnowledgeBasePage: React.FC = () => {
             placeholder="Search by document title..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full rounded border border-cyan-400/20 bg-black/30 px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+            className="w-full rounded border border-cyan-400/20 bg-slate-100 dark:bg-black/30 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
           />
           <select
             value={filterCollection}
             onChange={(e) => setFilterCollection(e.target.value)}
-            className="w-full rounded border border-cyan-400/20 bg-[#191919] px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+            className="w-full rounded border border-cyan-400/20 bg-white dark:bg-[#191919] px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
           >
             <option value="All">All Collections</option>
             <option value="special">Special</option>
@@ -202,7 +201,7 @@ const KnowledgeBasePage: React.FC = () => {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="w-full rounded border border-cyan-400/20 bg-[#191919] px-3 py-2 text-sm text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+            className="w-full rounded border border-cyan-400/20 bg-white dark:bg-[#191919] px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-cyan-400 focus:outline-none focus:ring-1 focus:ring-cyan-400"
           >
             <option value="All">All Statuses</option>
             <option value="Active">Active</option>
@@ -213,7 +212,7 @@ const KnowledgeBasePage: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="min-w-full border-collapse text-sm">
             <thead>
-              <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-widest text-slate-500">
+              <tr className="border-b border-slate-200 dark:border-white/10 text-left text-[10px] uppercase tracking-widest text-slate-400 dark:text-slate-500">
                 <th className="px-3 py-3 font-semibold">Document</th>
                 <th className="px-3 py-3 font-semibold">Number of chunks</th>
                 <th className="px-3 py-3 font-semibold">
@@ -226,7 +225,7 @@ const KnowledgeBasePage: React.FC = () => {
             <tbody>
               {Object.keys(groupedRecords).length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-3 py-6 text-center text-sm text-slate-500">
+                  <td colSpan={5} className="px-3 py-6 text-center text-sm text-slate-400 dark:text-slate-500">
                     No documents match your search.
                   </td>
                 </tr>
@@ -235,11 +234,11 @@ const KnowledgeBasePage: React.FC = () => {
                   const isCollapsed = collapsedCollections.has(collectionId);
                   return (
                   <React.Fragment key={collectionId}>
-                    <tr 
-                      className="border-b border-cyan-400/20 bg-cyan-900/10 cursor-pointer hover:bg-cyan-900/20 transition-colors"
+                    <tr
+                      className="border-b border-cyan-400/20 bg-cyan-500/5 dark:bg-cyan-900/10 cursor-pointer hover:bg-cyan-500/10 dark:hover:bg-cyan-900/20 transition-colors"
                       onClick={() => toggleCollection(collectionId)}
                     >
-                      <td colSpan={5} className="px-3 py-2 text-xs font-bold uppercase tracking-widest text-cyan-300">
+                      <td colSpan={5} className="px-3 py-2 text-xs font-bold uppercase tracking-widest text-cyan-700 dark:text-cyan-300">
                         <div className="flex items-center gap-2">
                           <svg
                             className={`w-4 h-4 transition-transform duration-200 ${isCollapsed ? "-rotate-90" : "rotate-0"}`}
@@ -254,20 +253,20 @@ const KnowledgeBasePage: React.FC = () => {
                       </td>
                     </tr>
                     {!isCollapsed && rows.map((row) => (
-                      <tr key={row.documentId} className="border-b border-white/5">
-                        <td className="px-3 py-3 text-slate-200 pl-6">
+                      <tr key={row.documentId} className="border-b border-slate-100 dark:border-white/5">
+                        <td className="px-3 py-3 text-slate-700 dark:text-slate-200 pl-6">
                           {row.documentTitle || row.documentId}
                         </td>
-                        <td className="px-3 py-3 text-slate-300">{row.chunkCount}</td>
-                        <td className="px-3 py-3 text-slate-300">
+                        <td className="px-3 py-3 text-slate-600 dark:text-slate-300">{row.chunkCount}</td>
+                        <td className="px-3 py-3 text-slate-600 dark:text-slate-300">
                           {row.embeddingModel}
                         </td>
                         <td className="px-3 py-3">
                           <span
                             className={`rounded px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${
                               row.status === "Active"
-                                ? "bg-green-500/15 text-green-400"
-                                : "bg-red-500/15 text-red-300"
+                                ? "bg-green-500/15 text-green-600 dark:text-green-400"
+                                : "bg-red-500/15 text-red-600 dark:text-red-300"
                             }`}
                           >
                             {row.status}
@@ -278,14 +277,14 @@ const KnowledgeBasePage: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => handleReprocessDocument(row.documentId)}
-                              className="rounded border border-white/10 bg-white/5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+                              className="rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 transition-colors hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
                             >
                               Re-process document
                             </button>
                             <button
                               type="button"
                               onClick={() => handleViewChunks(row.documentId)}
-                              className="rounded border border-white/10 bg-white/5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+                              className="rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-white/5 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-widest text-slate-600 dark:text-slate-300 transition-colors hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
                             >
                               View chunk details
                             </button>
@@ -305,45 +304,45 @@ const KnowledgeBasePage: React.FC = () => {
       {/* Chunks Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#191919] border border-slate-700/70 rounded w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl">
-            <div className="flex justify-between items-center p-6 border-b border-slate-700/70">
-              <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">Chunk Details</h3>
+          <div className="bg-white dark:bg-[#191919] border border-slate-200 dark:border-slate-700/70 rounded w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl">
+            <div className="flex justify-between items-center p-6 border-b border-slate-200 dark:border-slate-700/70">
+              <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-900 dark:text-white">Chunk Details</h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-white transition-colors"
+                className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
               </button>
             </div>
-            
+
             <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
               {isLoadingChunks ? (
                 <div className="flex justify-center items-center h-32">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
                 </div>
               ) : selectedChunks.length === 0 ? (
-                <div className="text-center text-slate-400 py-8 text-sm">
+                <div className="text-center text-slate-500 dark:text-slate-400 py-8 text-sm">
                   No chunks found for this document.
                 </div>
               ) : (
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="rounded border border-slate-700/70 bg-[#1A1A1A] p-5">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Total Chunks</p>
-                    <p className="mt-3 text-2xl font-black text-white">{selectedChunks.length}</p>
+                  <div className="rounded border border-slate-200 dark:border-slate-700/70 bg-slate-50 dark:bg-primary p-5">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Total Chunks</p>
+                    <p className="mt-3 text-2xl font-black text-slate-900 dark:text-white">{selectedChunks.length}</p>
                   </div>
-                  <div className="rounded border border-slate-700/70 bg-[#1A1A1A] p-5">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Embedding Model</p>
-                    <p className="mt-3 text-lg font-black text-white">{selectedChunks[0]?.embedding_model || "Unknown"}</p>
+                  <div className="rounded border border-slate-200 dark:border-slate-700/70 bg-slate-50 dark:bg-primary p-5">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Embedding Model</p>
+                    <p className="mt-3 text-lg font-black text-slate-900 dark:text-white">{selectedChunks[0]?.embedding_model || "Unknown"}</p>
                   </div>
-                  <div className="rounded border border-slate-700/70 bg-[#1A1A1A] p-5">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Average Chunk Size</p>
-                    <p className="mt-3 text-xl font-black text-white">
+                  <div className="rounded border border-slate-200 dark:border-slate-700/70 bg-slate-50 dark:bg-primary p-5">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Average Chunk Size</p>
+                    <p className="mt-3 text-xl font-black text-slate-900 dark:text-white">
                       {Math.round(selectedChunks.reduce((acc, c) => acc + c.chunk_size, 0) / selectedChunks.length)} chars
                     </p>
                   </div>
-                  <div className="rounded border border-slate-700/70 bg-[#1A1A1A] p-5">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">Size Range</p>
-                    <p className="mt-3 text-xl font-black text-white">
+                  <div className="rounded border border-slate-200 dark:border-slate-700/70 bg-slate-50 dark:bg-primary p-5">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">Size Range</p>
+                    <p className="mt-3 text-xl font-black text-slate-900 dark:text-white">
                       {Math.min(...selectedChunks.map(c => c.chunk_size))} - {Math.max(...selectedChunks.map(c => c.chunk_size))} chars
                     </p>
                   </div>
@@ -358,4 +357,3 @@ const KnowledgeBasePage: React.FC = () => {
 };
 
 export default KnowledgeBasePage;
-

@@ -3,15 +3,15 @@ import { useAdminStore } from "@/stores/adminStore";
 import { adminService } from "@/services/adminService";
 
 const trendColorMap: Record<string, string> = {
-  up: "text-emerald-300",
-  down: "text-amber-300",
-  neutral: "text-slate-300",
+  up: "text-emerald-600 dark:text-emerald-300",
+  down: "text-amber-600 dark:text-amber-300",
+  neutral: "text-slate-600 dark:text-slate-300",
 };
 
 const statusStyleMap: Record<string, string> = {
-  Ready: "border-emerald-400/30 bg-emerald-500/10 text-emerald-300",
-  Running: "border-cyan-400/30 bg-cyan-500/10 text-cyan-300",
-  "Needs Refresh": "border-amber-400/30 bg-amber-500/10 text-amber-300",
+  Ready: "border-emerald-400/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300",
+  Running: "border-cyan-400/30 bg-cyan-500/10 text-cyan-600 dark:text-cyan-300",
+  "Needs Refresh": "border-amber-400/30 bg-amber-500/10 text-amber-600 dark:text-amber-300",
 };
 
 const ResearchMetricsPage: React.FC = () => {
@@ -65,7 +65,7 @@ const ResearchMetricsPage: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div className="p-8 text-white">Loading research metrics...</div>;
+    return <div className="p-8 text-slate-900 dark:text-white">Loading research metrics...</div>;
   }
 
   if (error) {
@@ -77,12 +77,12 @@ const ResearchMetricsPage: React.FC = () => {
   const notes = researchMetricsData?.experiment_notes || [];
   return (
     <div className="space-y-8 p-8">
-      <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
+      <section className="rounded border border-cyan-400/20 bg-white dark:bg-[#191919] p-6">
         <div>
-          <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">
+          <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Research
           </h2>
-          <p className="mt-3 max-w-3xl text-sm text-slate-300">
+          <p className="mt-3 max-w-3xl text-sm text-slate-600 dark:text-slate-300">
             Track research-grade evaluation metrics for RAG quality, generation
             quality, and dataset readiness across experiment cycles.
           </p>
@@ -91,22 +91,22 @@ const ResearchMetricsPage: React.FC = () => {
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {metrics.length === 0 && (
-          <p className="col-span-3 text-sm text-slate-400">No research metrics available.</p>
+          <p className="col-span-3 text-sm text-slate-500 dark:text-slate-400">No research metrics available.</p>
         )}
         {metrics.map((metric, idx) => (
           <article
             key={idx}
-            className="rounded border border-slate-700/70 bg-[#191919] p-5"
+            className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5"
           >
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
               {metric.label}
             </p>
-            <p className="mt-3 text-2xl font-black text-white">
+            <p className="mt-3 text-2xl font-black text-slate-900 dark:text-white">
               {metric.value}
             </p>
-            <p className="mt-2 text-xs text-slate-400">{metric.note}</p>
+            <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">{metric.note}</p>
             <p
-              className={`mt-1 text-[11px] font-semibold uppercase tracking-wider ${trendColorMap[metric.trend] || "text-slate-300"}`}
+              className={`mt-1 text-[11px] font-semibold uppercase tracking-wider ${trendColorMap[metric.trend] || "text-slate-600 dark:text-slate-300"}`}
             >
               {metric.trend === "up"
                 ? "Trending Up"
@@ -117,9 +117,9 @@ const ResearchMetricsPage: React.FC = () => {
           </article>
         ))}
       </section>
-      <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
+      <section className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-6">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+          <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-900 dark:text-white">
             Evaluation Datasets
           </h3>
           <div>
@@ -139,9 +139,9 @@ const ResearchMetricsPage: React.FC = () => {
             </button>
           </div>
         </div>
-        <div className="mt-4 overflow-hidden rounded border border-white/10">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="border-b border-white/10 bg-black/40 text-xs uppercase text-slate-500">
+        <div className="mt-4 overflow-hidden rounded border border-slate-200 dark:border-white/10">
+          <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
+            <thead className="border-b border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-black/40 text-xs uppercase text-slate-500 dark:text-slate-500">
               <tr>
                 <th className="px-4 py-3 font-semibold">Dataset</th>
                 <th className="px-4 py-3 font-semibold">Version</th>
@@ -152,24 +152,24 @@ const ResearchMetricsPage: React.FC = () => {
                 <th className="px-4 py-3 font-semibold text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 bg-[#191919]">
+            <tbody className="divide-y divide-slate-100 dark:divide-white/5 bg-white dark:bg-[#191919]">
               {datasets.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-4 text-center text-slate-500">
+                  <td colSpan={7} className="px-4 py-4 text-center text-slate-400 dark:text-slate-500">
                     No datasets available.
                   </td>
                 </tr>
               ) : (
                 datasets.map((ds, idx) => (
-                  <tr key={idx} className="hover:bg-white/[0.02]">
-                    <td className="px-4 py-3 font-medium text-white">{ds.name}</td>
+                  <tr key={idx} className="hover:bg-slate-50 dark:hover:bg-white/2">
+                    <td className="px-4 py-3 font-medium text-slate-900 dark:text-white">{ds.name}</td>
                     <td className="px-4 py-3">{ds.version}</td>
                     <td className="px-4 py-3">{ds.samples.toLocaleString()}</td>
                     <td className="px-4 py-3">{ds.split}</td>
                     <td className="px-4 py-3">{ds.lastRun}</td>
                     <td className="px-4 py-3">
                       <span
-                        className={`inline-block rounded border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${statusStyleMap[ds.status] || "border-slate-400/30 bg-slate-500/10 text-slate-300"}`}
+                        className={`inline-block rounded border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${statusStyleMap[ds.status] || "border-slate-400/30 bg-slate-500/10 text-slate-600 dark:text-slate-300"}`}
                       >
                         {ds.status}
                       </span>
@@ -180,13 +180,13 @@ const ResearchMetricsPage: React.FC = () => {
                           <button
                             onClick={() => handleEvaluate(ds.id)}
                             disabled={ds.status === "Running"}
-                            className="rounded border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-300 hover:bg-cyan-500/20 disabled:opacity-50"
+                            className="rounded border border-cyan-400/30 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-600 dark:text-cyan-300 hover:bg-cyan-500/20 disabled:opacity-50"
                           >
                             Run
                           </button>
                           <button
                             onClick={() => handleDelete(ds.id)}
-                            className="rounded border border-rose-400/30 bg-rose-500/10 px-3 py-1 text-xs text-rose-300 hover:bg-rose-500/20"
+                            className="rounded border border-rose-400/30 bg-rose-500/10 px-3 py-1 text-xs text-rose-600 dark:text-rose-300 hover:bg-rose-500/20"
                           >
                             Delete
                           </button>
@@ -202,20 +202,20 @@ const ResearchMetricsPage: React.FC = () => {
       </section>
 
 
-      <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
-        <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+      <section className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-6">
+        <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-900 dark:text-white">
           Experiment Notes
         </h3>
         <div className="mt-4 space-y-3">
           {notes.length === 0 && (
-            <p className="text-sm text-slate-400">No experiment notes available.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">No experiment notes available.</p>
           )}
           {notes.map((note, idx) => (
-            <article key={idx} className="rounded border border-white/10 bg-black/30 p-4">
-              <p className="text-sm font-semibold text-slate-200">
+            <article key={idx} className="rounded border border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-black/30 p-4">
+              <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
                 {note.title}
               </p>
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                 {note.description}
               </p>
             </article>

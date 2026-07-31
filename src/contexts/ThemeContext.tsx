@@ -63,9 +63,28 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       updateFn();
       return;
     }
+
+    const vv = window.visualViewport;
+    const vpWidth = vv?.width ?? window.innerWidth;
+    const vpHeight = vv?.height ?? window.innerHeight;
+    const offsetLeft = vv?.offsetLeft ?? 0;
+    const offsetTop = vv?.offsetTop ?? 0;
+
+    const dpr = window.devicePixelRatio || 1;
+    // On Windows with non-integer DPR (e.g. 125% display scaling → DPR 1.25),
+    // Chrome's View Transition clip-path runs in device-pixel space instead of
+    // CSS-pixel space. Integer-DPR screens (1×, 2×, 3×) use CSS pixels and work
+    // correctly without adjustment.
+    const coordFactor = Number.isInteger(dpr) ? 1 : dpr;
+
+    const x = ((e?.clientX ?? vpWidth / 2) + offsetLeft) * coordFactor;
+    const y = ((e?.clientY ?? vpHeight / 2) + offsetTop) * coordFactor;
+
+    const layoutW = window.innerWidth * coordFactor;
+    const layoutH = window.innerHeight * coordFactor;
     const endRadius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y)
+      Math.max(x, layoutW - x),
+      Math.max(y, layoutH - y)
     );
 
     // @ts-ignore

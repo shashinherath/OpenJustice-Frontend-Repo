@@ -24,7 +24,7 @@ const MultilingualAnalyticsPage: React.FC = () => {
   if (loading) {
     return (
       <div className="flex h-64 items-center justify-center p-8">
-        <div className="text-cyan-400">Loading multilingual analytics...</div>
+        <div className="text-cyan-600 dark:text-cyan-400">Loading multilingual analytics...</div>
       </div>
     );
   }
@@ -39,12 +39,12 @@ const MultilingualAnalyticsPage: React.FC = () => {
 
   return (
     <div className="space-y-8 p-8">
-      <section className="rounded border border-cyan-400/20 bg-[#191919] p-6">
+      <section className="rounded border border-cyan-400/20 bg-white dark:bg-[#191919] p-6">
         <div>
-          <h2 className="mt-2 text-2xl font-bold tracking-tight text-white">
+          <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
             Multilingual Analytics
           </h2>
-          <p className="mt-3 max-w-3xl text-sm text-slate-300">
+          <p className="mt-3 max-w-3xl text-sm text-slate-600 dark:text-slate-300">
             Inspect language-level usage, translation volumes, and per-language
             engagement.
           </p>
@@ -52,30 +52,30 @@ const MultilingualAnalyticsPage: React.FC = () => {
       </section>
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
             Total Queries
           </p>
-          <p className="mt-3 text-2xl font-black text-white">{data.total_queries}</p>
+          <p className="mt-3 text-2xl font-black text-slate-900 dark:text-white">{data.total_queries}</p>
         </article>
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
             Languages Tracked
           </p>
-          <p className="mt-3 text-2xl font-black text-cyan-400">
+          <p className="mt-3 text-2xl font-black text-cyan-600 dark:text-cyan-400">
             {data.total_languages}
           </p>
         </article>
-        <article className="rounded border border-slate-700/70 bg-[#191919] p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500">
+        <article className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 dark:text-slate-500">
             Translation Requests
           </p>
-          <p className="mt-3 text-2xl font-black text-white">{data.translation_requests}</p>
+          <p className="mt-3 text-2xl font-black text-slate-900 dark:text-white">{data.translation_requests}</p>
         </article>
       </section>
 
-      <section className="rounded border border-slate-700/70 bg-[#191919] p-6">
-        <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-white">
+      <section className="rounded border border-slate-200 dark:border-slate-700/70 bg-white dark:bg-[#191919] p-6">
+        <h3 className="text-sm font-bold uppercase tracking-[0.18em] text-slate-900 dark:text-white">
           Language Share
         </h3>
         <div className="mt-4 space-y-4">
@@ -84,17 +84,17 @@ const MultilingualAnalyticsPage: React.FC = () => {
             return (
               <article
                 key={l.code}
-                className="rounded border border-white/10 bg-[#191919] p-4"
+                className="rounded border border-slate-200 dark:border-white/10 bg-white dark:bg-[#191919] p-4"
               >
                 <div className="mb-2 flex items-center justify-between">
-                  <p className="text-sm font-semibold text-slate-200">
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-200">
                     {l.label}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     {l.count} ({pct}%)
                   </p>
                 </div>
-                <div className="h-2 overflow-hidden rounded bg-white/10">
+                <div className="h-2 overflow-hidden rounded bg-slate-100 dark:bg-white/10">
                   <div
                     className="bg-cyan-400 h-full transition-all duration-700 ease-in-out"
                     style={{ width: `${pct}%` }}
