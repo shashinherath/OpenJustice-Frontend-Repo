@@ -49,11 +49,18 @@
 
 3. **Configure environment variables**
 
-   The project includes a `.env` file with default local development values:
+   Copy the example environment file and adjust if needed:
+   ```bash
+   cp .env.example .env
+   ```
+
+   Default values (suitable for local development):
    ```env
    VITE_API_BASE_URL=http://localhost:8000/api
    VITE_SOCKET_URL=http://localhost:8000
    ```
+
+   See [`.env.example`](.env.example) for all available variables and [`.env.production.example`](.env.production.example) for production deployment.
 
 4. **Start the development server**
    ```bash
@@ -106,3 +113,16 @@ src/
 OpenJustice is an AI-powered educational tool. It provides **legal information, not legal advice or representation.** The system may not be aware of recent case law or jurisdiction-specific procedural details.
 
 **This interface is a research prototype.** Users should cross-reference all outputs with primary source documents and consult a qualified attorney for specific legal situations.
+
+## 📄 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## 🤝 Contributing
+
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md) before getting started.
+
+## 🛡️ Security
+
+To report a security vulnerability, please see our [Security Policy](SECURITY.md).
+
